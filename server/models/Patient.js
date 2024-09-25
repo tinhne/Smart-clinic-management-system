@@ -8,7 +8,12 @@ const patientSchema = new Schema({
     required: true,
     unique: true,
   },
-  patient_name: {
+  patient_first_name: {
+    type: String,
+    required: true,
+    maxlength: 100,
+  },
+  patent_last_name: {
     type: String,
     required: true,
     maxlength: 100,

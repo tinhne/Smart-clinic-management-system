@@ -1,30 +1,33 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const medicationSchema = new Schema({
-  medication_id: {
-    type: String,
-    required: true,
-    unique: true,
+const medicationSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      maxlength: 100,
+    },
+    description: {
+      type: String,
+      required: true,
+      maxlength: 1000,
+    },
+    quantity_available: {
+      type: Number,
+      required: true,
+      min: 0, // Số lượng không được âm
+    },
+    price: {
+      type: Number,
+      required: true,
+      min: 0, // Giá không được âm
+    },
   },
-  name: {
-    type: String,
-    required: true,
-    maxlength: 100,
-  },
-  description: {
-    type: String,
-    required: true,
-    maxlength: 1000,
-  },
-  quantity_available: {
-    type: Number,
-    required: true,
-  },
-  price: {
-    type: Number,
-    required: true,
-  },
-});
+  {
+    timestamps: true,
+    versionKey: false,
+  }
+);
 
 module.exports = mongoose.model("Medication", medicationSchema);

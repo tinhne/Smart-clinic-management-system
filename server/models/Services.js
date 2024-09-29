@@ -1,22 +1,26 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-// Define collection and schema for Services
 const servicesSchema = new Schema({
   service_id: {
     type: String,
     required: true,
     unique: true,
   },
-  service_name: {
+  name: {
     type: String,
     required: true,
     maxlength: 100,
   },
-  service_price: {
+  price: {
     type: Number,
     required: true,
+    min: 0, // Đảm bảo giá phải lớn hơn hoặc bằng 0
+  },
+  description: {
+    type: String,
+    maxlength: 1000,
   },
 });
 
-module.exports = mongoose.model("Services", servicesSchema);
+module.exports = mongoose.model("Service", servicesSchema);

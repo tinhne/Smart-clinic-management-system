@@ -1,37 +1,36 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-// Define collection and schema for Appointment
-const appointmentSchema = new Schema({
-  appointment_id: {
-    type: String,
-    required: true,
-    unique: true,
+const appointmentSchema = new Schema(
+  {
+    appointment_date: {
+      type: Date, // Sửa thành Date để dễ quản lý thời gian
+      required: true,
+    },
+    status: {
+      type: String, // Chuyển từ mảng sang String vì chỉ có một trạng thái tại một thời điểm
+      enum: ["confirmed", "cancelled", "pending"],
+      default: "confirmed",
+    },
+    time_slot: {
+      type: String,
+      required: true,
+    },
+    patient_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "Patient",
+    },
+    doctor_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "Doctor",
+    },
   },
-  appointment_date: {
-    type: Date,
-    required: true,
-  },
-  statuses: {
-    type: [String],
-    enum: ["pending", "approved", "rejected"],
-    required: true,
-  },
-  appointment_room: {
-    type: String,
-    required: true,
-    maxlength: 10,
-  },
-  patient_id: {
-    type: String,
-    required: true,
-    ref: "Patient",
-  },
-  doctor_id: {
-    type: String,
-    required: true,
-    ref: "Doctor",
-  },
-});
+  {
+    timestamps: true, // Tự động thêm hai trường 'createdAt' và 'updatedAt' cho mỗi bản ghi
+    versionKey: false, // Loại bỏ trường '__v'
+  }
+);
 
 module.exports = mongoose.model("Appointment", appointmentSchema);

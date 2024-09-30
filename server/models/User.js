@@ -1,10 +1,14 @@
 const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema(
   {
-    name: {
+    first_name: {
+      type: String,
+      required: true,
+      maxlength: 100,
+    },
+    last_name: {
       type: String,
       required: true,
       maxlength: 100,
@@ -13,17 +17,6 @@ const userSchema = new Schema(
       type: String,
       required: true,
       unique: true,
-      match: /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/,
-    },
-    password: {
-      type: String,
-      required: true,
-      minlength: 6,
-    },
-    role: {
-      type: String,
-      enum: ["admin", "doctor", "patient"],
-      required: true,
     },
     phone: {
       type: String,
@@ -33,25 +26,35 @@ const userSchema = new Schema(
     },
     address: {
       type: String,
+      required: true,
       maxlength: 100,
     },
+    gender: {
+      type: String,
+      required: true,
+      enum: ["Male", "Female", "Other"],
+    },
+    role: {
+      type: String,
+      required: true,
+      enum: ["patient", "doctor", "admin"], // Phân biệt vai trò người dùng
+    },
+    password: {
+      type: String,
+      required: true,
+    },
     birthdate: {
-      type: Date,
+      type: String,
+      required: true,
+    },
+    specialties: {
+      type: [String], // Chỉ sử dụng cho doctor, không bắt buộc với các vai trò khác
     },
   },
-  { timestamps: true, versionKey: false }
-);
-// Hash password trước khi lưu
-userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) return next();
-
-  try {
-    const salt = await bcrypt.genSalt(10);
-    this.password = await bcrypt.hash(this.password, salt);
-    next();
-  } catch (error) {
-    next(error);
+  {
+    timestamps: true,
+    versionKey: false,
   }
-});
+);
 
 module.exports = mongoose.model("User", userSchema);

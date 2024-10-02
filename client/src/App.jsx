@@ -1,12 +1,7 @@
-import React from 'react'
-import LoginRegister from './pages/LoginRegister/LoginRegister'
+import React from "react";
 
 function App() {
-  return (
-    <div>
-      <LoginRegister/>
-    </div>
-  )
+  return <div>Hello World!</div>;
 }
 
-export default App
+export default App;

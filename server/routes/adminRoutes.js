@@ -18,10 +18,15 @@ router.post("/users", authenticate, authorize(["admin"]), createUser);
 router.get("/users/:id", authenticate, authorize(["admin"]), getUserById);
 
 // Lấy tất cả người dùng theo vai trò (admin only)
-router.get("/users", authenticate, authorize(["admin"]), getAllUserByRole);
+router.get(
+  "/users",
+  authenticate,
+  authorize(["admin", "doctor"]),
+  getAllUserByRole
+);
 
-// Cập nhật thông tin người dùng (admin only)
-router.put("/users/:id", authenticate, authorize(["admin"]), updateUser);
+// Cập nhật thông tin người dùng 
+router.put("/users/:id", authenticate, updateUser);
 
 // Xóa người dùng (admin only)
 router.delete("/users/:id", authenticate, authorize(["admin"]), deleteUser);

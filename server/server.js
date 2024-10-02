@@ -1,25 +1,33 @@
 require('dotenv').config();
 const express = require("express");
-const mongoose = require("mongoose");
-const connectDB = require("./config/mongoDB"); // Đảm bảo file này tồn tại
+const cors = require("cors");
+const dotenv = require("dotenv");
+const connectDB = require("./config/mongoDB");
+const seedAdmin = require("./seeders/seedAdmin");
+dotenv.config();
+const adminRoutes = require("./routes/adminRoutes");
+const authRoutes = require("./routes/authRoutes");
 const app = express();
-const port = process.env.PORT || 8888;
 
-// config req.body
-app.use(express.json()); // for json
-app.use(express.urlencoded({ extended: true })); // for form data
+// Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
-// Start server and connect to MongoDB
-(async () => {
-    try {
-        // Kết nối MongoDB
-        await connectDB();
+// Connect to MongoDB
+connectDB();
 
-        // Lắng nghe port
-        app.listen(port, () => {
-            console.log(`Backend Node.js App listening on port ${port}`);
-        });
-    } catch (error) {
-        console.log(">>> Error connect to DB: ", error);
-    }
-})();
+// Seed Admin
+seedAdmin();
+// Enable All CORS Requests
+app.use(cors());
+
+// Routes
+app.use("/api/auth", authRoutes);
+app.use("/api/admin", adminRoutes);
+
+
+// Khoi tao server
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`http://localhost:${PORT}`);
+});

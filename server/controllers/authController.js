@@ -1,41 +1,31 @@
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const User = require("../models/User");
-const userService = require('../service/userService');
+const userService = require("../service/userService");
 
+// Đăng nhập cho tất cả loại người dùng
 exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ email, role: "admin" });
-    if (!user) {
-      return res.status(404).json({ message: "Tài khoản không tồn tại" });
-    }
+    const { token, role } = await userService.login(email, password);
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-      return res.status(400).json({ message: "Mật khẩu không chính xác" });
-    }
-
-    const token = jwt.sign(
-      { _id: user._id, role: user.role },
-      process.env.JWT_SECRET,
-      {
-        expiresIn: "1h",
-      }
-    );
-
-    res.status(200).json({ message: "Đăng nhập thành công", token });
+    res.status(200).json({
+      message: "Đăng nhập thành công",
+      user: { email, password },
+      token,
+      role,
+    });
   } catch (error) {
-    res.status(500).json({ message: "Lỗi đăng nhập", error: error.message });
+    res.status(400).json({ message: error.message });
   }
 };
 
+// Đăng ký cho benh nhan
 exports.register = async (req, res) => {
-    try {
-        const newUser = await userService.register(req.body);
-        res.status(201).json({ message: 'User registered successfully', user: newUser });
-    } catch (err) {
-        res.status(400).json({ message: err.message });
-    }
+  try {
+    const newUser = await userService.register(req.body);
+    res
+      .status(201)
+      .json({ message: "Đăng ký tài khoản thành công", user: newUser });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
 };

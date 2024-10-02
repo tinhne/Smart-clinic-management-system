@@ -1,88 +1,98 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
+const mongoose = require("mongoose");
 
-// create account doctor
-exports.createDoctor = async (doctorData) => {
-  const { email, password } = doctorData; // Extract email and password from doctorData
+// Tạo tài khoản người dùng
+exports.createUser = async (userData) => {
+  const { email, password, role } = userData;
+
+  if (role === "admin") {
+    return { success: false, message: "Admin không thể tạo tài khoản admin" };
+  }
   try {
-    const exitsUser = await User.findOne({ email });
-    if (exitsUser) {
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
       return { success: false, message: "Tài khoản đã tồn tại" };
     }
 
-    // Hash password
-    const salt = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create new doctor
-    const newDoctor = new User({
-      ...doctorData,
-      password: salt,
-      role: "doctor",
+    const newUser = new User({
+      ...userData,
+      password: hashedPassword,
+      role,
     });
-    await newDoctor.save();
-    return { success: true, doctor: newDoctor };
+
+    await newUser.save();
+    return { success: true, user: newUser };
   } catch (error) {
-    console.error("Lỗi khi tạo tài khoản bác sĩ: ", error);
-    return { success: false, message: "Lỗi khi tạo tài khoản bác sĩ" };
+    console.error("Lỗi khi tạo tài khoản: ", error);
+    return { success: false, message: "Lỗi khi tạo tài khoản" };
   }
 };
 
-// Lay all thong tin bac si
-exports.getAllDoctors = async () => {
+// Lay tat ca nguoi dung theo role
+exports.getAllUsersByRole = async (role) => {
   try {
-    const doctors = await User.find({ role: "doctor" });
-    return { success: true, doctors };
+    const users = await User.find({ role });
+    return { success: true, users };
   } catch (error) {
-    console.error("Lỗi khi lấy thông tin bác sĩ: ", error);
-    return { success: false, message: "Lỗi khi lấy thông tin bác sĩ" };
+    console.error(
+      `Lỗi khi lấy thông tin người dùng với vai trò ${role}: `,
+      error
+    );
+    return {
+      success: false,
+      message: `Lỗi khi lấy thông tin người dùng với vai trò ${role}`,
+    };
   }
 };
 
-// Lấy thông tin bác sĩ theo ID
-exports.getDoctorById = async (doctorId) => {
+// lay tat ca nguoi dung theo role va id
+exports.getUserById = async (userId, role) => {
   try {
-    const doctor = await User.findOne({ _id: doctorId, role: "doctor" });
-    if (!doctor) {
-      return { success: false, message: "Không tìm thấy bác sĩ" };
+    const user = await User.findOne({ _id: userId, role });
+    if (!user) {
+      return {
+        success: false,
+        message: `Không tìm thấy người dùng với vai trò ${role}`,
+      };
     }
-    return { success: true, doctor };
+    return { success: true, user };
   } catch (error) {
-    console.error("Lỗi khi lấy thông tin bác sĩ: ", error);
-    return { success: false, message: "Lỗi khi lấy thông tin bác sĩ" };
+    console.error("Lỗi khi lấy thông tin người dùng: ", error);
+    return { success: false, message: "Lỗi khi lấy thông tin người dùng" };
   }
 };
 
-// Cập nhật thông tin bác sĩ
-exports.updateDoctor = async (doctorId, doctorData) => {
+// cap nhat thong tin nguoi dung theo id
+exports.updateUser = async (userId, userData) => {
   try {
-    const updatedDoctor = await User.findByIdAndUpdate(
-      { _id: doctorId, role: "doctor" },
-      { ...doctorData },
+    const updatedUser = await User.findByIdAndUpdate(
+      { _id: userId },
+      { ...userData },
       { new: true }
     );
-    if (!updatedDoctor) {
-      return { success: false, message: "Không tìm thấy bác sĩ" };
+    if (!updatedUser) {
+      return { success: false, message: "Không tìm thấy người dùng" };
     }
-    return { success: true, doctor: updatedDoctor };
+    return { success: true, user: updatedUser };
   } catch (error) {
-    console.error("Lỗi khi cập nhật thông tin bác sĩ: ", error);
-    return { success: false, message: "Lỗi khi cập nhật thông tin bác sĩ" };
+    console.error("Lỗi khi cập nhật thông tin người dùng: ", error);
+    return { success: false, message: "Lỗi khi cập nhật thông tin người dùng" };
   }
 };
 
-// Xóa bác sĩ theo ID
-exports.deleteDoctor = async (doctorId) => {
+// Xoa nguoi dung theo id
+exports.deleteUser = async (userId, currentAdminId) => {
   try {
-    const deletedDoctor = await User.findOneAndDelete({
-      _id: doctorId,
-      role: "doctor",
-    });
-    if (!deletedDoctor) {
-      return { success: false, message: "Không tìm thấy bác sĩ" };
+    const deletedUser = await User.findOneAndDelete({ _id: userId });
+    if (!deletedUser) {
+      return { success: false, message: "Không tìm thấy người dùng" };
     }
-    return { success: true, message: "Xóa bác sĩ thành công" };
+    return { success: true, message: "Xóa người dùng thành công" };
   } catch (error) {
-    console.error("Lỗi khi xóa bác sĩ: ", error);
-    return { success: false, message: "Lỗi khi xóa bác sĩ" };
+    console.error("Lỗi khi xóa người dùng: ", error);
+    return { success: false, message: "Lỗi khi xóa người dùng" };
   }
 };

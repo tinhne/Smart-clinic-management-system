@@ -1,67 +1,99 @@
 const {
-  createDoctor,
-  getDoctorById,
-  getAllDoctors,
-  updateDoctor,
-  deleteDoctor,
+  createUser,
+  getAllUsersByRole,
+  getUserById,
+  updateUser,
+  deleteUser,
 } = require("../service/adminService");
 
-// Tạo tài khoản bác sĩ
-exports.createDoctor = async (req, res) => {
-  const response = await createDoctor(req.body);
+// tao tai khoan nguoi dung
+exports.createUser = async (req, res) => {
+  const response = await createUser(req.body);
 
   if (response.success) {
     return res.status(201).json({
-      message: "Tạo tài khoản bác sĩ thành công",
-      doctor: response.doctor,
+      message: `Tạo tài khoản ${req.body.role} thành công`,
+      user: response.user,
     });
   } else {
     return res.status(400).json({ message: response.message });
   }
 };
 
-// Lấy tất cả thông tin bác sĩ
-exports.getAllDoctors = async (req, res) => {
-  const response = await getAllDoctors();
+// lay tat ca nguoi dung theo role
+exports.getAllUserByRole = async (req, res) => {
+  const { role } = req.query;
+  try {
+    const response = await getAllUsersByRole(role);
 
-  if (response.success) {
-    return res.status(200).json({ doctors: response.doctors });
-  } else {
-    return res.status(404).json({ message: response.message });
-  }
-};
-
-// Lấy thông tin bác sĩ theo ID
-exports.getDoctor = async (req, res) => {
-  const response = await getDoctorById(req.params.id);
-
-  if (response.success) {
-    return res.status(200).json({ doctor: response.doctor });
-  } else {
-    return res.status(404).json({ message: response.message });
-  }
-};
-
-// Cập nhật thông tin bác sĩ
-exports.updateDoctor = async (req, res) => {
-  const response = await updateDoctor(req.params.id, req.body);
-
-  if (response.success) {
+    if (response.success) {
+      return res.status(200).json({ users: response.users });
+    } else {
+      return res.status(404).json({ message: response.message });
+    }
+  } catch (error) {
     return res
-      .status(200)
-      .json({ message: "Cập nhật bác sĩ thành công", doctor: response.doctor });
-  } else {
-    return res.status(400).json({ message: response.message });
+      .status(500)
+      .json({ message: `Lỗi server khi lấy danh sách ${role}`, error });
   }
 };
 
-// Xóa bác sĩ
-exports.deleteDoctor = async (req, res) => {
-  const response = await deleteDoctor(req.params.id);
+// lay thong tin nguoi dung theo id va role
+exports.getUserById = async (req, res) => {
+  const { id } = req.params;
+  const { role } = req.query;
 
-  if (response.success) {
-    return res.status(200).json({ message: response.message });
-  } else {
-    return res.status(400).json({ message: response.message });
+  try {
+    const response = await getUserById(id, role);
+
+    if (response.success) {
+      return res.status(200).json({ user: response.user });
+    } else {
+      return res.status(404).json({ message: response.message });
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Lỗi server khi lấy thông tin người dùng", error });
+  }
+};
+
+// cap nhat thong tin nguoi dung theo id
+exports.updateUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const response = await updateUser(id, req.body);
+
+    if (response.success) {
+      return res.status(200).json({
+        message: "Cập nhật thông tin tài khoản thành công",
+        user: response.user,
+      });
+    } else {
+      return res.status(404).json({ message: response.message });
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Lỗi server khi cập nhật thông tin người dùng", error });
+  }
+};
+// xoa tai khoan nguoi dung theo id
+exports.deleteUser = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const response = await deleteUser(id);
+
+    if (response.success) {
+      return res.status(200).json({ message: response.message });
+    } else {
+      return res.status(404).json({ message: response.message });
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Lỗi server khi xóa tài khoản", error });
   }
 };

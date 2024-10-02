@@ -38,6 +38,7 @@ const userSchema = new Schema(
       type: String,
       required: true,
       enum: ["patient", "doctor", "admin"], // Phân biệt vai trò người dùng
+      default: "patient",
     },
     password: {
       type: String,

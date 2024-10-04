@@ -5,7 +5,7 @@ const scheduleSchema = new Schema(
   {
     doctor_id: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Doctor",
+      ref: "User",
       required: true,
     },
     date: {
@@ -35,7 +35,7 @@ const scheduleSchema = new Schema(
       {
         patient_id: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "Patient",
+          ref: "User",
         },
         time: {
           type: String,

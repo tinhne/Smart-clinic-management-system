@@ -13,10 +13,6 @@ const servicesSchema = new Schema(
       required: true,
       min: 0,
     },
-    description: {
-      type: String,
-      maxlength: 1000,
-    },
   },
   {
     timestamps: true,

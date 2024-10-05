@@ -8,9 +8,7 @@ const {
 } = require("../controllers/adminController");
 const { authenticate } = require("../middlewares/authenticate");
 const { authorize } = require("../middlewares/authorize");
-
 const router = express.Router();
-
 // Tạo tài khoản (admin only)
 router.post("/users", authenticate, authorize(["admin"]), createUser);
 

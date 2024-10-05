@@ -6,12 +6,12 @@ const medicalRecordSchema = new Schema(
     patient_id: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "Patient",
+      ref: "User",
     },
     doctor_id: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "Doctor",
+      ref: "User",
     },
     medicalrecord_date: {
       type: Date,

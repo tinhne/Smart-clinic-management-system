@@ -32,12 +32,12 @@ const prescriptionSchema = new Schema(
     patient_id: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "Patient",
+      ref: "User",
     },
     doctor_id: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "Doctor",
+      ref: "User",
     },
     total_price: {
       type: Number,

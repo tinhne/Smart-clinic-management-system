@@ -19,17 +19,17 @@ const appointmentSchema = new Schema(
     patient_id: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "Patient",
+      ref: "User",
     },
     doctor_id: {
       type: mongoose.Schema.Types.ObjectId,
       required: true,
-      ref: "Doctor",
+      ref: "User",
     },
   },
   {
-    timestamps: true, // Tự động thêm hai trường 'createdAt' và 'updatedAt' cho mỗi bản ghi
-    versionKey: false, // Loại bỏ trường '__v'
+    timestamps: true,
+    versionKey: false,
   }
 );
 

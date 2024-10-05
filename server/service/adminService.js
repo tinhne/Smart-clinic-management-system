@@ -33,6 +33,9 @@ exports.createUser = async (userData) => {
 // Lay tat ca nguoi dung theo role
 exports.getAllUsersByRole = async (role) => {
   try {
+    if (role && role === "admin") {
+      return { message: "Bạn không có quyền xem thông tin admin" };
+    }
     const users = await User.find({ role });
     return { success: true, users };
   } catch (error) {
@@ -83,7 +86,7 @@ exports.updateUser = async (userId, userData) => {
 };
 
 // Xoa nguoi dung theo id
-exports.deleteUser = async (userId, currentAdminId) => {
+exports.deleteUser = async (userId) => {
   try {
     const deletedUser = await User.findOneAndDelete({ _id: userId });
     if (!deletedUser) {

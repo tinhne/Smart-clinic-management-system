@@ -1,0 +1,36 @@
+.navbar-custom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px;
+  height: 60px;
+  padding: 0px;
+  .container {
+    width: 100%;
+    justify-content: space-between;
+    padding: 0 50px;
+    .nav-links {
+      margin-left: 803px;
+      display: flex;
+      gap: 33px;
+    }
+
+    .navbar-buttons {
+      margin-left: 10px;
+    }
+    .navbar-collapse {
+      justify-content: space-between;
+    }
+  }
+}
+@media (min-width: 1400px) {
+  .container,
+  .container-lg,
+  .container-md,
+  .container-sm,
+  .container-xl,
+  .container-xxl {
+    max-width: 100% !important;
+  }
+}
+

@@ -8,6 +8,7 @@ dotenv.config();
 const adminRoutes = require("./routes/adminRoutes");
 const authRoutes = require("./routes/authRoutes");
 const serviceRoutes = require("./routes/serviceRoutes");
+const medicineRoutes = require("./routes/medicineRoutes");
 const app = express();
 
 // Middleware
@@ -26,6 +27,7 @@ app.use(cors());
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/services", serviceRoutes);
+app.use("/api/medicines", medicineRoutes);
 
 // Khoi tao server
 const PORT = process.env.PORT || 5000;

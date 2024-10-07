@@ -1,6 +1,6 @@
-import image1 from "../assets/img/image 1.png";
-import avatar from "../assets/img/1237b30268db9ee0c9cbe3a79b1ff8fa.jpg";
-import "../style/homepage.scss";
+import image1 from "../../assets/img/image1.png";
+import avatar from "../../assets/img/1237b30268db9ee0c9cbe3a79b1ff8fa.jpg";
+import "../../style/homepage.scss";
 import { CiSearch } from "react-icons/ci";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";

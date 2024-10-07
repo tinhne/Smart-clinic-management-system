@@ -2,7 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import HomePage from "./page/homepage.jsx";
+import HomePage from "./pages/users/homepage.jsx";
 const router = createBrowserRouter([
   {
     path: "",
@@ -13,7 +13,7 @@ const router = createBrowserRouter([
         element: <HomePage></HomePage>,
       },
     ],
-  }
+  },
 ]);
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

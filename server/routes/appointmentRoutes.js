@@ -1,4 +1,3 @@
-// routes/appointmentRoutes.js
 const express = require("express");
 const router = express.Router();
 const appointmentController = require("../controllers/appointmentController");
@@ -9,7 +8,7 @@ const { authorize } = require("../middlewares/authorize");
 // Bệnh nhân đặt lịch hẹn
 router.post("/book", authenticate, authorize(["patient"]), appointmentController.bookAppointment);
 
-// Bác sĩ xác nhận lịch hẹn
+// Admin xác nhận lịch hẹn và gửi SMS
 router.put("/confirm/:id", authenticate, authorize(["admin"]), appointmentController.confirmAppointment);
 
 // Bệnh nhân hủy lịch hẹn

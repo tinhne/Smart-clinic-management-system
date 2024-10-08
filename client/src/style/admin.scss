@@ -1,0 +1,106 @@
+.admin-layout {
+  display: flex;
+  flex-direction: row;
+  padding: 50px;
+  margin-top: 20px;
+}
+.admin-content {
+  margin-left: 15%; 
+  width: 85%; 
+  padding: 0;
+}
+.admin-header {
+  background: #1975DC;
+  color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  width: 85%; 
+  margin-left: 15%; 
+  position: fixed; 
+  top: 0;
+  left: 0;
+  z-index: 1000; 
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.header-left img {
+  width: 30px;
+  color: white;
+}
+
+.header-right img {
+  width: 40px;
+  border-radius: 50%;
+}
+
+.header-search {
+  display: flex;
+  align-items: center;
+}
+.search-input {
+  width: 300px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  padding: 5px;
+  margin-right: 10px;
+}
+.search-icon{
+  font-size: 30px;
+  color: #1975DC;
+  border-radius: 5px;
+  margin-left: -40px;
+}
+.admin-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: 15%; 
+  background: #1975DC;
+  color: white;
+  padding-top: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+}
+
+.admin-sidebar ul {
+  list-style-type: none;
+  padding-left: 10px;
+}
+
+.admin-sidebar ul li {
+  padding: 15px 30px;
+  margin-bottom: 10px;
+}
+
+.admin-sidebar ul li a {
+  color: white;
+  text-decoration: none;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  height: 40px;
+  width: 245px;
+  
+}
+
+.admin-sidebar ul li a i {
+  margin-right: 10px;
+  margin-left: 20px;
+}
+
+.admin-sidebar ul li a:hover {
+  background-color: #ffffff;
+  color: #1975DC;
+  border-radius: 10px;
+}
+.admin-sidebar ul li a.active {
+  background-color: #ffffff;
+  color: #1975DC;
+  border-radius: 5px;
+  
+  border-radius: 10px;
+}
+

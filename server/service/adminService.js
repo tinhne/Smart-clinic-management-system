@@ -1,6 +1,5 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
-const mongoose = require("mongoose");
 
 // Tạo tài khoản người dùng
 exports.createUser = async (userData) => {

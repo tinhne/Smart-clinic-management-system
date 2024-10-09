@@ -8,6 +8,11 @@ const medicationSchema = new Schema(
       required: true,
       maxlength: 100,
     },
+    unit_of_caculation: {
+      type: String,
+      required: true,
+      maxlength: 100,
+    },
     description: {
       type: String,
       required: true,

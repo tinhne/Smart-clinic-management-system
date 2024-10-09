@@ -3,11 +3,6 @@ const Schema = mongoose.Schema;
 
 // Define collection and schema for Notifications
 const notificationSchema = new Schema({
-  notification_id: {
-    type: String,
-    required: true,
-    unique: true,
-  },
   notification_title: {
     type: String,
     required: true,
@@ -27,6 +22,11 @@ const notificationSchema = new Schema({
     required: true,
     unique: true,
     ref: "MedicalRecord",
+  },
+  user_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: "User",
   },
 });
 

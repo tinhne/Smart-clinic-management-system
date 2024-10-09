@@ -1,8 +1,8 @@
 import React from "react";
-import "../../style/admin.scss";
+import "../../style/dashboard.scss";
 
 const Dashboard = () => {
-  return <div>Hello World</div>;
+  return <div className="aa">Hello World</div>;
 };
 
 export default Dashboard;

@@ -40,7 +40,7 @@ const AdminSidebar = () => {
         </li>
         <li>
           <NavLink
-            to="/admin/services"
+            to="/admin/dich-vu-kham"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
             <i className="fa fa-hospital"></i> Quản lý dịch vụ khám

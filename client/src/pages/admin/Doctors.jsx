@@ -52,53 +52,121 @@ function Doctors() {
       </div>
 
       {/* Hiển thị danh sách bác sĩ */}
-      <table className="doctor-table">
-        <thead>
-          <tr>
-            <th>Tên bác sĩ</th>
-            <th>Email</th>
-            <th>Giới tính</th>
-            <th>Số điện thoại</th>
-            <th>Chuyên khoa</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Nguyen Tan Dung</td>
-            <td>dungnguyentan10112003@gmail.com</td>
-            <td>Male</td>
-            <td>0935038810</td>
-            <td>Tim Mạch</td>
-            <td>
-              <button className="btn btn-edit">Edit</button>
-              <button className="btn btn-delete">Delete</button>
-            </td>
-          </tr>
-          <tr>
-            <td>Dũng</td>
-            <td>dung@gmail.com</td>
-            <td>Male</td>
-            <td>0935038810</td>
-            <td>Tim Mạch</td>
-            <td>
-              <button className="btn btn-edit">Edit</button>
-              <button className="btn btn-delete">Delete</button>
-            </td>
-          </tr>
-          <tr>
-            <td>Dũng</td>
-            <td>dung@gmail.com</td>
-            <td>Male</td>
-            <td>0935038810</td>
-            <td>Tim Mạch</td>
-            <td>
-              <button className="btn btn-edit">Edit</button>
-              <button className="btn btn-delete">Delete</button>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+      <div className="table-container">
+        <table className="doctor-table">
+          <thead>
+            <tr>
+              <th>Tên bác sĩ</th>
+              <th>Email</th>
+              <th>Giới tính</th>
+              <th>Số điện thoại</th>
+              <th>Chuyên khoa</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Nguyen Tan Dung</td>
+              <td>dungnguyentan10112003@gmail.com</td>
+              <td>Male</td>
+              <td>0935038810</td>
+              <td>Tim Mạch</td>
+              <td>
+                <button className="btn btn-edit">Edit</button>
+                <button className="btn btn-delete">Delete</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Dũng</td>
+              <td>dung@gmail.com</td>
+              <td>Male</td>
+              <td>0935038810</td>
+              <td>Tim Mạch</td>
+              <td>
+                <button className="btn btn-edit">Edit</button>
+                <button className="btn btn-delete">Delete</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Dũng</td>
+              <td>dung@gmail.com</td>
+              <td>Male</td>
+              <td>0935038810</td>
+              <td>Tim Mạch</td>
+              <td>
+                <button className="btn btn-edit">Edit</button>
+                <button className="btn btn-delete">Delete</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Dũng</td>
+              <td>dung@gmail.com</td>
+              <td>Male</td>
+              <td>0935038810</td>
+              <td>Tim Mạch</td>
+              <td>
+                <button className="btn btn-edit">Edit</button>
+                <button className="btn btn-delete">Delete</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Dũng</td>
+              <td>dung@gmail.com</td>
+              <td>Male</td>
+              <td>0935038810</td>
+              <td>Tim Mạch</td>
+              <td>
+                <button className="btn btn-edit">Edit</button>
+                <button className="btn btn-delete">Delete</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Dũng</td>
+              <td>dung@gmail.com</td>
+              <td>Male</td>
+              <td>0935038810</td>
+              <td>Tim Mạch</td>
+              <td>
+                <button className="btn btn-edit">Edit</button>
+                <button className="btn btn-delete">Delete</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Dũng</td>
+              <td>dung@gmail.com</td>
+              <td>Male</td>
+              <td>0935038810</td>
+              <td>Tim Mạch</td>
+              <td>
+                <button className="btn btn-edit">Edit</button>
+                <button className="btn btn-delete">Delete</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Dũng</td>
+              <td>dung@gmail.com</td>
+              <td>Male</td>
+              <td>0935038810</td>
+              <td>Tim Mạch</td>
+              <td>
+                <button className="btn btn-edit">Edit</button>
+                <button className="btn btn-delete">Delete</button>
+              </td>
+            </tr>
+            <tr>
+              <td>Dũng</td>
+              <td>dung@gmail.com</td>
+              <td>Male</td>
+              <td>0935038810</td>
+              <td>Tim Mạch</td>
+              <td>
+                <button className="btn btn-edit">Edit</button>
+                <button className="btn btn-delete">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 }

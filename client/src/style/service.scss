@@ -1,0 +1,134 @@
+.service-page {
+    padding: 50px;
+  
+    .add-service-form {
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      padding: 20px;
+      background-color: #f9f9f9;
+      border-radius: 5px;
+      width: 400px;
+  
+      h3 {
+        font-size: 24px;
+        color: #3498db;
+        margin-bottom: 20px;
+      }
+  
+      form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+  
+        label {
+          font-weight: bold;
+          color: #333;
+          margin-bottom: 5px;
+        }
+  
+        input {
+          padding: 10px;
+          border: 1px solid #ddd;
+          border-radius: 5px;
+          font-size: 14px;
+          width: 100%;
+        }
+  
+        .btn {
+          margin-top: 10px;
+          padding: 10px 20px;
+          background-color: #3498db;
+          color: white;
+          border: none;
+          border-radius: 5px;
+          cursor: pointer;
+          font-size: 14px;
+          transition: background-color 0.3s ease;
+  
+          &:hover {
+            background-color: #2980b9;
+          }
+        }
+      }
+    }
+  
+    .table-container {
+      margin-top: 50px;
+      max-height: 350px; /* Giới hạn chiều cao của bảng */
+      overflow-y: auto; /* Chỉ cuộn dọc trong bảng */
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+  
+    .service-table {
+      width: 100%;
+      border-collapse: collapse;
+  
+      thead {
+        position: sticky;
+        top: 0;
+        z-index: 10;
+        background-color: #3498db;
+        color: white;
+      }
+  
+      th,
+      td {
+        text-align: center;
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+      }
+  
+      th {
+        font-weight: 600;
+      }
+  
+      tbody tr {
+        transition: background-color 0.3s ease;
+      }
+  
+      tbody tr:hover {
+        background-color: #f1f1f1;
+      }
+  
+      .btn {
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        transition: background-color 0.3s ease;
+  
+        &:hover {
+          opacity: 0.9;
+        }
+      }
+  
+      .btn-edit {
+        background-color: #3498db;
+        color: white;
+  
+        &:hover {
+          background-color: #2980b9;
+        }
+      }
+  
+      .btn-delete {
+        background-color: #e74c3c;
+        color: white;
+  
+        &:hover {
+          background-color: #c0392b;
+        }
+      }
+  
+      td:last-child {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+      }
+    }
+  }
+  

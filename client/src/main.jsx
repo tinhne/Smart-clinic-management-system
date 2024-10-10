@@ -3,7 +3,7 @@ import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/users/homepage.jsx";
-import AdminApp from "../AdminApp.jsx";
+import AdminApp from "./AdminApp.jsx";
 import Dashboard from "./pages/admin/Dashboard.jsx";
 import Doctors from "./pages/admin/Doctors.jsx";
 import Patients from "./pages/admin/Patients.jsx";
@@ -31,15 +31,15 @@ const router = createBrowserRouter([
         element: <Dashboard></Dashboard>,
       },
       {
-        path: "doctors",
+        path: "bac-si",
         element: <Doctors></Doctors>,
       },
       {
-        path: "patients",
+        path: "benh-nhan",
         element: <Patients></Patients>,
       },
       {
-        path: "medicine",
+        path: "thuoc",
         element: <Medication></Medication>,
       },
       {
@@ -50,13 +50,14 @@ const router = createBrowserRouter([
   },
   {
     path: "/tin-tuc/",
-    element: <Blog/>,  
+    element: <Blog />,
     children: [
       {
         index: true,
         element: <Blog />,
-      }
-]},
+      },
+    ],
+  },
 ]);
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

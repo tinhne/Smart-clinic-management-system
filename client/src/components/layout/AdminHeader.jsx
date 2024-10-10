@@ -2,7 +2,7 @@ import React from "react";
 import menu from "../../assets/img/menu.png";
 import customer from "../../assets/img/customer01.png";
 import { CiSearch } from "react-icons/ci";
-import "../../style/admin.scss";
+import "../../style/layoutAdmin/admin.scss";
 
 function AdminHeader() {
   return (

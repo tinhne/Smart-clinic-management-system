@@ -9,6 +9,7 @@ import Doctors from "./pages/admin/Doctors.jsx";
 import Patients from "./pages/admin/Patients.jsx";
 import Medication from "./pages/admin/Medication.jsx";
 import Services from "./pages/admin/Services.jsx";
+import Blog from "./pages/Blog/Blog.jsx";
 const router = createBrowserRouter([
   {
     path: "",
@@ -47,6 +48,15 @@ const router = createBrowserRouter([
       },
     ],
   },
+  {
+    path: "/tin-tuc/",
+    element: <Blog/>,  
+    children: [
+      {
+        index: true,
+        element: <Blog />,
+      }
+]},
 ]);
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>

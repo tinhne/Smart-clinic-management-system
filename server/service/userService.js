@@ -56,14 +56,18 @@ exports.login = async (email, password) => {
       throw new Error("Mật khẩu không chính xác");
     }
 
+    // Tạo username từ first_name và last_name
+    const username = `${user.first_name} ${user.last_name}`;
+
     const token = jwt.sign(
-      { _id: user._id, role: user.role },
+      { _id: user._id, role: user.role, username: username }, 
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
 
-    return { token, role: user.role };
+    return { token, role: user.role, _id: user._id, username }; // Trả về username
   } catch (error) {
     throw new Error(error.message);
   }
 };
+

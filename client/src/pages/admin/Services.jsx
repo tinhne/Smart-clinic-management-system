@@ -1,5 +1,5 @@
 import React from "react";
-import "../../style/service.scss";
+import "../../style/adminStyle/service.scss";
 
 function Services() {
   return (

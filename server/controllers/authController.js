@@ -5,13 +5,15 @@ exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const { token, role } = await userService.login(email, password);
+    const { _id ,token, role,username } = await userService.login(email, password);
 
     res.status(200).json({
       message: "Đăng nhập thành công",
       user: { email, password },
       token,
       role,
+      _id,
+      username
     });
   } catch (error) {
     res.status(400).json({ message: error.message });

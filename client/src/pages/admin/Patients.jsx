@@ -1,5 +1,5 @@
 import React from "react";
-import "../../style/patient.scss";
+import "../../style/adminStyle/patient.scss";
 
 function Patients() {
   return (

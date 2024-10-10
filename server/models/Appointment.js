@@ -1,16 +1,17 @@
+// models/Appointment.js
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const appointmentSchema = new Schema(
   {
     appointment_date: {
-      type: Date, // Sửa thành Date để dễ quản lý thời gian
+      type: Date,
       required: true,
     },
     status: {
-      type: String, // Chuyển từ mảng sang String vì chỉ có một trạng thái tại một thời điểm
+      type: String,
       enum: ["confirmed", "cancelled", "pending"],
-      default: "confirmed",
+      default: "pending",
     },
     time_slot: {
       type: String,

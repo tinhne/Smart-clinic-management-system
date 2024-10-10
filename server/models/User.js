@@ -51,6 +51,7 @@ const userSchema = new Schema(
     specialties: {
       type: [String], // Chỉ sử dụng cho doctor, không bắt buộc với các vai trò khác
     },
+    imageUrl: { type: String }, // New field for user image
   },
   {
     timestamps: true,

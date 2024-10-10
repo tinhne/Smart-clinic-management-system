@@ -2,9 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import HomePage from "./pages/users/HomePage.jsx"; 
-import Blog from "./pages/Blog/Blog.jsx"; 
-
+import HomePage from "./pages/users/homepage.jsx";
 const router = createBrowserRouter([
   {
     path: "",
@@ -16,15 +14,6 @@ const router = createBrowserRouter([
       },
     ],
   },
-  {
-    path: "/tin-tuc/",
-    element: <Blog/>,  
-    children: [
-      {
-        index: true,
-        element: <Blog />,
-      }
-]},
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(

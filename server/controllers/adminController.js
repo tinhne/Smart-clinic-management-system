@@ -6,6 +6,7 @@ const {
   deleteUser,
 } = require("../service/adminService");
 
+
 // tao tai khoan nguoi dung
 exports.createUser = async (req, res) => {
   const response = await createUser(req.body);
@@ -97,3 +98,4 @@ exports.deleteUser = async (req, res) => {
       .json({ message: "Lỗi server khi xóa tài khoản", error });
   }
 };
+

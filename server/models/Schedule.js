@@ -14,11 +14,11 @@ const scheduleSchema = new Schema(
     },
     working_hours: {
       start_time: {
-        type: Date, // Sử dụng Date để dễ dàng so sánh và quản lý thời gian
+        type: String, // Sử dụng Date để dễ dàng so sánh và quản lý thời gian
         required: true,
       },
       end_time: {
-        type: Date,
+        type: String,
         required: true,
       },
     },

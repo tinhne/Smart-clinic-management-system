@@ -2,9 +2,9 @@ import image1 from "../../assets/img/image1.png";
 import avatar from "../../assets/img/1237b30268db9ee0c9cbe3a79b1ff8fa.jpg";
 import "../../style/homepage.scss";
 import { CiSearch } from "react-icons/ci";
-import doctorImage from "../assets/img/customer01.png";
-import image2 from "../assets/img/coth 1.png";
-import image from "../assets/img/login.png";
+import doctorImage from "../../assets/img/customer01.png";
+import image2 from "../../assets/img/coth 1.png";
+import image from "../../assets/img/login.png";
 
 const HomePage = () => {
   return (

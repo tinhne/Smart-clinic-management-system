@@ -2,19 +2,31 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import HomePage from "./pages/users/homepage.jsx";
+import HomePage from "./pages/users/HomePage.jsx"; 
+import Blog from "./pages/Blog/Blog.jsx"; 
+
 const router = createBrowserRouter([
   {
     path: "",
-    element: <App></App>,
+    element: <App />,
     children: [
       {
         index: true,
-        element: <HomePage></HomePage>,
+        element: <HomePage />,
       },
     ],
   },
+  {
+    path: "/tin-tuc/",
+    element: <Blog/>,  
+    children: [
+      {
+        index: true,
+        element: <Blog />,
+      }
+]},
 ]);
+
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <RouterProvider router={router} />

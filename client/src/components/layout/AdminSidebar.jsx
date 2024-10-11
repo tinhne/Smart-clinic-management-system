@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import "../../style/admin.scss";
+import "../../style/layoutAdmin/admin.scss";
 
 const AdminSidebar = () => {
   return (
@@ -16,7 +16,7 @@ const AdminSidebar = () => {
         </li>
         <li>
           <NavLink
-            to="/admin/doctors"
+            to="/admin/bac-si"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
             <i className="fa fa-user-md"></i> Quản lý bác sĩ
@@ -24,7 +24,7 @@ const AdminSidebar = () => {
         </li>
         <li>
           <NavLink
-            to="/admin/patients"
+            to="/admin/benh-nhan"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
             <i className="fa fa-user"></i> Quản lý bệnh nhân
@@ -32,7 +32,7 @@ const AdminSidebar = () => {
         </li>
         <li>
           <NavLink
-            to="/admin/medicine"
+            to="/admin/thuoc"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
             <i className="fa fa-medkit"></i> Quản lý thuốc

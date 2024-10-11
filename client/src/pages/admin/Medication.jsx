@@ -1,5 +1,5 @@
 import React from "react";
-import "../../style/medicine.scss";
+import "../../style/adminStyle/medicine.scss";
 
 function Medication() {
   return (

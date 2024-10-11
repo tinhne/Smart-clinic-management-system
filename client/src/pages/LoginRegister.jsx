@@ -20,9 +20,9 @@ function LoginRegister() {
       <div className="form-right">
         <h2>{isRegistering ? 'Sign up' : 'Sign in'}</h2>
         <div className="social-icons">
-          <a href="#"><img src="src/assets/img/fb2.png" alt="Facebook" /></a>
+          {/* <a href="#"><img src="src/assets/img/fb2.png" alt="Facebook" /></a>
           <a href="#"><img src="src/assets/img/gg1.png" alt="Google" /></a>
-          <a href="#"><img src="src/assets/img/git.png" alt="LinkedIn" /></a>
+          <a href="#"><img src="src/assets/img/git.png" alt="LinkedIn" /></a> */}
         </div>
         {isRegistering ? (
           <form>

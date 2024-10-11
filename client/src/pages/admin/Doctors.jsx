@@ -1,4 +1,4 @@
-import "../../style/doctors.scss";
+import "../../style/adminStyle/doctors.scss";
 
 function Doctors() {
   return (

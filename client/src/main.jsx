@@ -3,12 +3,13 @@ import ReactDOM from "react-dom/client";
 import App from "./App.jsx";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import HomePage from "./pages/users/homepage.jsx";
-import AdminApp from "../AdminApp.jsx";
+import AdminApp from "./AdminApp.jsx";
 import Dashboard from "./pages/admin/Dashboard.jsx";
 import Doctors from "./pages/admin/Doctors.jsx";
 import Patients from "./pages/admin/Patients.jsx";
 import Medication from "./pages/admin/Medication.jsx";
 import Services from "./pages/admin/Services.jsx";
+import Blog from "./pages/Blog/Blog.jsx";
 const router = createBrowserRouter([
   {
     path: "",
@@ -30,20 +31,30 @@ const router = createBrowserRouter([
         element: <Dashboard></Dashboard>,
       },
       {
-        path: "doctors",
+        path: "bac-si",
         element: <Doctors></Doctors>,
       },
       {
-        path: "patients",
+        path: "benh-nhan",
         element: <Patients></Patients>,
       },
       {
-        path: "medicine",
+        path: "thuoc",
         element: <Medication></Medication>,
       },
       {
         path: "dich-vu-kham",
         element: <Services></Services>,
+      },
+    ],
+  },
+  {
+    path: "/tin-tuc/",
+    element: <Blog />,
+    children: [
+      {
+        index: true,
+        element: <Blog />,
       },
     ],
   },

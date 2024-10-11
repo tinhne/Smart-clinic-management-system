@@ -10,14 +10,14 @@ import Patients from "./pages/admin/Patients.jsx";
 import Medication from "./pages/admin/Medication.jsx";
 import Services from "./pages/admin/Services.jsx";
 import Blog from "./pages/Blog/Blog.jsx";
-// import LoginRegister from "./pages/LoginRegister";
+import LoginRegister from "./pages/LoginRegister.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const router = createBrowserRouter([
   {
     path:"/login-register",
-    // element: <LoginRegister></LoginRegister>,
+    element: <LoginRegister></LoginRegister>,
   },
   {
     path: "",

@@ -6,10 +6,10 @@ import LoginRegister from "./pages/LoginRegister";
 function App() {
   return (
     <>
-      <LoginRegister></LoginRegister>
-      {/* <Header></Header>
+      {/* <LoginRegister></LoginRegister> */}
+      <Header></Header>
       <Outlet></Outlet>
-      <Footer></Footer> */}
+      <Footer></Footer>
     </>
   );
 }

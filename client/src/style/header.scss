@@ -21,6 +21,13 @@
 
     .navbar-buttons {
       margin-left: 10px;
+      .btn_register{
+        margin-left: 10px;
+      }
+      .btn_login{
+        background-color: white;
+        color: blue;
+      }
     }
     .navbar-collapse {
       justify-content: space-between;

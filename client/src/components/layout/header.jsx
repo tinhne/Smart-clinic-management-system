@@ -19,8 +19,8 @@ const Header = () => {
               <Nav.Link href="/tin-tuc/">Tin y tế</Nav.Link>
             </Nav>
             <div className="navbar-buttons">
-              <Button variant="primary">Primary</Button>{" "}
-              <Button variant="primary">Primary</Button>{" "}
+              <Button  className="btn_register">Đăng ký</Button>{" "}
+              <Button className="btn_login" >Đăng nhập</Button>{" "}
             </div>
           </Navbar.Collapse>
         </Container>

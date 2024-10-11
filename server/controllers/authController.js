@@ -5,18 +5,26 @@ exports.login = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const { _id ,token, role,username } = await userService.login(email, password);
+    const { _id, token, role, username } = await userService.login(
+      email,
+      password
+    );
 
     res.status(200).json({
-      message: "Đăng nhập thành công",
+      EC: 0,
+      EM: "Đăng nhập thành công",
       user: { email, password },
       token,
       role,
       _id,
-      username
+      username,
     });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(400).json({
+      EC: 1,
+      EM: "Đăng nhập không thành công",
+      message: error.message,
+    });
   }
 };
 
@@ -26,8 +34,8 @@ exports.register = async (req, res) => {
     const newUser = await userService.register(req.body);
     res
       .status(201)
-      .json({ message: "Đăng ký tài khoản thành công", user: newUser });
+      .json({ EC: 0, EM: "Đăng ký tài khoản thành công", user: newUser });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(400).json({ EC: 1, EM: err.message });
   }
 };

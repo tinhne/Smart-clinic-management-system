@@ -4,8 +4,26 @@ import Navbar from "react-bootstrap/Navbar";
 import Button from "react-bootstrap/Button";
 import "../../style/header.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { useEffect, useState } from "react";
+import NavDropdown from "react-bootstrap/NavDropdown";
+import { FaRegUserCircle } from "react-icons/fa";
 
 const Header = () => {
+  const [token, setToken] = useState("");
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("access_token");
+
+    if (storedToken) {
+      setToken(storedToken);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("access_token");
+    setToken("");
+  };
+
   return (
     <>
       <Navbar expand="lg" className="navbar-custom bg-body-tertiary">
@@ -19,13 +37,37 @@ const Header = () => {
               <Nav.Link href="/tin-tuc/">Tin y tế</Nav.Link>
             </Nav>
             <div className="navbar-buttons">
-              <Button  className="btn_register">Đăng ký</Button>{" "}
-              <Button className="btn_login" >Đăng nhập</Button>{" "}
+              {token ? (
+                <div className="user_info">
+                  <div className="user_img">
+                    <FaRegUserCircle size={30} />
+                  </div>
+                  <NavDropdown title="Nguyễn" id="basic-nav-dropdown">
+                    <NavDropdown.Item href="#action/3.1" onClick={handleLogout}>
+                      Đăng xuất
+                    </NavDropdown.Item>
+                    <NavDropdown.Item href="#action/3.2">
+                      Hành động khác
+                    </NavDropdown.Item>
+                    <NavDropdown.Item href="#action/3.3">
+                      Một thứ gì đó
+                    </NavDropdown.Item>
+                    <NavDropdown.Divider />
+                    <NavDropdown.Item href="#action/3.4">
+                      Liên kết tách biệt
+                    </NavDropdown.Item>
+                  </NavDropdown>
+                </div>
+              ) : (
+                <>
+                  <Button className="btn_register">Đăng ký</Button>
+                  <Button className="btn_login">Đăng nhập</Button>
+                </>
+              )}
             </div>
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      
     </>
   );
 };

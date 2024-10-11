@@ -16,7 +16,6 @@ const HomePage = () => {
             Đặt khám với hơn 600 bác sỹ, 160 bệnh nhân, 56 phòng khám trên
             Pandora để có số thứ tự và khung giờ khám trước.
           </p>
-
           <div className="search-container">
             <input
               type="text"

@@ -10,18 +10,23 @@ import { FaRegUserCircle } from "react-icons/fa";
 
 const Header = () => {
   const [token, setToken] = useState("");
+  const [username, setUsername] = useState(""); // Thêm useState cho username
 
   useEffect(() => {
     const storedToken = localStorage.getItem("access_token");
-
+    const storedUsername = localStorage.getItem("username"); // Lấy giá trị username từ localStorage
     if (storedToken) {
       setToken(storedToken);
+    }
+    if (storedUsername) {
+      setUsername(storedUsername); // Cập nhật state cho username
     }
   }, []);
 
   const handleLogout = () => {
     localStorage.removeItem("access_token");
     setToken("");
+    setUsername(""); // Xóa cả username khi logout
   };
 
   return (
@@ -41,22 +46,27 @@ const Header = () => {
                 <div className="user_info">
                   <div className="user_img">
                     <FaRegUserCircle size={30} />
+                  </div>{" "}
+                  <div>
+                    <NavDropdown title={username} id="basic-nav-dropdown">
+                      <NavDropdown.Item
+                        href="#action/3.1"
+                        onClick={handleLogout}
+                      >
+                        Đăng xuất
+                      </NavDropdown.Item>
+                      <NavDropdown.Item href="#action/3.2">
+                        Hành động khác
+                      </NavDropdown.Item>
+                      <NavDropdown.Item href="#action/3.3">
+                        Một thứ gì đó
+                      </NavDropdown.Item>
+                      <NavDropdown.Divider />
+                      <NavDropdown.Item href="#action/3.4">
+                        Liên kết tách biệt
+                      </NavDropdown.Item>
+                    </NavDropdown>
                   </div>
-                  <NavDropdown title="Nguyễn" id="basic-nav-dropdown">
-                    <NavDropdown.Item href="#action/3.1" onClick={handleLogout}>
-                      Đăng xuất
-                    </NavDropdown.Item>
-                    <NavDropdown.Item href="#action/3.2">
-                      Hành động khác
-                    </NavDropdown.Item>
-                    <NavDropdown.Item href="#action/3.3">
-                      Một thứ gì đó
-                    </NavDropdown.Item>
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item href="#action/3.4">
-                      Liên kết tách biệt
-                    </NavDropdown.Item>
-                  </NavDropdown>
                 </div>
               ) : (
                 <>

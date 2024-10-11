@@ -1,10 +1,10 @@
-import Blog_Header from "../../components/Blog/BlogHeader";
 import "../../style/Blog/Blog.scss";
 import image from "../../assets/img/Blog_Image/1 9.png";
+import Header from "../../components/layout/header";
 const Blog = () => {
   return (
     <>
-      <Blog_Header />
+      <Header />
 
       <section className="banner">
         <div className="overlay"></div>

@@ -13,6 +13,7 @@
     width: 100%;
     justify-content: space-between;
     padding: 0 50px;
+    overflow:visible ;
     .nav-links {
       margin-left: 803px;
       display: flex;
@@ -28,11 +29,14 @@
         background-color: white;
         color: blue;
       }
-    //   .user_info{
-    //     display: flex;
-    //     gap:10px;
+      .user_info{
+        display: flex;
+        gap:10px;
 
-    //   }
+      }
+      .dropdown-menu {
+        z-index: 100;
+      }
     }
     .navbar-collapse {
       justify-content: space-between;

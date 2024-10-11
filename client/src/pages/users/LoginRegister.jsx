@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import "../style/LoginRegister.scss"; // Đảm bảo bạn đã tạo file CSS này
-import { LoginApi, ResgisterApi } from "../utils/AuthAPI/LoginRegisterAPI";
+import "../../style/LoginRegister.scss"; // Đảm bảo bạn đã tạo file CSS này
+import { LoginApi, ResgisterApi } from "../../utils/AuthAPI/LoginRegisterAPI";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 
-function LoginRegister() {
+const LoginRegister = () => {
   const [isRegistering, setIsRegistering] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -16,21 +16,18 @@ function LoginRegister() {
   const [birthdate, setBirthdate] = useState("");
   const navigate = useNavigate();
 
+  // Arrow function for toggling the form between login and register
   const toggleForm = () => {
-    setIsRegistering(!isRegistering);
+    setIsRegistering(prevState => !prevState);
   };
 
-  // Xử lí đăng nhập
+  // Arrow function for login
   const handleLogin = async (e) => {
     e.preventDefault();
 
     if (!email || !password) {
-      if (!email) {
-        toast.error("Vui lòng nhập email.");
-      }
-      if (!password) {
-        toast.error("Vui lòng nhập mật khẩu.");
-      }
+      if (!email) toast.error("Vui lòng nhập email.");
+      if (!password) toast.error("Vui lòng nhập mật khẩu.");
       return;
     }
 
@@ -38,6 +35,7 @@ function LoginRegister() {
       const res = await LoginApi(email, password);
       if (res && res.EC === 0) {
         localStorage.setItem("access_token", res.token);
+        localStorage.setItem("username", res.username);
         toast.success(res.EM);
         navigate("/");
       } else {
@@ -47,16 +45,15 @@ function LoginRegister() {
       console.error("Login failed:", error);
       toast.error(
         error.response?.data?.message ||
-          "Có lỗi xảy ra trong quá trình đăng nhập!"
+        "Có lỗi xảy ra trong quá trình đăng nhập!"
       );
     }
   };
 
-  // Xử lí đăng ký
+  // Arrow function for register
   const handleRegister = async (e) => {
     e.preventDefault();
-    
-    // Kiểm tra định dạng của dữ liệu
+
     if (
       !firstName ||
       !lastName ||
@@ -70,34 +67,30 @@ function LoginRegister() {
       toast.error("Vui lòng điền đầy đủ thông tin.");
       return;
     }
-  
-    // Kiểm tra định dạng email
+
     const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailPattern.test(email)) {
       toast.error("Email không hợp lệ.");
       return;
     }
-  
-    // Kiểm tra định dạng số điện thoại (10-15 ký tự)
+
     const phonePattern = /^[0-9]{10,15}$/;
     if (!phonePattern.test(phone)) {
       toast.error("Số điện thoại không hợp lệ. Nó phải từ 10 đến 15 ký tự số.");
       return;
     }
-  
-    // Kiểm tra độ dài của mật khẩu
+
     if (password.length < 6) {
       toast.error("Mật khẩu phải có ít nhất 6 ký tự.");
       return;
     }
-  
-    // Kiểm tra định dạng ngày sinh
+
     const birthdatePattern = /^\d{4}-\d{2}-\d{2}$/; // YYYY-MM-DD
     if (!birthdatePattern.test(birthdate)) {
       toast.error("Ngày sinh không hợp lệ. Định dạng phải là YYYY-MM-DD.");
       return;
     }
-  
+
     try {
       const res = await ResgisterApi(
         firstName,
@@ -109,11 +102,9 @@ function LoginRegister() {
         gender,
         birthdate
       );
-      
-      console.log(res); 
       if (res && res.EC === 0) {
         toast.success(res.EM);
-        setIsRegistering(false); 
+        setIsRegistering(false);
       } else {
         toast.error(res.EM || "Đăng ký không thành công!");
       }
@@ -146,14 +137,14 @@ function LoginRegister() {
                 placeholder="First Name"
                 value={firstName}
                 onChange={(e) => setFirstName(e.target.value)}
-                
+                required
               />
               <input
                 type="text"
                 placeholder="Last Name"
                 value={lastName}
                 onChange={(e) => setLastName(e.target.value)}
-                
+                required
               />
             </div>
             <div className="input-group">
@@ -162,14 +153,14 @@ function LoginRegister() {
                 placeholder="Email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                
+                required
               />
               <input
                 type="text"
                 placeholder="Phone"
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
-                
+                required
               />
             </div>
             <div className="input-group">
@@ -178,12 +169,12 @@ function LoginRegister() {
                 placeholder="Address"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
-                
+                required
               />
               <select
                 value={gender}
                 onChange={(e) => setGender(e.target.value)}
-                
+                required
               >
                 <option value="" disabled>
                   Gender
@@ -198,13 +189,13 @@ function LoginRegister() {
                 placeholder="Password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                
+                required
               />
               <input
                 type="date"
                 value={birthdate}
                 onChange={(e) => setBirthdate(e.target.value)}
-                
+                required
               />
             </div>
             <button type="submit" className="sign-up-btn">
@@ -242,6 +233,6 @@ function LoginRegister() {
       </div>
     </div>
   );
-}
+};
 
 export default LoginRegister;

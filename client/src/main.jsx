@@ -14,11 +14,11 @@ import LoginAdmin from "./pages/admin/LoginAdmin.jsx";
 import PrivateRoute from "./components/Private/PrivateRoute.jsx"; // Import PrivateRoute
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
+import LoginRegister from "./pages/users/LoginRegister.jsx"
 const router = createBrowserRouter([
   {
     path: "/login-register",
-    // element: <LoginRegister></LoginRegister>,
+    element: <LoginRegister></LoginRegister>,
   },
   {
     path: "",

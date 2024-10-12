@@ -7,14 +7,16 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useState } from "react";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { FaRegUserCircle } from "react-icons/fa";
+import { useNavigate } from "react-router-dom";
 
 const Header = () => {
   const [token, setToken] = useState("");
   const [username, setUsername] = useState(""); // Thêm useState cho username
+  const navigate = useNavigate();
 
   useEffect(() => {
     const storedToken = localStorage.getItem("access_token");
-    const storedUsername = localStorage.getItem("username"); // Lấy giá trị username từ localStorage
+    const storedUsername = localStorage.getItem("username"); 
     if (storedToken) {
       setToken(storedToken);
     }
@@ -29,6 +31,13 @@ const Header = () => {
     setUsername(""); // Xóa cả username khi logout
   };
 
+  // Thêm hàm xử lý click cho từng lựa chọn đăng nhập
+  const handleLogin = () => {
+    navigate("/login-register");
+  };
+
+ 
+
   return (
     <>
       <Navbar expand="lg" className="navbar-custom bg-body-tertiary">
@@ -42,7 +51,7 @@ const Header = () => {
               <Nav.Link href="/tin-tuc/">Tin y tế</Nav.Link>
             </Nav>
             <div className="navbar-buttons">
-              {token ? (
+              {username ? (
                 <div className="user_info">
                   <div className="user_img">
                     <FaRegUserCircle size={30} />
@@ -70,8 +79,13 @@ const Header = () => {
                 </div>
               ) : (
                 <>
-                  <Button className="btn_register">Đăng ký</Button>
-                  <Button className="btn_login">Đăng nhập</Button>
+                  <div
+                    className="login-dropdown-container"
+                  
+                  >
+                    <Button className="btn_login" onClick={handleLogin}>Đăng nhập</Button>
+                  
+                  </div>
                 </>
               )}
             </div>

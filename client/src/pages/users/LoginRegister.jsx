@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import "../../style/LoginRegister/LoginRegister.scss"; // Đảm bảo bạn đã tạo file CSS này
+import "../../style/LoginRegister/LoginRegister.scss";
 import { LoginApi, ResgisterApi } from "../../utils/AuthAPI/LoginRegisterAPI";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import Cookies from "js-cookie"; // Thư viện quản lý Cookies
 
 function LoginRegister() {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -21,9 +22,9 @@ function LoginRegister() {
   };
 
   // Xử lý đăng nhập
+  // Xử lý đăng nhập
   const handleLogin = async (e) => {
     e.preventDefault();
-
     if (!email || !password) {
       if (!email) {
         toast.error("Vui lòng nhập email.");
@@ -36,10 +37,25 @@ function LoginRegister() {
 
     try {
       const res = await LoginApi(email, password);
+
       if (res && res.EC === 0) {
-        localStorage.setItem("access_token", res.token);
-        toast.success(res.EM);
-        navigate("/");
+        // Điều hướng dựa trên role
+        if (res.role === "admin") {
+          toast.error("Admin không được phép đăng nhập ở đây");
+          return; // Ngăn không cho tiếp tục lưu thông tin
+        } else if (res.role === "patient" || res.role === "doctor") {
+          // Lưu token và role vào cookies
+          Cookies.set("access_token", res.token, {
+            secure: true,
+            sameSite: "Strict",
+          });
+          Cookies.set("role", res.role, { secure: true, sameSite: "Strict" });
+
+          toast.success(res.EM);
+          navigate("/"); // Điều hướng đến trang chính cho patient/doctor
+        } else {
+          toast.error("Role không xác định!");
+        }
       } else {
         toast.error(res.EM || "Đăng nhập không thành công!");
       }
@@ -47,7 +63,7 @@ function LoginRegister() {
       console.error("Login failed:", error);
       toast.error(
         error.response?.data?.message ||
-        "Có lỗi xảy ra trong quá trình đăng nhập!"
+          "Có lỗi xảy ra trong quá trình đăng nhập!"
       );
     }
   };
@@ -119,7 +135,7 @@ function LoginRegister() {
       console.error("Registration failed:", error);
       toast.error(
         error.response?.data?.message ||
-        "Có lỗi xảy ra trong quá trình đăng ký!"
+          "Có lỗi xảy ra trong quá trình đăng ký!"
       );
     }
   };
@@ -136,7 +152,9 @@ function LoginRegister() {
         </div>
         <div className="login__form-right">
           <h2>{isRegistering ? "Sign up" : "Sign in"}</h2>
-          <div className="login__social-icons">{/* Biểu tượng đăng nhập mạng xã hội */}</div>
+          <div className="login__social-icons">
+            {/* Biểu tượng đăng nhập mạng xã hội */}
+          </div>
           {isRegistering ? (
             <form onSubmit={handleRegister}>
               <div className="login__input-group">

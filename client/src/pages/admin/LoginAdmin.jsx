@@ -8,10 +8,39 @@ function LoginAdmin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [validationErrors, setValidationErrors] = useState({});
   const navigate = useNavigate();
+
+  const validateForm = () => {
+    const errors = {};
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    if (!email) {
+      errors.email = "Email không được để trống.";
+    } else if (!emailPattern.test(email)) {
+      errors.email = "Email không hợp lệ.";
+    }
+
+    if (!password) {
+      errors.password = "Mật khẩu không được để trống.";
+    } else if (password.length < 6) {
+      errors.password = "Mật khẩu phải chứa ít nhất 6 ký tự.";
+    }
+
+    return errors;
+  };
 
   const handleLogin = async (e) => {
     e.preventDefault();
+
+    // Validate form before submitting
+    const errors = validateForm();
+    if (Object.keys(errors).length > 0) {
+      setValidationErrors(errors);
+      return;
+    } else {
+      setValidationErrors({});
+    }
 
     try {
       const response = await loginAdmin(email, password);
@@ -19,11 +48,17 @@ function LoginAdmin() {
 
       if (response && response.EC === 0) {
         localStorage.setItem("access_token", response.token);
-        navigate("/admin/dashboard");
+        localStorage.setItem("role", response.role);
+
+        if (response.role === "admin") {
+          navigate("/admin/dashboard");
+        } else {
+          setErrorMessage("Bạn không có quyền truy cập vào trang này.");
+        }
       } else {
         setErrorMessage(
           response?.EM || "Đăng nhập thất bại. Vui lòng thử lại."
-        ); // Display error message
+        );
       }
     } catch (error) {
       console.error("Login error:", error);
@@ -40,23 +75,32 @@ function LoginAdmin() {
             Caps<span>tone1</span>
           </h1>
           <p>Đăng nhập</p>
-          {errorMessage && <p className="error-message">{errorMessage}</p>}{" "}
-          {/* Display error message */}
+          {errorMessage && <p className="error-message">{errorMessage}</p>}
           <form onSubmit={handleLogin}>
-            <input
-              type="email"
-              placeholder="Tài khoản"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)} // Update email state
-              required
-            />
-            <input
-              type="password"
-              placeholder="Mật khẩu"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)} // Update password state
-              required
-            />
+            <div>
+              <input
+                type="email"
+                placeholder="Tài khoản"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              {validationErrors.email && (
+                <p className="error-message">{validationErrors.email}</p>
+              )}
+            </div>
+            <div>
+              <input
+                type="password"
+                placeholder="Mật khẩu"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              {validationErrors.password && (
+                <p className="error-message">{validationErrors.password}</p>
+              )}
+            </div>
             <button type="submit">Đăng nhập</button>
           </form>
         </div>

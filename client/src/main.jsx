@@ -14,7 +14,8 @@ import LoginAdmin from "./pages/admin/LoginAdmin.jsx";
 import PrivateRoute from "./components/Private/PrivateRoute.jsx"; // Import PrivateRoute
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import LoginRegister from "./pages/users/LoginRegister.jsx"
+import LoginRegister from "./pages/users/LoginRegister.jsx";
+import Logout from "./pages/admin/Logout.jsx";
 const router = createBrowserRouter([
   {
     path: "/login-register",
@@ -32,7 +33,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/admin",
-    element: <PrivateRoute />,
+    element: <PrivateRoute allowedRoles={["admin"]} />,
     children: [
       {
         element: <AdminApp />,
@@ -65,6 +66,10 @@ const router = createBrowserRouter([
   {
     path: "/admin/login", // Public login page
     element: <LoginAdmin />,
+  },
+  {
+    path: "/admin/logout",
+    element: <Logout />,
   },
   {
     path: "/tin-tuc/",

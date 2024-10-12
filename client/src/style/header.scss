@@ -18,6 +18,16 @@
       margin-left: 803px;
       display: flex;
       gap: 33px;
+      font-weight: 700;
+    }
+    .logoMain {
+      font-size: 2.5rem;
+      font-weight: bold;
+      color: #34a853;
+
+      span {
+        color: #4285f4;
+      }
     }
 
     .navbar-buttons {
@@ -28,6 +38,12 @@
       .btn_login{
         background-color: white;
         color: blue;
+      }
+      .user_img img {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+
       }
       .user_info{
         display: flex;

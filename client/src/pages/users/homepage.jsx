@@ -216,7 +216,7 @@ const HomePage = () => {
                 <img src={doctorImage} alt="Doctor" />
                 <div className="doctor_info">
                   <p className="doctor_name">ThS.Bs Nguyễn Hồng Văn Khánh</p>
-                  <p>Gan mật tụy - Ghép gan, Nhi</p>
+                  <p className="specialty">Gan mật tụy - Ghép gan, Nhi</p>
                 </div>
               </div>
               <div className="doctor_card">
@@ -230,21 +230,21 @@ const HomePage = () => {
                 <img src={doctorImage} alt="Doctor" />
                 <div className="doctor_info">
                   <p className="doctor_name">ThS.Bs Nguyễn Hồng Văn Khánh</p>
-                  <p>Gan mật tụy - Ghép gan, Nhi</p>
+                  <p className="specialty">Gan mật tụy - Ghép gan, Nhi</p>
                 </div>
               </div>
               <div className="doctor_card">
                 <img src={doctorImage} alt="Doctor" />
                 <div className="doctor_info">
                   <p className="doctor_name">ThS.Bs Nguyễn Hồng Văn Khánh</p>
-                  <p>Gan mật tụy - Ghép gan, Nhi</p>
+                  <p className="specialty">Gan mật tụy - Ghép gan, Nhi</p>
                 </div>
               </div>
               <div className="doctor_card">
                 <img src={doctorImage} alt="Doctor" />
                 <div className="doctor_info">
                   <p className="doctor_name">ThS.Bs Nguyễn Hồng Văn Khánh</p>
-                  <p>Gan mật tụy - Ghép gan, Nhi</p>
+                  <p className="specialty">Gan mật tụy - Ghép gan, Nhi</p>
                 </div>
               </div>
             </div>

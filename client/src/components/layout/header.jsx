@@ -8,7 +8,8 @@ import { useEffect, useState } from "react";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { FaRegUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
-import Cookies from "js-cookie"; 
+import Cookies from "js-cookie";
+import customer from "../../assets/img/customer01.png";
 
 const Header = () => {
   const [token, setToken] = useState("");
@@ -45,7 +46,11 @@ const Header = () => {
     <>
       <Navbar expand="lg" className="navbar-custom bg-body-tertiary">
         <Container>
-          <Navbar.Brand href="#home">React-Bootstrap</Navbar.Brand>
+          <Navbar.Brand href="/">
+            <h1 className="logoMain">
+              Caps<span>tone1</span>
+            </h1>
+          </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="nav-links">
@@ -57,7 +62,7 @@ const Header = () => {
               {username ? (
                 <div className="user_info">
                   <div className="user_img">
-                    <FaRegUserCircle size={30} />
+                    <img src={customer} alt="" />
                   </div>{" "}
                   <div>
                     <NavDropdown title={username} id="basic-nav-dropdown">

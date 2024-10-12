@@ -50,7 +50,7 @@ function LoginRegister() {
             sameSite: "Strict",
           });
           Cookies.set("role", res.role, { secure: true, sameSite: "Strict" });
-
+          localStorage.setItem("username", res.username);
           toast.success(res.EM);
           navigate("/"); // Điều hướng đến trang chính cho patient/doctor
         } else {

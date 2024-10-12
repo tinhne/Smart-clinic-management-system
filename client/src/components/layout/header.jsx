@@ -8,6 +8,7 @@ import { useEffect, useState } from "react";
 import NavDropdown from "react-bootstrap/NavDropdown";
 import { FaRegUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import Cookies from "js-cookie"; 
 
 const Header = () => {
   const [token, setToken] = useState("");
@@ -16,7 +17,7 @@ const Header = () => {
 
   useEffect(() => {
     const storedToken = localStorage.getItem("access_token");
-    const storedUsername = localStorage.getItem("username"); 
+    const storedUsername = localStorage.getItem("username");
     if (storedToken) {
       setToken(storedToken);
     }
@@ -26,17 +27,19 @@ const Header = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem("access_token");
+    localStorage.clear();
     setToken("");
-    setUsername(""); // Xóa cả username khi logout
+    setUsername("");
+    Cookies.remove("access_token");
+    Cookies.remove("role");
+
+    // Xóa cả username khi logout
   };
 
   // Thêm hàm xử lý click cho từng lựa chọn đăng nhập
   const handleLogin = () => {
     navigate("/login-register");
   };
-
- 
 
   return (
     <>
@@ -79,12 +82,10 @@ const Header = () => {
                 </div>
               ) : (
                 <>
-                  <div
-                    className="login-dropdown-container"
-                  
-                  >
-                    <Button className="btn_login" onClick={handleLogin}>Đăng nhập</Button>
-                  
+                  <div className="login-dropdown-container">
+                    <Button className="btn_login" onClick={handleLogin}>
+                      Đăng nhập
+                    </Button>
                   </div>
                 </>
               )}

@@ -13,6 +13,7 @@ exports.createMedicine = async (req, res) => {
 
     if (response.success) {
       return res.status(201).json({
+        success: true,
         message: "Tạo thuốc thành công",
         medicine: response.medicine,
       });
@@ -34,6 +35,7 @@ exports.getAllMedicines = async (req, res) => {
 
     if (response.success) {
       return res.status(200).json({
+        success: true,
         message: "Lấy danh sách thuốc thành công",
         medicines: response.medicines,
         currentPage: response.currentPage,
@@ -60,6 +62,7 @@ exports.updateMedicine = async (req, res) => {
 
     if (response.success) {
       return res.status(200).json({
+        success: true,
         message: "Cập nhật thông tin thuốc thành công",
         medicine: response.medicine,
       });
@@ -81,7 +84,10 @@ exports.deleteMedicine = async (req, res) => {
     const response = await deleteMedicine(id);
 
     if (response.success) {
-      return res.status(200).json({ message: "Xóa thuốc thành công" });
+      return res.status(200).json({
+        success: true,
+        message: "Xóa thuốc thành công",
+      });
     } else {
       return res.status(404).json({ message: response.message });
     }

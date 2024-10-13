@@ -28,6 +28,7 @@ function Medication() {
     try {
       setLoading(true);
       const data = await getMedicines(page, 5);
+      console.log(data);
       if (data) {
         setMedicines(data.medicines);
         setCurrentPage(data.currentPage);
@@ -67,11 +68,7 @@ function Medication() {
       const res = await updateMedicine(editingMedicineId, updatedMedicine);
       if (res.success) {
         alert("Cập nhật thuốc thành công.");
-        setMedicines((prevMedicines) =>
-          prevMedicines.map((medicine) =>
-            medicine._id === editingMedicineId ? res.medicine : medicine
-          )
-        );
+        fetchMedicines(currentPage);
         setEditingMedicineId(null);
         resetForm();
       } else {
@@ -97,7 +94,7 @@ function Medication() {
       const res = await addNewMedicine(newMedicine);
       if (res.success) {
         alert("Thêm thuốc thành công.");
-        setMedicines((prevMedicines) => [res.medicine, ...prevMedicines]);
+        fetchMedicines(1);
         resetForm();
       } else {
         alert(res.message);
@@ -139,12 +136,11 @@ function Medication() {
         const res = await deleteMedicine(id);
         if (res.success) {
           alert("Xóa thuốc thành công.");
-          setMedicines((prevMedicines) =>
-            prevMedicines.filter((medicine) => medicine._id !== id)
-          );
+          fetchMedicines(currentPage);
         } else {
           alert(res.message);
         }
+        console.log(res);
       } catch (error) {
         console.error("Error deleting medicine:", error);
         alert("Lỗi khi xóa thuốc. Vui lòng thử lại.");

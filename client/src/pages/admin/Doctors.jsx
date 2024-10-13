@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
-import { getAllUserByRole, createDoctor } from "../../utils/AuthAPI/AdminService"; // Import createDoctor
+import {
+  getAllUserByRole,
+  createDoctor,
+} from "../../utils/AuthAPI/AdminService"; // Import createDoctor
 import "../../style/adminStyle/doctors.scss";
 
 function Doctors() {
@@ -11,17 +14,17 @@ function Doctors() {
 
   // Trạng thái cho form bác sĩ
 
-const [formData, setFormData] = useState({
-  firstName: "",
-  lastName: "",
-  email: "",
-  gender: "Male",
-  dob: "",
-  phone: "",
-  specialization: "",
-  doctorImage: null,
-  password: "", // Thêm trường mật khẩu
-});
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    gender: "Male",
+    dob: "",
+    phone: "",
+    specialization: "",
+    doctorImage: null,
+    password: "", // Thêm trường mật khẩu
+  });
 
   const [imagePreview, setImagePreview] = useState(null); // Để hiển thị ảnh trước khi upload
 
@@ -31,7 +34,6 @@ const [formData, setFormData] = useState({
     setError(null);
     try {
       const data = await getAllUserByRole("doctor", page, 10);
-      console.log("API Response:", data); // Log data to see its structure
       if (data) {
         setDoctors(data.users);
         setCurrentPage(data.currentPage);
@@ -96,7 +98,17 @@ const [formData, setFormData] = useState({
   // Hàm xử lý tạo bác sĩ
   const handleCreateDoctor = async (e) => {
     e.preventDefault(); // Ngăn chặn reload trang
-    const { firstName, lastName, email, gender, dob, phone, specialization, doctorImage, password } = formData;
+    const {
+      firstName,
+      lastName,
+      email,
+      gender,
+      dob,
+      phone,
+      specialization,
+      doctorImage,
+      password,
+    } = formData;
     // Chuyển đổi ảnh thành base64
     const reader = new FileReader();
     reader.onloadend = async () => {
@@ -110,7 +122,7 @@ const [formData, setFormData] = useState({
         phone,
         specialization,
         doctorImage: base64Image,
-        password, 
+        password,
       });
 
       if (response.success) {
@@ -144,35 +156,79 @@ const [formData, setFormData] = useState({
           <div className="form-left">
             <div>
               <label>Họ:</label>
-              <input type="text" name="firstName" value={formData.firstName} onChange={handleInputChange} required />
+              <input
+                type="text"
+                name="firstName"
+                value={formData.firstName}
+                onChange={handleInputChange}
+                required
+              />
               <label>Tên:</label>
-              <input type="text" name="lastName" value={formData.lastName} onChange={handleInputChange} required />
+              <input
+                type="text"
+                name="lastName"
+                value={formData.lastName}
+                onChange={handleInputChange}
+                required
+              />
             </div>
             <div>
               <label>Email:</label>
-              <input type="email" name="email" value={formData.email} onChange={handleInputChange} required />
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+              />
             </div>
             <div>
               <label>Giới tính:</label>
-              <select name="gender" value={formData.gender} onChange={handleInputChange}>
+              <select
+                name="gender"
+                value={formData.gender}
+                onChange={handleInputChange}
+              >
                 <option value="Male">Male</option>
-                <option value="Female">FeMale</option>
+                <option value="Female">Female</option>
               </select>
               <label>Ngày sinh:</label>
-              <input type="date" name="dob" value={formData.dob} onChange={handleInputChange} />
+              <input
+                type="date"
+                name="dob"
+                value={formData.dob}
+                onChange={handleInputChange}
+              />
             </div>
-
             <div>
               <label>Số điện thoại:</label>
-              <input type="text" name="phone" value={formData.phone} onChange={handleInputChange} required />
+              <input
+                type="text"
+                name="phone"
+                value={formData.phone}
+                onChange={handleInputChange}
+                required
+              />
             </div>
             <div>
               <label>Chuyên khoa:</label>
-              <input type="text" name="specialization" value={formData.specialization} onChange={handleInputChange} required />
+              <input
+                type="text"
+                name="specialization"
+                value={formData.specialization}
+                onChange={handleInputChange}
+                required
+              />
             </div>
             <div>
               <label htmlFor="">Password</label>
-              <input type="text" name="password" value={formData.password} onChange={handleInputChange}  required  />
+              <input
+                type="text"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                required
+              />
             </div>
             <button type="submit" className="btn">
               Tạo bác sĩ
@@ -185,11 +241,19 @@ const [formData, setFormData] = useState({
               {imagePreview ? (
                 <img src={imagePreview} alt="Doctor preview" />
               ) : (
-                <img src="https://via.placeholder.com/150x200" alt="Doctor placeholder" />
+                <img
+                  src="https://via.placeholder.com/150x200"
+                  alt="Doctor placeholder"
+                />
               )}
             </div>
             <label>Ảnh bác sĩ:</label>
-            <input type="file" name="doctorImage" accept="image/*" onChange={handleImageChange} />
+            <input
+              type="file"
+              name="doctorImage"
+              accept="image/*"
+              onChange={handleImageChange}
+            />
           </div>
         </form>
       </div>

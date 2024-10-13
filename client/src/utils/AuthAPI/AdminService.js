@@ -6,3 +6,6 @@ import axios from "../../config/axios.customize";
 export const getAllUserByRole = async (role, page, limit) => {
     return axios.get(`/api/admin/users?role=${role}&page=${page}&limit=${limit}`);
 };
+export const createDoctor = async (doctorData) => {
+  return axios.post('/api/admin/create-doctor', doctorData);
+};

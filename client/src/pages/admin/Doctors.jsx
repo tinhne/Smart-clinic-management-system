@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { getAllUserByRole } from "../../utils/AuthAPI/AdminService";
+import { getAllUserByRole, createDoctor } from "../../utils/AuthAPI/AdminService"; // Import createDoctor
 import "../../style/adminStyle/doctors.scss";
 
 function Doctors() {
@@ -9,26 +9,42 @@ function Doctors() {
   const [loading, setLoading] = useState(false); // Trạng thái loading
   const [error, setError] = useState(null); // Lưu lỗi nếu có
 
+  // Trạng thái cho form bác sĩ
+
+const [formData, setFormData] = useState({
+  firstName: "",
+  lastName: "",
+  email: "",
+  gender: "Male",
+  dob: "",
+  phone: "",
+  specialization: "",
+  doctorImage: null,
+  password: "", // Thêm trường mật khẩu
+});
+
+  const [imagePreview, setImagePreview] = useState(null); // Để hiển thị ảnh trước khi upload
+
   // Hàm lấy danh sách bác sĩ theo trang
   const fetchDoctors = async (page) => {
     setLoading(true);
     setError(null);
     try {
-        const data = await getAllUserByRole("doctor", page, 10);
-        console.log("API Response:", data); // Log data to see its structure
-        if (data) {
-            setDoctors(data.users);
-            setCurrentPage(data.currentPage);
-            setTotalPages(data.totalPages);
-        } else {
-            setError("Không thể tải danh sách bác sĩ.");
-        }
+      const data = await getAllUserByRole("doctor", page, 10);
+      console.log("API Response:", data); // Log data to see its structure
+      if (data) {
+        setDoctors(data.users);
+        setCurrentPage(data.currentPage);
+        setTotalPages(data.totalPages);
+      } else {
+        setError("Không thể tải danh sách bác sĩ.");
+      }
     } catch (error) {
-        console.error("Error fetching users by role:", error); // Log error
-        setError("Lỗi khi kết nối tới server.");
+      console.error("Error fetching users by role:", error); // Log error
+      setError("Lỗi khi kết nối tới server.");
     }
     setLoading(false);
-};
+  };
 
   // Gọi hàm fetchDoctors khi component mount hoặc khi currentPage thay đổi
   useEffect(() => {
@@ -44,49 +60,119 @@ function Doctors() {
 
   // Hàm xử lý xóa bác sĩ
   const handleDeleteDoctor = (doctorId) => {
-    // TODO: Thêm logic xóa bác sĩ tại đây
     console.log("Delete doctor with ID:", doctorId);
   };
 
   // Hàm xử lý chỉnh sửa bác sĩ
   const handleEditDoctor = (doctorId) => {
-    // TODO: Thêm logic chỉnh sửa bác sĩ tại đây
     console.log("Edit doctor with ID:", doctorId);
+  };
+
+  // Hàm xử lý thay đổi input
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
+
+  // Hàm xử lý thay đổi file ảnh
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+        setFormData((prev) => ({
+          ...prev,
+          doctorImage: file,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Hàm xử lý tạo bác sĩ
+  const handleCreateDoctor = async (e) => {
+    e.preventDefault(); // Ngăn chặn reload trang
+    const { firstName, lastName, email, gender, dob, phone, specialization, doctorImage, password } = formData;
+    // Chuyển đổi ảnh thành base64
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64Image = reader.result;
+      const response = await createDoctor({
+        firstName,
+        lastName,
+        email,
+        gender,
+        dob,
+        phone,
+        specialization,
+        doctorImage: base64Image,
+        password, 
+      });
+
+      if (response.success) {
+        setDoctors((prev) => [response.user, ...prev]); // Thêm bác sĩ mới vào đầu danh sách
+        setFormData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          gender: "Male",
+          dob: "",
+          phone: "",
+          specialization: "",
+          doctorImage: null,
+        });
+        setImagePreview(null); // Reset ảnh preview
+      } else {
+        setError(response.message);
+      }
+    };
+
+    if (doctorImage) {
+      reader.readAsDataURL(doctorImage);
+    }
   };
 
   return (
     <div className="doctor-page">
       <div className="add-doctor-form">
         <h3>Thêm bác sĩ</h3>
-        <form>
+        <form onSubmit={handleCreateDoctor}>
           <div className="form-left">
             <div>
               <label>Họ:</label>
-              <input type="text" name="firstName" />
+              <input type="text" name="firstName" value={formData.firstName} onChange={handleInputChange} required />
               <label>Tên:</label>
-              <input type="text" name="lastName" />
+              <input type="text" name="lastName" value={formData.lastName} onChange={handleInputChange} required />
             </div>
             <div>
               <label>Email:</label>
-              <input type="email" name="email" />
+              <input type="email" name="email" value={formData.email} onChange={handleInputChange} required />
             </div>
             <div>
               <label>Giới tính:</label>
-              <select name="gender">
-                <option value="Male">Nam</option>
-                <option value="Female">Nữ</option>
+              <select name="gender" value={formData.gender} onChange={handleInputChange}>
+                <option value="Male">Male</option>
+                <option value="Female">FeMale</option>
               </select>
               <label>Ngày sinh:</label>
-              <input type="date" name="dob" />
+              <input type="date" name="dob" value={formData.dob} onChange={handleInputChange} />
             </div>
 
             <div>
               <label>Số điện thoại:</label>
-              <input type="text" name="phone" />
+              <input type="text" name="phone" value={formData.phone} onChange={handleInputChange} required />
             </div>
             <div>
               <label>Chuyên khoa:</label>
-              <input type="text" name="specialization" />
+              <input type="text" name="specialization" value={formData.specialization} onChange={handleInputChange} required />
+            </div>
+            <div>
+              <label htmlFor="">Password</label>
+              <input type="text" name="password" value={formData.password} onChange={handleInputChange}  required  />
             </div>
             <button type="submit" className="btn">
               Tạo bác sĩ
@@ -96,13 +182,14 @@ function Doctors() {
           {/* Trường ảnh */}
           <div className="form-right">
             <div className="image-preview">
-              <img
-                src="https://via.placeholder.com/150x200"
-                alt="Doctor preview"
-              />
+              {imagePreview ? (
+                <img src={imagePreview} alt="Doctor preview" />
+              ) : (
+                <img src="https://via.placeholder.com/150x200" alt="Doctor placeholder" />
+              )}
             </div>
             <label>Ảnh bác sĩ:</label>
-            <input type="file" name="doctorImage" accept="image/*" />
+            <input type="file" name="doctorImage" accept="image/*" onChange={handleImageChange} />
           </div>
         </form>
       </div>
@@ -135,7 +222,7 @@ function Doctors() {
                     <td>{doctor.email}</td>
                     <td>{doctor.gender}</td>
                     <td>{doctor.phone}</td>
-                    <td>{doctor.specialties}</td>
+                    <td>{doctor.specialization}</td>
                     <td>
                       <button
                         className="btn btn-edit"

@@ -7,7 +7,6 @@ const {
   deleteUser,
 } = require("../service/adminService");
 
-
 // tao tai khoan bac si
 // Tạo tài khoản bác sĩ
 exports.createDoctor = async (req, res) => {
@@ -22,11 +21,17 @@ exports.createDoctor = async (req, res) => {
 
   // Kiểm tra xem có ảnh được upload không
   if (!doctorImage) {
-    return res.status(400).json({ message: "Không có ảnh bác sĩ được tải lên." });
+    return res
+      .status(400)
+      .json({ message: "Không có ảnh bác sĩ được tải lên." });
   }
 
   const imageData = doctorImage.replace(/^data:image\/\w+;base64,/, "");
-  const response = await createDoctor({ ...otherData, email, doctorImage: imageData });
+  const response = await createDoctor({
+    ...otherData,
+    email,
+    doctorImage: imageData,
+  });
 
   if (response.success) {
     return res.status(201).json({
@@ -38,13 +43,11 @@ exports.createDoctor = async (req, res) => {
   }
 };
 
-
-
 // lay tat ca nguoi dung theo role
 exports.getAllUserByRole = async (req, res) => {
   const { role } = req.query;
-  const page = parseInt(req.query.page) || 1;  // Mặc định là trang 1 nếu không có page
-  const limit = parseInt(req.query.limit) || 10; // Mặc định 10 bản ghi mỗi trang
+  const page = parseInt(req.query.page) || 1; // Mặc định là trang 1 nếu không có page
+  const limit = parseInt(req.query.limit) || 5; // Mặc định 10 bản ghi mỗi trang
 
   try {
     const response = await getAllUsersByRole(role, page, limit);
@@ -54,28 +57,6 @@ exports.getAllUserByRole = async (req, res) => {
         users: response.users,
         currentPage: response.currentPage,
         totalPages: response.totalPages,
-      });
-    } else {
-      return res.status(404).json({ message: response.message });
-    }
-  } catch (error) {
-    return res.status(500).json({ message: `Lỗi server khi lấy danh sách ${role}`, error });
-  }
-};
-exports.getAllUserByRole = async (req, res) => {
-  const { role } = req.query;
-  const page = parseInt(req.query.page) || 1; // Mặc định là trang 1
-  const limit = parseInt(req.query.limit) || 10; // Mặc định là 10 user mỗi trang
-
-  try {
-    const response = await getAllUsersByRole(role, page, limit);
-
-    if (response.success) {
-      return res.status(200).json({
-        users: response.users,
-        totalUsers: response.totalUsers,
-        totalPages: response.totalPages,
-        currentPage: response.currentPage,
       });
     } else {
       return res.status(404).json({ message: response.message });
@@ -86,7 +67,30 @@ exports.getAllUserByRole = async (req, res) => {
       .json({ message: `Lỗi server khi lấy danh sách ${role}`, error });
   }
 };
+// exports.getAllUserByRole = async (req, res) => {
+//   const { role } = req.query;
+//   const page = parseInt(req.query.page) || 1; // Mặc định là trang 1
+//   const limit = parseInt(req.query.limit) || 5; // Mặc định là 10 user mỗi trang
 
+//   try {
+//     const response = await getAllUsersByRole(role, page, limit);
+
+//     if (response.success) {
+//       return res.status(200).json({
+//         users: response.users,
+//         totalUsers: response.totalUsers,
+//         totalPages: response.totalPages,
+//         currentPage: response.currentPage,
+//       });
+//     } else {
+//       return res.status(404).json({ message: response.message });
+//     }
+//   } catch (error) {
+//     return res
+//       .status(500)
+//       .json({ message: `Lỗi server khi lấy danh sách ${role}`, error });
+//   }
+// };
 
 // lay thong tin nguoi dung theo id va role
 exports.getUserById = async (req, res) => {
@@ -147,4 +151,3 @@ exports.deleteUser = async (req, res) => {
       .json({ message: "Lỗi server khi xóa tài khoản", error });
   }
 };
-

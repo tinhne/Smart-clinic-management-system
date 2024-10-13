@@ -1,11 +1,11 @@
 .doctor-page {
-  padding: 50px;
+  padding: 50px 20px 0 20px;
 
   .add-doctor-form {
     display: flex;
     justify-content: flex-start;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-    padding: 10px;
+    padding: 5px;
 
     h3 {
       font-size: 24px;
@@ -23,7 +23,7 @@
       div {
         display: flex;
         flex-direction: row;
-        margin-bottom: 15px;
+        margin-bottom: 10px;
 
         label {
           margin: 5px;
@@ -112,11 +112,50 @@
   }
 
   .table-container {
-    max-height: 350px; /* Giới hạn chiều cao của bảng */
-    overflow-y: auto; /* Chỉ cuộn dọc trong table */
+    max-height: 340px; 
     margin-top: 20px;
     border: 1px solid #ddd;
     position: relative;
+  }
+  .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+    gap: 10px;
+
+    button {
+      padding: 10px 15px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      font-weight: 500;
+      transition: background-color 0.3s ease;
+
+      &:hover {
+        opacity: 0.9;
+      }
+    }
+
+    .btn-prev,
+    .btn-next {
+      background-color: #3498db;
+      color: white;
+
+      &:hover {
+        background-color: #2980b9;
+      }
+    }
+
+    .btn-page {
+      background-color: #f1f1f1;
+      color: #333;
+
+      &.active {
+        background-color: #3498db;
+        color: white;
+      }
+    }
   }
 
   .doctor-table {

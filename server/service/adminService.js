@@ -14,7 +14,11 @@ exports.createDoctor = async (doctorData) => {
     return { success: false, message: "Email không được để trống" };
   }
 
-  console.log("Dữ liệu bác sĩ trước khi lưu vào DB: ", { ...restData, email, doctorImage });
+  console.log("Dữ liệu bác sĩ trước khi lưu vào DB: ", {
+    ...restData,
+    email,
+    doctorImage,
+  });
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -27,7 +31,7 @@ exports.createDoctor = async (doctorData) => {
       ...restData,
       password: hashedPassword,
       role: "doctor",
-      doctorImage: Buffer.from(doctorImage, 'base64'),
+      doctorImage: Buffer.from(doctorImage, "base64"),
     });
 
     await newDoctor.save();
@@ -39,9 +43,8 @@ exports.createDoctor = async (doctorData) => {
   }
 };
 
-
 // Lay tat ca nguoi dung theo role
-exports.getAllUsersByRole = async (role, page = 1, limit = 10) => {
+exports.getAllUsersByRole = async (role, page = 1, limit = 5) => {
   try {
     if (role && role === "admin") {
       return { message: "Bạn không có quyền xem thông tin admin" };
@@ -65,7 +68,6 @@ exports.getAllUsersByRole = async (role, page = 1, limit = 10) => {
     };
   }
 };
-
 
 // lay tat ca nguoi dung theo role va id
 exports.getUserById = async (userId, role) => {

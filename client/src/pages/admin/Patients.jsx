@@ -14,7 +14,7 @@ function Patients() {
     setLoading(true);
     setError(null);
     try {
-      const data = await getAllUserByRole("patient", page, 10);
+      const data = await getAllUserByRole("patient", page, 5);
       console.log("API Response:", data); // Log data to see its structure
       if (data) {
         setPatients(data.users);
@@ -95,7 +95,10 @@ function Patients() {
           {/* Trường ảnh */}
           <div className="form-right">
             <div className="image-preview">
-              <img src="https://via.placeholder.com/150x200" alt="Patient preview" />
+              <img
+                src="https://via.placeholder.com/150x200"
+                alt="Patient preview"
+              />
             </div>
             <label>Ảnh bệnh nhân:</label>
             <input type="file" name="patientImage" accept="image/*" />
@@ -156,29 +159,28 @@ function Patients() {
             </tbody>
           </table>
         )}
+      </div>
+      {/* Nút phân trang */}
+      <div className="pagination">
+        <button
+          className="btn"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
 
-        {/* Nút phân trang */}
-        <div className="pagination">
-          <button
-            className="btn"
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
 
-          <span>
-            Page {currentPage} of {totalPages}
-          </span>
-
-          <button
-            className="btn"
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </button>
-        </div>
+        <button
+          className="btn"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
       </div>
     </div>
   );

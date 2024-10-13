@@ -33,7 +33,7 @@ function Doctors() {
     setLoading(true);
     setError(null);
     try {
-      const data = await getAllUserByRole("doctor", page, 10);
+      const data = await getAllUserByRole("doctor", page, 5);
       if (data) {
         setDoctors(data.users);
         setCurrentPage(data.currentPage);
@@ -286,7 +286,7 @@ function Doctors() {
                     <td>{doctor.email}</td>
                     <td>{doctor.gender}</td>
                     <td>{doctor.phone}</td>
-                    <td>{doctor.specialization}</td>
+                    <td>{doctor.specialties}</td>
                     <td>
                       <button
                         className="btn btn-edit"
@@ -311,29 +311,28 @@ function Doctors() {
             </tbody>
           </table>
         )}
+      </div>
+      {/* Nút phân trang */}
+      <div className="pagination">
+        <button
+          className="btn"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          Previous
+        </button>
 
-        {/* Nút phân trang */}
-        <div className="pagination">
-          <button
-            className="btn"
-            onClick={() => handlePageChange(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            Previous
-          </button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
 
-          <span>
-            Page {currentPage} of {totalPages}
-          </span>
-
-          <button
-            className="btn"
-            onClick={() => handlePageChange(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          >
-            Next
-          </button>
-        </div>
+        <button
+          className="btn"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          Next
+        </button>
       </div>
     </div>
   );

@@ -13,10 +13,23 @@ exports.createMedicine = async (medicineData) => {
 };
 
 // lấy tất cả loại thuốc
-exports.getAllMedicines = async () => {
+exports.getAllMedicines = async (page = 1, limit = 5) => {
   try {
-    const medicines = await Medication.find();
-    return { success: true, medicines };
+    const skip = (page - 1) * limit;
+    const medicines = await Medication.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+    const totalMedicines = await Medication.countDocuments();
+    const totalPages = Math.ceil(totalMedicines / limit);
+
+    return {
+      success: true,
+      medicines,
+      totalMedicines,
+      totalPages,
+      currentPage: page,
+    };
   } catch (error) {
     console.error("Lỗi khi lấy danh sách thuốc: ", error);
     return { success: false, message: "Lỗi khi lấy danh sách thuốc" };

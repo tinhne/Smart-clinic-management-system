@@ -1,5 +1,5 @@
 .patient-page {
-    padding: 50px;
+  padding: 50px 20px 0 20px;
   
     .add-patient-form {
         padding-top: 20px;
@@ -113,11 +113,50 @@
     }
   
     .table-container {
-      max-height: 350px; /* Giới hạn chiều cao của bảng */
-      overflow-y: auto; /* Chỉ cuộn dọc trong table */
+      max-height: 340px; 
+    margin-top: 20px;
+    border: 1px solid #ddd;
+    position: relative;
+    }
+    .pagination {
+      display: flex;
+      justify-content: center;
       margin-top: 20px;
-      border: 1px solid #ddd;
-      position: relative;
+      gap: 10px;
+  
+      button {
+        padding: 10px 15px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        transition: background-color 0.3s ease;
+  
+        &:hover {
+          opacity: 0.9;
+        }
+      }
+  
+      .btn-prev,
+      .btn-next {
+        background-color: #3498db;
+        color: white;
+  
+        &:hover {
+          background-color: #2980b9;
+        }
+      }
+  
+      .btn-page {
+        background-color: #f1f1f1;
+        color: #333;
+  
+        &.active {
+          background-color: #3498db;
+          color: white;
+        }
+      }
     }
   
     .patient-table {

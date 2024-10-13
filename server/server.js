@@ -7,13 +7,14 @@ const seedAdmin = require("./seeders/seedAdmin");
 const adminRoutes = require("./routes/adminRoutes");
 const authRoutes = require("./routes/authRoutes");
 const serviceRoutes = require("./routes/serviceRoutes");
-const BlogRoutes = require("./routes/BlogRouter")
+const BlogRoutes = require("./routes/BlogRouter");
+const medicineRoutes = require("./routes/medicineRoutes");
 const app = express();
 
 // Middleware
 
-app.use(express.json({ limit: '10mb' })); // Ví dụ: tăng lên 10MB
-app.use(express.urlencoded({ limit: '10mb', extended: true }));
+app.use(express.json({ limit: "10mb" })); // Ví dụ: tăng lên 10MB
+app.use(express.urlencoded({ limit: "10mb", extended: true }));
 // Kết nối database
 connection();
 
@@ -26,6 +27,7 @@ app.use(cors());
 // Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/admin", adminRoutes);
+app.use("/api/medicines", medicineRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/blog", BlogRoutes);
 

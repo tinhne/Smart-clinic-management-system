@@ -1,0 +1,8 @@
+// src/utils/AuthAPI/AdminService.js
+
+import axios from "../../config/axios.customize";
+
+// Ví dụ về hàm lấy danh sách người dùng theo vai trò
+export const getAllUserByRole = async (role, page, limit) => {
+    return axios.get(`/api/admin/users?role=${role}&page=${page}&limit=${limit}`);
+};

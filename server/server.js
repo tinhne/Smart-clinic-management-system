@@ -11,9 +11,9 @@ const BlogRoutes = require("./routes/BlogRouter")
 const app = express();
 
 // Middleware
-app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
 
+app.use(express.json({ limit: '10mb' })); // Ví dụ: tăng lên 10MB
+app.use(express.urlencoded({ limit: '10mb', extended: true }));
 // Kết nối database
 connection();
 

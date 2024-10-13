@@ -1,6 +1,6 @@
 const express = require("express");
 const {
-  createUser,
+  createDoctor,
   getUserById,
   getAllUserByRole,
   updateUser,
@@ -10,7 +10,7 @@ const { authenticate } = require("../middlewares/authenticate");
 const { authorize } = require("../middlewares/authorize");
 const router = express.Router();
 // Tạo tài khoản (admin only)
-router.post("/users", authenticate, authorize(["admin"]), createUser);
+router.post("/create-doctor", authenticate, authorize(["admin"]), createDoctor);
 
 // Lấy thông tin người dùng theo ID (admin only)
 router.get("/users/:id", authenticate, authorize(["admin"]), getUserById);

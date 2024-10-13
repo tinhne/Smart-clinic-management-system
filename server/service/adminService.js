@@ -1,13 +1,20 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 
-// Tạo tài khoản người dùng
-exports.createUser = async (userData) => {
-  const { email, password, role } = userData;
+// Tạo tài khoản bac si
+// src/service/adminService.js
+exports.createDoctor = async (doctorData) => {
+  const { email, password, doctorImage, ...restData } = doctorData;
 
-  if (role === "admin") {
-    return { success: false, message: "Admin không thể tạo tài khoản admin" };
+  if (!password) {
+    return { success: false, message: "Mật khẩu không được để trống" };
   }
+
+  if (!email) {
+    return { success: false, message: "Email không được để trống" };
+  }
+
+  console.log("Dữ liệu bác sĩ trước khi lưu vào DB: ", { ...restData, email, doctorImage });
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -16,28 +23,37 @@ exports.createUser = async (userData) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = new User({
-      ...userData,
+    const newDoctor = new User({
+      ...restData,
       password: hashedPassword,
-      role,
+      role: "doctor",
+      doctorImage: Buffer.from(doctorImage, 'base64'),
     });
 
-    await newUser.save();
-    return { success: true, user: newUser };
+    await newDoctor.save();
+
+    return { success: true, user: newDoctor };
   } catch (error) {
-    console.error("Lỗi khi tạo tài khoản: ", error);
-    return { success: false, message: "Lỗi khi tạo tài khoản" };
+    console.error("Lỗi khi tạo bác sĩ: ", error);
+    return { success: false, message: "Lỗi khi tạo bác sĩ" };
   }
 };
 
+
 // Lay tat ca nguoi dung theo role
-exports.getAllUsersByRole = async (role) => {
+exports.getAllUsersByRole = async (role, page = 1, limit = 10) => {
   try {
     if (role && role === "admin") {
       return { message: "Bạn không có quyền xem thông tin admin" };
     }
-    const users = await User.find({ role });
-    return { success: true, users };
+
+    const skip = (page - 1) * limit; // Bỏ qua số lượng người dùng ở các trang trước
+    const users = await User.find({ role }).skip(skip).limit(limit);
+
+    const totalUsers = await User.countDocuments({ role }); // Tổng số người dùng có role tương ứng
+    const totalPages = Math.ceil(totalUsers / limit); // Tổng số trang
+
+    return { success: true, users, totalUsers, totalPages, currentPage: page };
   } catch (error) {
     console.error(
       `Lỗi khi lấy thông tin người dùng với vai trò ${role}: `,
@@ -49,6 +65,7 @@ exports.getAllUsersByRole = async (role) => {
     };
   }
 };
+
 
 // lay tat ca nguoi dung theo role va id
 exports.getUserById = async (userId, role) => {

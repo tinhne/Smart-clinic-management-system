@@ -13,10 +13,22 @@ exports.createService = async (serviceData) => {
 };
 
 // lay tat ca dich vu phong kham
-exports.getAllServices = async () => {
+exports.getAllServices = async (page = 1, limit = 5) => {
   try {
-    const services = await Service.find();
-    return { success: true, services };
+    const skip = (page - 1) * limit;
+    const services = await Service.find()
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
+    const totalServices = await Service.countDocuments();
+    const totalPages = Math.ceil(totalServices / limit);
+    return {
+      success: true,
+      services,
+      totalServices,
+      totalPages,
+      currentPage: page,
+    };
   } catch (error) {
     console.error("Lỗi khi lấy danh sách dịch vụ: ", error);
     return { success: false, message: "Lỗi khi lấy danh sách dịch vụ" };

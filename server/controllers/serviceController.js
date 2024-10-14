@@ -12,6 +12,7 @@ exports.createService = async (req, res) => {
   try {
     if (response.success) {
       return res.status(201).json({
+        success: true,
         message: "Tạo dịch vụ thành công",
         service: response.service,
       });
@@ -27,11 +28,19 @@ exports.createService = async (req, res) => {
 
 // lay tat ca dich vu phong kham
 exports.getAllServices = async (req, res) => {
+  const page = parseInt(req.query.page) || 1;
+  const limit = parseInt(req.query.limit) || 5;
   try {
-    const response = await getAllServices();
+    const response = await getAllServices(page, limit);
 
     if (response.success) {
-      return res.status(200).json({ services: response.services });
+      return res.status(200).json({
+        success: true,
+        message: "Lấy danh sách dịch vụ thành công",
+        services: response.services,
+        currentPage: response.currentPage,
+        totalPages: response.totalPages,
+      });
     } else {
       return res.status(404).json({ message: response.message });
     }
@@ -50,7 +59,10 @@ exports.updateService = async (req, res) => {
     const response = await updateService(id, req.body);
 
     if (response.success) {
-      return res.status(200).json({ service: response.service });
+      return res.status(200).json({
+        success: true,
+        service: response.service,
+      });
     } else {
       return res.status(404).json({ message: response.message });
     }
@@ -69,6 +81,7 @@ exports.deleteService = async (req, res) => {
     const response = await deleteService(id);
 
     if (response.success) {
+      success: true;
       return res.status(200).json({ message: "Xóa dịch vụ thành công" });
     } else {
       return res.status(404).json({ message: response.message });

@@ -27,7 +27,7 @@ router.get(
 router.put("/users/:id", authenticate, updateUser);
 
 // Xóa người dùng (admin only)
-router.delete("/users/:id", authenticate, authorize(["admin"]), deleteUser);
+router.delete("/delete-users/:id", authenticate, authorize(["admin"]), deleteUser);
 
 
 

@@ -7,7 +7,6 @@ const {
   deleteUser,
 } = require("../service/adminService");
 
-// tao tai khoan bac si
 // Tạo tài khoản bác sĩ
 exports.createDoctor = async (req, res) => {
   console.log(req.body);

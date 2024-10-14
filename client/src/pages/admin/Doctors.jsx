@@ -4,7 +4,6 @@ import {
   createDoctor,
 } from "../../utils/AuthAPI/AdminService"; // Import createDoctor
 import "../../style/adminStyle/doctors.scss";
-import "react-toastify/dist/ReactToastify.css"; // Import CSS của react-toastify
 import { toast } from "react-toastify";
 
 function Doctors() {

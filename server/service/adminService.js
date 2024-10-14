@@ -32,7 +32,7 @@ exports.createDoctor = async (doctorData) => {
       password: hashedPassword,
       role: "doctor",
       imageUrl: Buffer.from(imageUrl, "base64"),
-      email
+      email,
     });
 
     await newDoctor.save();
@@ -52,7 +52,10 @@ exports.getAllUsersByRole = async (role, page = 1, limit = 5) => {
     }
 
     const skip = (page - 1) * limit; // Bỏ qua số lượng người dùng ở các trang trước
-    const users = await User.find({ role }).skip(skip).limit(limit);
+    const users = await User.find({ role })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
 
     const totalUsers = await User.countDocuments({ role }); // Tổng số người dùng có role tương ứng
     const totalPages = Math.ceil(totalUsers / limit); // Tổng số trang

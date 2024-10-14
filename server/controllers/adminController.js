@@ -38,17 +38,17 @@ exports.createDoctor = async (req, res) => {
     const doctorImageBase64 = response.user.imageUrl.toString("base64");
 
     return res.status(201).json({
+      success: true,
       message: "Tạo bác sĩ thành công",
       user: {
-        ...response.user._doc,  // Lấy toàn bộ các field từ user
-        imageUrl: `data:image/png;base64,${doctorImageBase64}`  // Bao gồm trường ảnh
-      }
+        ...response.user._doc, // Lấy toàn bộ các field từ user
+        imageUrl: `data:image/png;base64,${doctorImageBase64}`, // Bao gồm trường ảnh
+      },
     });
   } else {
     return res.status(400).json({ message: response.message });
   }
 };
-
 
 // lay tat ca nguoi dung theo role
 exports.getAllUserByRole = async (req, res) => {
@@ -61,6 +61,7 @@ exports.getAllUserByRole = async (req, res) => {
 
     if (response.success) {
       return res.status(200).json({
+        success: true,
         users: response.users,
         currentPage: response.currentPage,
         totalPages: response.totalPages,
@@ -109,7 +110,10 @@ exports.getUserById = async (req, res) => {
     const response = await getUserById(id, role);
 
     if (response.success) {
-      return res.status(200).json({ user: response.user });
+      return res.status(200).json({
+        success: true,
+        user: response.user,
+      });
     } else {
       return res.status(404).json({ message: response.message });
     }
@@ -129,6 +133,7 @@ exports.updateUser = async (req, res) => {
 
     if (response.success) {
       return res.status(200).json({
+        success: true,
         message: "Cập nhật thông tin tài khoản thành công",
         user: response.user,
       });
@@ -149,7 +154,10 @@ exports.deleteUser = async (req, res) => {
     const response = await deleteUser(id);
 
     if (response.success) {
-      return res.status(200).json({ message: response.message });
+      return res.status(200).json({
+        success: true,
+        message: response.message,
+      });
     } else {
       return res.status(404).json({ message: response.message });
     }

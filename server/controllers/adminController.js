@@ -26,22 +26,29 @@ exports.createDoctor = async (req, res) => {
       .json({ message: "Không có ảnh bác sĩ được tải lên." });
   }
 
-  const imageData = doctorImage.replace(/^data:image\/\w+;base64,/, "");
+  const imageUrl = doctorImage.replace(/^data:image\/\w+;base64,/, "");
   const response = await createDoctor({
     ...otherData,
     email,
-    doctorImage: imageData,
+    imageUrl: imageUrl,
   });
 
   if (response.success) {
+    // Chuyển đổi doctorImage từ Buffer thành Base64
+    const doctorImageBase64 = response.user.imageUrl.toString("base64");
+
     return res.status(201).json({
       message: "Tạo bác sĩ thành công",
-      user: response.user,
+      user: {
+        ...response.user._doc,  // Lấy toàn bộ các field từ user
+        imageUrl: `data:image/png;base64,${doctorImageBase64}`  // Bao gồm trường ảnh
+      }
     });
   } else {
     return res.status(400).json({ message: response.message });
   }
 };
+
 
 // lay tat ca nguoi dung theo role
 exports.getAllUserByRole = async (req, res) => {
@@ -57,6 +64,7 @@ exports.getAllUserByRole = async (req, res) => {
         users: response.users,
         currentPage: response.currentPage,
         totalPages: response.totalPages,
+        totalUsers: response.totalUsers,
       });
     } else {
       return res.status(404).json({ message: response.message });

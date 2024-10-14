@@ -4,6 +4,8 @@ import {
   createDoctor,
 } from "../../utils/AuthAPI/AdminService"; // Import createDoctor
 import "../../style/adminStyle/doctors.scss";
+import "react-toastify/dist/ReactToastify.css"; // Import CSS của react-toastify
+import { toast } from "react-toastify";
 
 function Doctors() {
   const [doctors, setDoctors] = useState([]); // Danh sách bác sĩ
@@ -13,12 +15,11 @@ function Doctors() {
   const [error, setError] = useState(null); // Lưu lỗi nếu có
 
   // Trạng thái cho form bác sĩ
-
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
-    gender: "Male",
+    gender: "",
     dob: "",
     phone: "",
     specialization: "",
@@ -29,6 +30,10 @@ function Doctors() {
   const [imagePreview, setImagePreview] = useState(null); // Để hiển thị ảnh trước khi upload
 
   // Hàm lấy danh sách bác sĩ theo trang
+  useEffect(() => {
+    fetchDoctors(currentPage);
+  }, [currentPage]);
+
   const fetchDoctors = async (page) => {
     setLoading(true);
     setError(null);
@@ -42,35 +47,17 @@ function Doctors() {
         setError("Không thể tải danh sách bác sĩ.");
       }
     } catch (error) {
-      console.error("Error fetching users by role:", error); // Log error
       setError("Lỗi khi kết nối tới server.");
     }
     setLoading(false);
   };
 
-  // Gọi hàm fetchDoctors khi component mount hoặc khi currentPage thay đổi
-  useEffect(() => {
-    fetchDoctors(currentPage);
-  }, [currentPage]);
-
-  // Hàm xử lý khi bấm vào nút phân trang
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
     }
   };
 
-  // Hàm xử lý xóa bác sĩ
-  const handleDeleteDoctor = (doctorId) => {
-    console.log("Delete doctor with ID:", doctorId);
-  };
-
-  // Hàm xử lý chỉnh sửa bác sĩ
-  const handleEditDoctor = (doctorId) => {
-    console.log("Edit doctor with ID:", doctorId);
-  };
-
-  // Hàm xử lý thay đổi input
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
@@ -79,7 +66,6 @@ function Doctors() {
     }));
   };
 
-  // Hàm xử lý thay đổi file ảnh
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -95,9 +81,10 @@ function Doctors() {
     }
   };
 
-  // Hàm xử lý tạo bác sĩ
+  // Hàm xử lý tạo bác sĩ và hiển thị thông báo toast
   const handleCreateDoctor = async (e) => {
-    e.preventDefault(); // Ngăn chặn reload trang
+    e.preventDefault();
+
     const {
       firstName,
       lastName,
@@ -109,43 +96,89 @@ function Doctors() {
       doctorImage,
       password,
     } = formData;
-    // Chuyển đổi ảnh thành base64
+
+    if (
+      !firstName ||
+      !lastName ||
+      !email ||
+      !gender ||
+      !dob ||
+      !phone ||
+      !specialization ||
+      !password
+    ) {
+      toast.error("Vui lòng điền đầy đủ thông tin.");
+      return;
+    }
+
+    if (!doctorImage) {
+      toast.error("Vui lòng chọn ảnh bác sĩ.");
+      return;
+    }
+
     const reader = new FileReader();
     reader.onloadend = async () => {
       const base64Image = reader.result;
-      const response = await createDoctor({
-        firstName,
-        lastName,
-        email,
-        gender,
-        dob,
-        phone,
-        specialization,
-        doctorImage: base64Image,
-        password,
-      });
 
-      if (response.success) {
-        setDoctors((prev) => [response.user, ...prev]); // Thêm bác sĩ mới vào đầu danh sách
-        setFormData({
-          firstName: "",
-          lastName: "",
-          email: "",
-          gender: "Male",
-          dob: "",
-          phone: "",
-          specialization: "",
-          doctorImage: null,
+      try {
+        const response = await createDoctor({
+          first_name: firstName,
+          last_name: lastName,
+          email,
+          gender,
+          birthdate: dob,
+          phone,
+          specialties: specialization.split(",").map((spec) => spec.trim()),
+          doctorImage: base64Image,
+          password,
         });
-        setImagePreview(null); // Reset ảnh preview
-      } else {
-        setError(response.message);
+        console.log("resss>>>>>>>>>>", response);
+
+        if (response.success) {
+          toast.success("Tạo bác sĩ thành công.");
+
+          // Tạo một đối tượng bác sĩ mới từ dữ liệu đã nhập
+          const newDoctor = {
+            first_name: firstName,
+            last_name: lastName,
+            email,
+            gender,
+            phone,
+            specialties: specialization.split(",").map((spec) => spec.trim()),
+          };
+
+          // Cập nhật danh sách bác sĩ với bác sĩ mới
+          setDoctors((prevDoctors) => [newDoctor, ...prevDoctors]); // Thêm vào đầu danh sách
+
+          // Reset form
+          setFormData({
+            firstName: "",
+            lastName: "",
+            email: "",
+            gender: "",
+            dob: "",
+            phone: "",
+            specialization: "",
+            doctorImage: null,
+            password: "",
+          });
+          setImagePreview(null);
+        } else {
+          toast.error(response.message || "Lỗi khi tạo bác sĩ");
+        }
+      } catch (error) {
+        // Kiểm tra lỗi từ server
+        if (error.response && error.response.data) {
+          toast.error(
+            error.response.data.message || "Lỗi khi kết nối tới server."
+          );
+        } else {
+          toast.error("Lỗi khi kết nối tới server.");
+        }
       }
     };
 
-    if (doctorImage) {
-      reader.readAsDataURL(doctorImage);
-    }
+    reader.readAsDataURL(doctorImage);
   };
 
   return (
@@ -221,13 +254,14 @@ function Doctors() {
               />
             </div>
             <div>
-              <label htmlFor="">Password</label>
+              <label htmlFor="">Mật khẩu:</label>
               <input
-                type="text"
+                type="password"
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
                 required
+                autoComplete="current-password" // Thêm thuộc tính này
               />
             </div>
             <button type="submit" className="btn">
@@ -277,7 +311,7 @@ function Doctors() {
               </tr>
             </thead>
             <tbody>
-              {doctors && Array.isArray(doctors) && doctors.length > 0 ? (
+              {doctors && doctors.length > 0 ? (
                 doctors.map((doctor, index) => (
                   <tr key={index}>
                     <td>
@@ -288,18 +322,8 @@ function Doctors() {
                     <td>{doctor.phone}</td>
                     <td>{doctor.specialties}</td>
                     <td>
-                      <button
-                        className="btn btn-edit"
-                        onClick={() => handleEditDoctor(doctor._id)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="btn btn-delete"
-                        onClick={() => handleDeleteDoctor(doctor._id)}
-                      >
-                        Delete
-                      </button>
+                      <button className="btn btn-edit">Edit</button>
+                      <button className="btn btn-delete">Delete</button>
                     </td>
                   </tr>
                 ))
@@ -312,6 +336,7 @@ function Doctors() {
           </table>
         )}
       </div>
+
       {/* Nút phân trang */}
       <div className="pagination">
         <button

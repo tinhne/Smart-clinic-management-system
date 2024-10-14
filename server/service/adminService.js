@@ -4,7 +4,7 @@ const bcrypt = require("bcryptjs");
 // Tạo tài khoản bac si
 // src/service/adminService.js
 exports.createDoctor = async (doctorData) => {
-  const { email, password, doctorImage, ...restData } = doctorData;
+  const { email, password, imageUrl, ...restData } = doctorData;
 
   if (!password) {
     return { success: false, message: "Mật khẩu không được để trống" };
@@ -17,7 +17,7 @@ exports.createDoctor = async (doctorData) => {
   console.log("Dữ liệu bác sĩ trước khi lưu vào DB: ", {
     ...restData,
     email,
-    doctorImage,
+    imageUrl,
   });
   try {
     const existingUser = await User.findOne({ email });
@@ -31,7 +31,8 @@ exports.createDoctor = async (doctorData) => {
       ...restData,
       password: hashedPassword,
       role: "doctor",
-      doctorImage: Buffer.from(doctorImage, "base64"),
+      imageUrl: Buffer.from(imageUrl, "base64"),
+      email
     });
 
     await newDoctor.save();

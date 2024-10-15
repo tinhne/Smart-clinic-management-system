@@ -5,8 +5,13 @@ import { CiSearch } from "react-icons/ci";
 import doctorImage from "../../assets/img/customer01.png";
 import image2 from "../../assets/img/coth1.png";
 import image from "../../assets/img/login.png";
+import { useNavigate } from "react-router-dom";
 
 const HomePage = () => {
+  const navigate = useNavigate();
+  const handleViewmore = () => {
+    navigate("/dat-kham/bac-si/tim-kiem");
+  };
   return (
     <>
       <div className="body-homepage">
@@ -48,7 +53,9 @@ const HomePage = () => {
               </p>
             </div>
             <div>
-              <button className="view-more-button">Xem Thêm &gt;</button>
+              <button className="view-more-button" onClick={handleViewmore}>
+                Xem Thêm &gt;
+              </button>
             </div>
           </div>
           <div className="doctor-cards">

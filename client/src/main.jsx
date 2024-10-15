@@ -16,6 +16,8 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import LoginRegister from "./pages/users/LoginRegister.jsx";
 import Logout from "./pages/admin/Logout.jsx";
+import DoctorList from "./pages/users/DoctorList.jsx";
+import DoctorProfile from "./pages/users/DoctorProfile.jsx";
 const router = createBrowserRouter([
   {
     path: "/login-register",
@@ -28,6 +30,14 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <HomePage />,
+      },
+      {
+        path: "/dat-kham/bac-si/",
+        element: <DoctorProfile />,
+      },
+      {
+        path: "/dat-kham/bac-si/tim-kiem",
+        element: <DoctorList />,
       },
     ],
   },

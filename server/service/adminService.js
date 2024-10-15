@@ -90,6 +90,8 @@ exports.getUserById = async (userId, role) => {
   }
 };
 
+// get all theo chuyen khoa
+
 // cap nhat thong tin nguoi dung theo id
 exports.updateUser = async (userId, userData) => {
   try {

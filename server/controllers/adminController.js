@@ -9,27 +9,29 @@ const {
 
 // Tạo tài khoản bác sĩ
 exports.createDoctor = async (req, res) => {
-  console.log(req.body);
-
   const { doctorImage, email, ...otherData } = req.body;
 
-  // Kiểm tra trường email
+  // Kiểm tra email
   if (!email) {
     return res.status(400).json({ message: "Email không được để trống." });
   }
 
-  // Kiểm tra xem có ảnh được upload không
+  // Kiểm tra hình ảnh
   if (!doctorImage) {
-    return res
-      .status(400)
-      .json({ message: "Không có ảnh bác sĩ được tải lên." });
+    return res.status(400).json({ message: "Không có ảnh bác sĩ được tải lên." });
   }
 
+  // Chắc chắn rằng ảnh là một chuỗi Base64 hợp lệ
   const imageUrl = doctorImage.replace(/^data:image\/\w+;base64,/, "");
+
+  if (!isValidBase64(imageUrl)) {
+    return res.status(400).json({ message: "Dữ liệu ảnh không hợp lệ." });
+  }
+
   const response = await createDoctor({
     ...otherData,
     email,
-    imageUrl: imageUrl,
+    imageUrl: imageUrl, // Giữ nguyên chuỗi Base64
   });
 
   if (response.success) {
@@ -48,6 +50,13 @@ exports.createDoctor = async (req, res) => {
     return res.status(400).json({ message: response.message });
   }
 };
+
+// Hàm kiểm tra tính hợp lệ của chuỗi Base64
+const isValidBase64 = (str) => {
+  const base64Regex = /^[A-Za-z0-9+/]+={0,2}$/;
+  return base64Regex.test(str);
+};
+
 
 // lay tat ca nguoi dung theo role
 exports.getAllUserByRole = async (req, res) => {

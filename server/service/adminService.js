@@ -3,6 +3,7 @@ const bcrypt = require("bcryptjs");
 
 // Tạo tài khoản bac si
 // src/service/adminService.js
+// Tạo tài khoản bác sĩ
 exports.createDoctor = async (doctorData) => {
   const { email, password, imageUrl, ...restData } = doctorData;
 
@@ -19,6 +20,7 @@ exports.createDoctor = async (doctorData) => {
     email,
     imageUrl,
   });
+
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -27,11 +29,14 @@ exports.createDoctor = async (doctorData) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
+    // Lưu ảnh như một Buffer
+    //const imageBuffer = Buffer.from(imageUrl, "base64");
+
     const newDoctor = new User({
       ...restData,
       password: hashedPassword,
       role: "doctor",
-      imageUrl: Buffer.from(imageUrl, "base64"),
+      imageUrl,
       email,
     });
 
@@ -43,6 +48,7 @@ exports.createDoctor = async (doctorData) => {
     return { success: false, message: "Lỗi khi tạo bác sĩ" };
   }
 };
+
 
 // Lay tat ca nguoi dung theo role
 exports.getAllUsersByRole = async (role, page = 1, limit = 5) => {

@@ -9,3 +9,6 @@ export const getAllUserByRole = async (role, page, limit) => {
 export const createDoctor = async (doctorData) => {
   return axios.post('/api/admin/create-doctor', doctorData);
 };
+export const deletedUser = async (userID) => {
+  return axios.delete(`/api/admin/delete-users/${userID}`);
+};

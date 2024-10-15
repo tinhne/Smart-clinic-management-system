@@ -6,13 +6,17 @@ import {
 import "../../style/adminStyle/doctors.scss";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-function Doctors() {
+import ModalDeleteUser from "../../components/admin/ModalDeleteUser";
+import ModalEditDoctor from "../../components/admin/ModalUpdateDoctor";
+const Doctors = (props) => {
   const [doctors, setDoctors] = useState([]); // Danh sách bác sĩ
   const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
   const [totalPages, setTotalPages] = useState(1); // Tổng số trang
   const [loading, setLoading] = useState(false); // Trạng thái loading
   const [error, setError] = useState(null); // Lưu lỗi nếu có
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null); // Bác sĩ được chọn để xóa
 
   // Trạng thái cho form bác sĩ
 
@@ -62,15 +66,8 @@ function Doctors() {
     }
   };
 
-  // Hàm xử lý xóa bác sĩ
-  const handleDeleteDoctor = (doctorId) => {
-    console.log("Delete doctor with ID:", doctorId);
-  };
-
   // Hàm xử lý chỉnh sửa bác sĩ
-  const handleEditDoctor = (doctorId) => {
-    console.log("Edit doctor with ID:", doctorId);
-  };
+
 
   // Hàm xử lý thay đổi input
   const handleInputChange = (e) => {
@@ -96,107 +93,6 @@ function Doctors() {
       reader.readAsDataURL(file);
     }
   };
-
-  // Hàm xử lý tạo bác sĩ
-  // const handleCreateDoctor = async (e) => {
-  //   e.preventDefault();
-
-  //   const {
-  //     firstName,
-  //     lastName,
-  //     email,
-  //     gender,
-  //     dob,
-  //     phone,
-  //     specialization,
-  //     doctorImage,
-  //     password,
-  //   } = formData;
-
-  //   if (
-  //     !firstName ||
-  //     !lastName ||
-  //     !email ||
-  //     !gender ||
-  //     !dob ||
-  //     !phone ||
-  //     !specialization ||
-  //     !password
-  //   ) {
-  //     toast.error("Vui lòng điền đầy đủ thông tin.");
-  //     return;
-  //   }
-
-  //   if (!doctorImage) {
-  //     toast.error("Vui lòng chọn ảnh bác sĩ.");
-  //     return;
-  //   }
-
-  //   const reader = new FileReader();
-  //   reader.onloadend = async () => {
-  //     const base64Image = reader.result;
-
-  //     try {
-  //       const response = await createDoctor({
-  //         first_name: firstName,
-  //         last_name: lastName,
-  //         email,
-  //         gender,
-  //         birthdate: dob,
-  //         phone,
-  //         specialties: specialization.split(",").map((spec) => spec.trim()),
-  //         doctorImage: base64Image,
-  //         password,
-  //       });
-
-  //       console.log("resss>>>>>>>>>>", response);
-
-  //       if (response.success) {
-  //         toast.success("Tạo bác sĩ thành công.");
-
-  //         // Tạo đối tượng bác sĩ mới từ dữ liệu đã nhập
-  //         const newDoctor = {
-  //           _id: response.doctor._id, // Giả định ID được trả về từ API
-  //           first_name: firstName,
-  //           last_name: lastName,
-  //           email,
-  //           gender,
-  //           phone,
-  //           specialties: specialization.split(",").map((spec) => spec.trim()),
-  //         };
-
-  //         // Thêm bác sĩ mới vào danh sách hiện tại mà không cần gọi API
-  //         setDoctors((prevDoctors) => [newDoctor, ...prevDoctors]);
-
-  //         // Reset form
-  //         setFormData({
-  //           firstName: "",
-  //           lastName: "",
-  //           email: "",
-  //           gender: "",
-  //           dob: "",
-  //           phone: "",
-  //           specialization: "",
-  //           doctorImage: null,
-  //           password: "",
-  //         });
-  //         setImagePreview(null);
-  //       } else {
-  //         toast.error(response.message || "Lỗi khi tạo bác sĩ");
-  //       }
-  //     } catch (error) {
-  //       if (error.response && error.response.data) {
-  //         toast.error(
-  //           error.response.data.message || "Lỗi khi kết nối tới server."
-  //         );
-  //       } else {
-  //         toast.error("Lỗi khi kết nối tới server.");
-  //       }
-  //     }
-  //   };
-
-  //   reader.readAsDataURL(doctorImage);
-  // };
 
   // Hàm xử lý tạo bác sĩ
   const handleCreateDoctor = async (e) => {
@@ -289,195 +185,218 @@ function Doctors() {
 
     reader.readAsDataURL(doctorImage);
   };
-
+  const handleDeleteDoctor = (doctor) => {
+    setSelectedUser(doctor);
+    setShowDeleteModal(true);
+  };
+  const handleEditDoctor = (doctor) => {
+    setSelectedUser(doctor);
+    setShowEditModal(true);
+  };
   return (
-    <div className="doctor-page">
-      <div className="add-doctor-form">
-        <h3>Thêm bác sĩ</h3>
-        <form onSubmit={handleCreateDoctor}>
-          <div className="form-left">
-            <div>
-              <label>Họ:</label>
-              <input
-                type="text"
-                name="firstName"
-                value={formData.firstName}
-                onChange={handleInputChange}
-                required
-              />
-              <label>Tên:</label>
-              <input
-                type="text"
-                name="lastName"
-                value={formData.lastName}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div>
-              <label>Email:</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div>
-              <label>Giới tính:</label>
-              <select
-                name="gender"
-                value={formData.gender}
-                onChange={handleInputChange}
-              >
-                <option value="Male">Male</option>
-                <option value="Female">Female</option>
-              </select>
-              <label>Ngày sinh:</label>
-              <input
-                type="date"
-                name="dob"
-                value={formData.dob}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div>
-              <label>Số điện thoại:</label>
-              <input
-                type="text"
-                name="phone"
-                value={formData.phone}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div>
-              <label>Chuyên khoa:</label>
-              <input
-                type="text"
-                name="specialization"
-                value={formData.specialization}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="">Password</label>
-              <input
-                type="text"
-                name="password"
-                value={formData.password}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <button type="submit" className="btn">
-              Tạo bác sĩ
-            </button>
-          </div>
-
-          {/* Trường ảnh */}
-          <div className="form-right">
-            <div className="image-preview">
-              {imagePreview ? (
-                <img src={imagePreview} alt="Doctor preview" />
-              ) : (
-                <img
-                  src="https://via.placeholder.com/150x200"
-                  alt="Doctor placeholder"
+    <>
+      <div className="doctor-page">
+        <div className="add-doctor-form">
+          <h3>Thêm bác sĩ</h3>
+          <form onSubmit={handleCreateDoctor}>
+            <div className="form-left">
+              <div>
+                <label>Họ:</label>
+                <input
+                  type="text"
+                  name="firstName"
+                  value={formData.firstName}
+                  onChange={handleInputChange}
+                  required
                 />
-              )}
+                <label>Tên:</label>
+                <input
+                  type="text"
+                  name="lastName"
+                  value={formData.lastName}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div>
+                <label>Email:</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div>
+                <label>Giới tính:</label>
+                <select
+                  name="gender"
+                  value={formData.gender}
+                  onChange={handleInputChange}
+                >
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+                <label>Ngày sinh:</label>
+                <input
+                  type="date"
+                  name="dob"
+                  value={formData.dob}
+                  onChange={handleInputChange}
+                />
+              </div>
+              <div>
+                <label>Số điện thoại:</label>
+                <input
+                  type="text"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div>
+                <label>Chuyên khoa:</label>
+                <input
+                  type="text"
+                  name="specialization"
+                  value={formData.specialization}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div>
+                <label htmlFor="">Password</label>
+                <input
+                  type="text"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <button type="submit" className="btn">
+                Tạo bác sĩ
+              </button>
             </div>
-            <label>Ảnh bác sĩ:</label>
-            <input
-              type="file"
-              name="doctorImage"
-              accept="image/*"
-              onChange={handleImageChange}
-            />
-          </div>
-        </form>
-      </div>
 
-      {/* Hiển thị danh sách bác sĩ */}
-      <div className="table-container">
-        {loading ? (
-          <p>Đang tải...</p>
-        ) : error ? (
-          <p>{error}</p>
-        ) : (
-          <table className="doctor-table">
-            <thead>
-              <tr>
-                <th>Tên bác sĩ</th>
-                <th>Email</th>
-                <th>Giới tính</th>
-                <th>Số điện thoại</th>
-                <th>Chuyên khoa</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {doctors && Array.isArray(doctors) && doctors.length > 0 ? (
-                doctors.map((doctor, index) => (
-                  <tr key={index}>
-                    <td>
-                      {doctor.first_name} {doctor.last_name}
-                    </td>
-                    <td>{doctor.email}</td>
-                    <td>{doctor.gender}</td>
-                    <td>{doctor.phone}</td>
-                    <td>{doctor.specialties}</td>
-                    <td>
-                      <button
-                        className="btn btn-edit"
-                        onClick={() => handleEditDoctor(doctor._id)}
-                      >
-                        Edit
-                      </button>
-                      <button
-                        className="btn btn-delete"
-                        onClick={() => handleDeleteDoctor(doctor._id)}
-                      >
-                        Delete
-                      </button>
-                    </td>
-                  </tr>
-                ))
-              ) : (
+            {/* Trường ảnh */}
+            <div className="form-right">
+              <div className="image-preview">
+                {imagePreview ? (
+                  <img src={imagePreview} alt="Doctor preview" />
+                ) : (
+                  <img
+                    src="https://via.placeholder.com/150x200"
+                    alt="Doctor placeholder"
+                  />
+                )}
+              </div>
+              <label>Ảnh bác sĩ:</label>
+              <input
+                type="file"
+                name="doctorImage"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+            </div>
+          </form>
+        </div>
+
+        {/* Hiển thị danh sách bác sĩ */}
+        <div className="table-container">
+          {loading ? (
+            <p>Đang tải...</p>
+          ) : error ? (
+            <p>{error}</p>
+          ) : (
+            <table className="doctor-table">
+              <thead>
                 <tr>
-                  <td colSpan="6">Không có bác sĩ nào.</td>
+                  <th>Tên bác sĩ</th>
+                  <th>Email</th>
+                  <th>Giới tính</th>
+                  <th>Số điện thoại</th>
+                  <th>Chuyên khoa</th>
+                  <th>Action</th>
                 </tr>
-              )}
-            </tbody>
-          </table>
-        )}
-      </div>
-      {/* Nút phân trang */}
-      <div className="pagination">
-        <button
-          className="btn"
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-        >
-          Previous
-        </button>
+              </thead>
+              <tbody>
+                {doctors && Array.isArray(doctors) && doctors.length > 0 ? (
+                  doctors.map((doctor, index) => (
+                    <tr key={index}>
+                      <td>
+                        {doctor.first_name} {doctor.last_name}
+                      </td>
+                      <td>{doctor.email}</td>
+                      <td>{doctor.gender}</td>
+                      <td>{doctor.phone}</td>
+                      <td>{doctor.specialties}</td>
+                      <td>
+                        <button
+                          className="btn btn-edit"
+                          onClick={() => handleEditDoctor(doctor)}
+                        >
+                          Edit
+                        </button>
+                        <button
+                          className="btn btn-delete"
+                          onClick={() => handleDeleteDoctor(doctor)}
+                        >
+                          Delete
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="6">Không có bác sĩ nào.</td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          )}
+        </div>
+        {/* Nút phân trang */}
+        <div className="pagination">
+          <button
+            className="btn"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+          >
+            Previous
+          </button>
 
-        <span>
-          Page {currentPage} of {totalPages}
-        </span>
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
 
-        <button
-          className="btn"
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-        >
-          Next
-        </button>
+          <button
+            className="btn"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
+        </div>
+        <ModalDeleteUser
+          showDeleteModal={showDeleteModal}
+          setShowDeleteModal={setShowDeleteModal}
+          selectedUser={selectedUser}
+          doctors={doctors}
+          fetchDoctors={fetchDoctors}
+        />
+        <ModalEditDoctor
+          showEditModal={showEditModal}
+          setShowEditModal={setShowEditModal}
+          selectedUser={selectedUser}
+          doctors={doctors}
+          fetchDoctors={fetchDoctors}
+        />
       </div>
-    </div>
+    </>
   );
-}
+};
 
 export default Doctors;

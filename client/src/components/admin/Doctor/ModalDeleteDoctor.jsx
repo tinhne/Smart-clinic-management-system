@@ -2,12 +2,16 @@ import PropTypes from "prop-types"; // Import PropTypes
 import { useEffect, useState } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
-import { deletedUser } from "../../utils/AuthAPI/AdminService";
+import { deletedUser } from "../../../utils/AuthAPI/AdminService";
 import {  toast } from 'react-toastify';
 
 const ModalDeleteUser = (props) => {
   const { showDeleteModal, setShowDeleteModal, selectedUser, fetchDoctors } = props;
-  const handleClose = () => showDeleteModal(false);
+  
+  // Đóng modal
+  const handleClose = () => setShowDeleteModal(false); // Sửa lại hàm này
+
+  // Hàm xử lý xóa người dùng
   const handleDeleteUser = async(userID) => {
     try{
         await deletedUser(userID);
@@ -15,40 +19,38 @@ const ModalDeleteUser = (props) => {
         setShowDeleteModal(false);
         toast.success("Xóa người dùng thành công!");
       } catch (error) {
-        console.error("L��i khi xóa người dùng:", error);
+        console.error("Lỗi khi xóa người dùng:", error);
         toast.error("Xóa người dùng thất bại!");
       }
     }
     
   return (
-    <>
-      <Modal show={showDeleteModal} onHide={handleClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Xác nhận xóa người dùng</Modal.Title>
-        </Modal.Header>
+    <Modal show={showDeleteModal} onHide={handleClose}>
+      <Modal.Header closeButton>
+        <Modal.Title>Xác nhận xóa người dùng</Modal.Title>
+      </Modal.Header>
 
-        <Modal.Body>
-          <p>
-            Bạn có chắc chắn muốn xóa người dùng {selectedUser?.first_name}{" "}
-            {selectedUser?.last_name} không?
-          </p>
-        </Modal.Body>
+      <Modal.Body>
+        <p>
+          Bạn có chắc chắn muốn xóa người dùng {selectedUser?.first_name} {selectedUser?.last_name} không?
+        </p>
+      </Modal.Body>
 
-        <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>
-            Đóng
-          </Button>
-          <Button
-            variant="danger"
-            onClick={() => handleDeleteUser(selectedUser?._id)}
-          >
-            Xóa
-          </Button>
-        </Modal.Footer>
-      </Modal>
-    </>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={handleClose}>
+          Đóng
+        </Button>
+        <Button
+          variant="danger"
+          onClick={() => handleDeleteUser(selectedUser?._id)}
+        >
+          Xóa
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 };
+
 
 // Define propTypes to validate the props passed to the component
 ModalDeleteUser.propTypes = {

@@ -12,3 +12,10 @@ export const createDoctor = async (doctorData) => {
 export const deletedUser = async (userID) => {
   return axios.delete(`/api/admin/delete-users/${userID}`);
 };
+export const editUser = async (userID, formData) => {
+  return axios.put(`/api/admin/edit-users/${userID}`, formData); // Thêm formData vào request body
+};
+export const createPatient = (patientData) => {
+  return axios.post('/api/admin/create-patient', patientData);
+
+}

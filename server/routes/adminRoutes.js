@@ -5,13 +5,16 @@ const {
   getAllUserByRole,
   updateUser,
   deleteUser,
+  createPatient,  // Tạo tài khoản bệnh nhân (admin, doctor)
 } = require("../controllers/adminController");
 const { authenticate } = require("../middlewares/authenticate");
 const { authorize } = require("../middlewares/authorize");
 const router = express.Router();
-// Tạo tài khoản (admin only)
+// Tạo tài khoản bác sĩ (admin only)
 router.post("/create-doctor", authenticate, authorize(["admin"]), createDoctor);
 
+// Tạo tài khoản bệnh nhân (admin, doctor)
+router.post("/create-patient", authenticate, authorize(["admin","doctor"]), createPatient);
 // Lấy thông tin người dùng theo ID (admin only)
 router.get("/users/:id", authenticate, authorize(["admin"]), getUserById);
 

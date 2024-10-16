@@ -49,6 +49,51 @@ exports.createDoctor = async (doctorData) => {
   }
 };
 
+exports.createPatient = async (patientData) => {
+  const { email, password, imageUrl, ...restData } = patientData;
+
+  if (!password) {
+    return { success: false, message: "Mật khẩu không được để trống" };
+  }
+
+  if (!email) {
+    return { success: false, message: "Email không được để trống" };
+  }
+
+  console.log("Dữ liệu bệnh nhân trước khi lưu vào DB: ", {
+    ...restData,
+    email,
+    imageUrl,
+  });
+
+  try {
+    // Kiểm tra xem email đã tồn tại chưa
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return { success: false, message: "Tài khoản đã tồn tại" };
+    }
+
+    // Mã hóa mật khẩu
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Tạo bệnh nhân mới
+    const newPatient = new User({
+      ...restData,
+      password: hashedPassword,
+      role: "patient", // Đặt role là bệnh nhân
+      imageUrl,
+      email,
+    });
+
+    // Lưu bệnh nhân vào DB
+    await newPatient.save();
+
+    return { success: true, user: newPatient }; // Trả về bệnh nhân vừa được tạo
+  } catch (error) {
+    console.error("Lỗi khi tạo bệnh nhân: ", error);
+    return { success: false, message: "Lỗi khi tạo bệnh nhân" };
+  }
+};
 
 // Lay tat ca nguoi dung theo role
 exports.getAllUsersByRole = async (role, page = 1, limit = 5) => {

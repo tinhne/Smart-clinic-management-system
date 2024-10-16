@@ -28,6 +28,9 @@ const medicationSchema = new Schema(
       required: true,
       min: 0, // Giá không được âm
     },
+    medicalImage: {
+      type: String, 
+    }
   },
   {
     timestamps: true,

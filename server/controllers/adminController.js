@@ -1,6 +1,7 @@
 const { response } = require("express");
 const {
   createDoctor,
+  createPatient,
   getAllUsersByRole,
   getUserById,
   updateUser,
@@ -44,6 +45,49 @@ exports.createDoctor = async (req, res) => {
       user: {
         ...response.user._doc, // Lấy toàn bộ các field từ user
         imageUrl: `data:image/png;base64,${doctorImageBase64}`, // Bao gồm trường ảnh
+      },
+    });
+  } else {
+    return res.status(400).json({ message: response.message });
+  }
+};
+
+exports.createPatient = async (req, res) => {
+  const { patientImage, email, ...otherData } = req.body;
+
+  // Kiểm tra email
+  if (!email) {
+    return res.status(400).json({ message: "Email không được để trống." });
+  }
+
+  // Kiểm tra hình ảnh
+  if (!patientImage) {
+    return res.status(400).json({ message: "Không có ảnh bệnh nhân được tải lên." });
+  }
+
+  // Chắc chắn rằng ảnh là một chuỗi Base64 hợp lệ
+  const imageUrl = patientImage.replace(/^data:image\/\w+;base64,/, "");
+
+  if (!isValidBase64(imageUrl)) {
+    return res.status(400).json({ message: "Dữ liệu ảnh không hợp lệ." });
+  }
+
+  const response = await createPatient({
+    ...otherData,
+    email,
+    imageUrl: imageUrl, // Giữ nguyên chuỗi Base64
+  });
+
+  if (response.success) {
+    // Chuyển đổi patientImage từ Buffer thành Base64
+    const patientImageBase64 = response.user.imageUrl.toString("base64");
+
+    return res.status(201).json({
+      success: true,
+      message: "Tạo bệnh nhân thành công",
+      user: {
+        ...response.user._doc, // Lấy toàn bộ các field từ user
+        imageUrl: `data:image/png;base64,${patientImageBase64}`, // Bao gồm trường ảnh
       },
     });
   } else {

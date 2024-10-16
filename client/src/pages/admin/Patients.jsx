@@ -1,21 +1,42 @@
 import React, { useState, useEffect } from "react";
-import { getAllUserByRole } from "../../utils/AuthAPI/AdminService";
+import {
+  getAllUserByRole,
+  createPatient,
+} from "../../utils/AuthAPI/AdminService";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import "../../style/adminStyle/patient.scss";
-
+import ModalDeletePatient from "../../components/admin/patient/ModalDeletePaitent";
+import ModalEditPatient from "../../components/admin/patient/ModalUpdatePaitent";
 function Patients() {
-  const [patients, setPatients] = useState([]); // Danh sách bệnh nhân
-  const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
-  const [totalPages, setTotalPages] = useState(1); // Tổng số trang
-  const [loading, setLoading] = useState(false); // Trạng thái loading
-  const [error, setError] = useState(null); // Lưu lỗi nếu có
+  const [patients, setPatients] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [selectedUser, setSelectedUser] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
 
-  // Hàm lấy danh sách bệnh nhân theo trang
+  const [newPatient, setNewPatient] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    gender: "Male",
+    dob: "",
+    phone: "",
+    address: "",
+    password: "",
+    patientImage: null,
+  });
+
+  const [imagePreview, setImagePreview] = useState(null); // Để hiển thị ảnh trước khi upload
+
   const fetchPatients = async (page) => {
     setLoading(true);
     setError(null);
     try {
       const data = await getAllUserByRole("patient", page, 5);
-      console.log("API Response:", data); // Log data to see its structure
       if (data) {
         setPatients(data.users);
         setCurrentPage(data.currentPage);
@@ -24,89 +45,235 @@ function Patients() {
         setError("Không thể tải danh sách bệnh nhân.");
       }
     } catch (error) {
-      console.error("Error fetching users by role:", error); // Log error
       setError("Lỗi khi kết nối tới server.");
     }
     setLoading(false);
   };
 
-  // Gọi hàm fetchPatients khi component mount hoặc khi currentPage thay đổi
   useEffect(() => {
     fetchPatients(currentPage);
   }, [currentPage]);
 
-  // Hàm xử lý khi bấm vào nút phân trang
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
     }
   };
 
-  // Hàm xử lý xóa bệnh nhân
-  const handleDeletePatient = (patientId) => {
-    // TODO: Thêm logic xóa bệnh nhân tại đây
-    console.log("Delete patient with ID:", patientId);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewPatient((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
-  // Hàm xử lý chỉnh sửa bệnh nhân
-  const handleEditPatient = (patientId) => {
-    // TODO: Thêm logic chỉnh sửa bệnh nhân tại đây
-    console.log("Edit patient with ID:", patientId);
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+        setNewPatient((prev) => ({
+          ...prev,
+          patientImage: file,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleCreatePatient = async (e) => {
+    e.preventDefault();
+
+    const {
+      firstName,
+      lastName,
+      email,
+      gender,
+      dob,
+      phone,
+      address,
+      password,
+      patientImage,
+    } = newPatient;
+
+    // Kiểm tra thông tin đầu vào
+    if (
+      !firstName ||
+      !lastName ||
+      !email ||
+      !gender ||
+      !dob ||
+      !phone ||
+      !address ||
+      !password
+    ) {
+      toast.error("Vui lòng điền đầy đủ thông tin.");
+      return;
+    }
+
+    if (!patientImage) {
+      toast.error("Vui lòng chọn ảnh bệnh nhân.");
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onloadend = async () => {
+      const base64Image = reader.result;
+
+      try {
+        const createdPatient = await createPatient({
+          first_name: firstName,
+          last_name: lastName,
+          email,
+          gender,
+          birthdate: dob,
+          phone,
+          address,
+          password,
+          patientImage: base64Image, // Gửi ảnh dưới dạng base64
+        });
+
+        if (createdPatient && createdPatient.data) {
+          setPatients((prevPatients) => [createdPatient.data, ...prevPatients]);
+          await fetchPatients(1);
+          toast.success("Bệnh nhân được tạo thành công!");
+        }
+        setNewPatient({
+          firstName: "",
+          lastName: "",
+          email: "",
+          gender: "Male",
+          dob: "",
+          phone: "",
+          address: "",
+          password: "",
+          patientImage: null, // Reset the image after creating a patient
+        });
+        setImagePreview(null); // Reset preview image
+      } catch (error) {
+        toast.error("Lỗi khi tạo bệnh nhân.");
+        console.error("Error creating patient:", error.response.data);
+      }
+    };
+
+    reader.readAsDataURL(patientImage);
   };
 
   return (
     <div className="patient-page">
+      <ToastContainer position="top-right" autoClose={5000} />
+
       <div className="add-patient-form">
         <h3>Thêm bệnh nhân</h3>
-        <form>
+        <form onSubmit={handleCreatePatient}>
           <div className="form-left">
             <div>
               <label>Họ:</label>
-              <input type="text" name="firstName" />
+              <input
+                type="text"
+                name="firstName"
+                value={newPatient.firstName}
+                onChange={handleInputChange}
+                required
+              />
               <label>Tên:</label>
-              <input type="text" name="lastName" />
+              <input
+                type="text"
+                name="lastName"
+                value={newPatient.lastName}
+                onChange={handleInputChange}
+                required
+              />
             </div>
             <div>
               <label>Email:</label>
-              <input type="email" name="email" />
+              <input
+                type="email"
+                name="email"
+                value={newPatient.email}
+                onChange={handleInputChange}
+                required
+              />
             </div>
             <div>
               <label>Giới tính:</label>
-              <select name="gender">
+              <select
+                name="gender"
+                value={newPatient.gender}
+                onChange={handleInputChange}
+              >
                 <option value="Male">Nam</option>
                 <option value="Female">Nữ</option>
               </select>
               <label>Ngày sinh:</label>
-              <input type="date" name="dob" />
+              <input
+                type="date"
+                name="dob"
+                value={newPatient.dob}
+                onChange={handleInputChange}
+                required
+              />
             </div>
             <div>
               <label>Số điện thoại:</label>
-              <input type="text" name="phone" />
+              <input
+                type="text"
+                name="phone"
+                value={newPatient.phone}
+                onChange={handleInputChange}
+                required
+              />
             </div>
             <div>
               <label>Địa chỉ:</label>
-              <input type="text" name="address" />
+              <input
+                type="text"
+                name="address"
+                value={newPatient.address}
+                onChange={handleInputChange}
+                required
+              />
+            </div>
+            <div>
+              <label>Password:</label>
+              <input
+                type="password"
+                name="password"
+                value={newPatient.password}
+                onChange={handleInputChange}
+                required
+              />
             </div>
             <button type="submit" className="btn">
               Tạo bệnh nhân
             </button>
           </div>
 
-          {/* Trường ảnh */}
           <div className="form-right">
             <div className="image-preview">
-              <img
-                src="https://via.placeholder.com/150x200"
-                alt="Patient preview"
-              />
+              {imagePreview ? (
+                <img src={imagePreview} alt="Patient preview" />
+              ) : (
+                <img
+                  src="https://via.placeholder.com/150x200"
+                  alt="Patient placeholder"
+                />
+              )}
             </div>
             <label>Ảnh bệnh nhân:</label>
-            <input type="file" name="patientImage" accept="image/*" />
+            <input
+              type="file"
+              name="patientImage"
+              accept="image/*"
+              onChange={handleImageChange}
+              required
+            />
           </div>
         </form>
       </div>
 
-      {/* Hiển thị danh sách bệnh nhân */}
       <div className="table-container">
         {loading ? (
           <p>Đang tải...</p>
@@ -125,12 +292,10 @@ function Patients() {
               </tr>
             </thead>
             <tbody>
-              {patients && Array.isArray(patients) && patients.length > 0 ? (
+              {patients.length > 0 ? (
                 patients.map((patient, index) => (
                   <tr key={index}>
-                    <td>
-                      {patient.first_name} {patient.last_name}
-                    </td>
+                    <td>{`${patient.first_name} ${patient.last_name}`}</td>
                     <td>{patient.email}</td>
                     <td>{patient.gender}</td>
                     <td>{patient.phone}</td>
@@ -138,13 +303,19 @@ function Patients() {
                     <td>
                       <button
                         className="btn btn-edit"
-                        onClick={() => handleEditPatient(patient._id)}
+                        onClick={() => {
+                          setSelectedUser(patient);
+                          setShowEditModal(true); // Hiển thị modal
+                        }}
                       >
                         Edit
                       </button>
                       <button
                         className="btn btn-delete"
-                        onClick={() => handleDeletePatient(patient._id)}
+                        onClick={() => {
+                          setSelectedUser(patient); // Đặt người dùng cần xóa
+                          setShowDeleteModal(true); // Hiển thị modal
+                        }}
                       >
                         Delete
                       </button>
@@ -160,7 +331,7 @@ function Patients() {
           </table>
         )}
       </div>
-      {/* Nút phân trang */}
+
       <div className="pagination">
         <button
           className="btn"
@@ -182,6 +353,18 @@ function Patients() {
           Next
         </button>
       </div>
+
+      <ModalDeletePatient
+        showDeleteModal={showDeleteModal}
+        setShowDeleteModal={setShowDeleteModal}
+        selectedUser={selectedUser}
+        fetchPatients={fetchPatients}
+      />
+      <ModalEditPatient
+        showEditModal={showEditModal}
+        setShowEditModal={setShowEditModal}
+        selectedUser={selectedUser}
+        fetchPatients={fetchPatients}/>
     </div>
   );
 }

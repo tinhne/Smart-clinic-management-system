@@ -6,8 +6,8 @@ import {
 import "../../style/adminStyle/doctors.scss";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import ModalDeleteUser from "../../components/admin/ModalDeleteUser";
-import ModalEditDoctor from "../../components/admin/ModalUpdateDoctor";
+import ModalDeleteDoctor from "../../components/admin/Doctor/ModalDeleteDoctor";
+import ModalEditDoctor from "../../components/admin/Doctor/ModalUpdateDoctor";
 const Doctors = (props) => {
   const [doctors, setDoctors] = useState([]); // Danh sách bác sĩ
   const [currentPage, setCurrentPage] = useState(1); // Trang hiện tại
@@ -28,6 +28,7 @@ const Doctors = (props) => {
     dob: "",
     phone: "",
     specialization: "",
+    address: "",
     doctorImage: null,
     password: "", // Thêm trường mật khẩu
   });
@@ -51,6 +52,7 @@ const Doctors = (props) => {
       console.error("Error fetching users by role:", error); // Log error
       setError("Lỗi khi kết nối tới server.");
     }
+
     setLoading(false);
   };
 
@@ -67,7 +69,6 @@ const Doctors = (props) => {
   };
 
   // Hàm xử lý chỉnh sửa bác sĩ
-
 
   // Hàm xử lý thay đổi input
   const handleInputChange = (e) => {
@@ -107,6 +108,7 @@ const Doctors = (props) => {
       phone,
       specialization,
       doctorImage,
+      address,
       password,
     } = formData;
 
@@ -119,7 +121,8 @@ const Doctors = (props) => {
       !dob ||
       !phone ||
       !specialization ||
-      !password
+      !password ||
+      !address
     ) {
       toast.error("Vui lòng điền đầy đủ thông tin.");
       return;
@@ -145,9 +148,9 @@ const Doctors = (props) => {
           specialties: specialization.split(",").map((spec) => spec.trim()),
           doctorImage: base64Image,
           password,
+          address,
         });
 
-        console.log("API Response:", response);
 
         if (response.success) {
           toast.success("Tạo bác sĩ thành công.");
@@ -166,6 +169,7 @@ const Doctors = (props) => {
             specialization: "",
             doctorImage: null,
             password: "",
+            address: "",
           });
           setImagePreview(null);
         } else {
@@ -252,6 +256,16 @@ const Doctors = (props) => {
                   type="text"
                   name="phone"
                   value={formData.phone}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div>
+                <label>Địa chỉ :</label>
+                <input
+                  type="text"
+                  name="address" // Đúng tên "address"
+                  value={formData.address}
                   onChange={handleInputChange}
                   required
                 />
@@ -380,7 +394,7 @@ const Doctors = (props) => {
             Next
           </button>
         </div>
-        <ModalDeleteUser
+        <ModalDeleteDoctor
           showDeleteModal={showDeleteModal}
           setShowDeleteModal={setShowDeleteModal}
           selectedUser={selectedUser}

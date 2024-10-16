@@ -13,7 +13,7 @@ function Medication() {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [editingMedicineId, setEditingMedicineId] = useState(null); // ID thuốc đang chỉnh sửa
+  const [editingMedicineId, setEditingMedicineId] = useState(null);
 
   const [addMedicine, setAddMedicine] = useState({
     medicineName: "",
@@ -21,6 +21,7 @@ function Medication() {
     unit: "vien",
     medicinePrice: "",
     medicineQuantity: "",
+    medicalImage: null,
   });
 
   // Hàm lấy danh sách thuốc
@@ -28,7 +29,6 @@ function Medication() {
     try {
       setLoading(true);
       const data = await getMedicines(page, 5);
-      console.log(data);
       if (data) {
         setMedicines(data.medicines);
         setCurrentPage(data.currentPage);
@@ -54,6 +54,60 @@ function Medication() {
     setAddMedicine((prev) => ({ ...prev, [name]: value }));
   };
 
+  // Xử lý thay đổi ảnh
+  const handleImageChange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+        const base64Image = await convertToBase64(file);
+        setAddMedicine((prev) => ({ ...prev, medicalImage: base64Image }));
+    }
+};
+
+  const convertToBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => {
+        resolve(reader.result);
+      };
+      reader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
+  // Xử lý thêm mới thuốc
+  const handleAddMedicine = async () => {
+    const newMedicine = {
+      name: addMedicine.medicineName,
+      description: addMedicine.medicineDes,
+      unit_of_caculation: addMedicine.unit,
+      price: parseFloat(addMedicine.medicinePrice),
+      quantity_available: parseInt(addMedicine.medicineQuantity, 10),
+      medicalImage: null,
+    };
+
+    if (addMedicine.medicalImage) {
+      newMedicine.medicalImage = await convertToBase64(addMedicine.medicalImage);
+    }
+
+    console.log("Thêm thuốc:", newMedicine);
+
+    try {
+      const res = await addNewMedicine(newMedicine);
+      if (res.success) {
+        alert("Thêm thuốc thành công.");
+        fetchMedicines(1);
+        resetForm();
+      } else {
+        alert(res.message);
+      }
+    } catch (error) {
+      console.error("Error adding medicine:", error);
+      alert("Lỗi khi thêm thuốc. Vui lòng thử lại.");
+    }
+  };
+
   // Xử lý cập nhật thuốc
   const handleUpdateMedicine = async () => {
     const updatedMedicine = {
@@ -62,7 +116,10 @@ function Medication() {
       unit_of_caculation: addMedicine.unit,
       price: parseFloat(addMedicine.medicinePrice),
       quantity_available: parseInt(addMedicine.medicineQuantity, 10),
+      medicalImage: addMedicine.medicalImage,
     };
+
+    console.log("Cập nhật thuốc:", updatedMedicine);
 
     try {
       const res = await updateMedicine(editingMedicineId, updatedMedicine);
@@ -80,32 +137,7 @@ function Medication() {
     }
   };
 
-  // Xử lý thêm mới thuốc
-  const handleAddMedicine = async () => {
-    const newMedicine = {
-      name: addMedicine.medicineName,
-      description: addMedicine.medicineDes,
-      unit_of_caculation: addMedicine.unit,
-      price: parseFloat(addMedicine.medicinePrice),
-      quantity_available: parseInt(addMedicine.medicineQuantity, 10),
-    };
-
-    try {
-      const res = await addNewMedicine(newMedicine);
-      if (res.success) {
-        alert("Thêm thuốc thành công.");
-        fetchMedicines(1);
-        resetForm();
-      } else {
-        alert(res.message);
-      }
-    } catch (error) {
-      console.error("Error adding medicine:", error);
-      alert("Lỗi khi thêm thuốc. Vui lòng thử lại.");
-    }
-  };
-
-  // Hàm submit form (thêm hoặc cập nhật)
+  // Hàm submit form
   const handleFormSubmit = (e) => {
     e.preventDefault();
     if (editingMedicineId) {
@@ -124,13 +156,12 @@ function Medication() {
       unit: medicine.unit_of_caculation,
       medicinePrice: medicine.price.toString(),
       medicineQuantity: medicine.quantity_available.toString(),
+      medicalImage: medicine.medicalImage || null,
     });
   };
 
   const handleDelete = async (id) => {
-    const confirmDelete = window.confirm(
-      "Bạn có chắc chắn muốn xóa thuốc này?"
-    );
+    const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa thuốc này?");
     if (confirmDelete) {
       try {
         const res = await deleteMedicine(id);
@@ -140,7 +171,6 @@ function Medication() {
         } else {
           alert(res.message);
         }
-        console.log(res);
       } catch (error) {
         console.error("Error deleting medicine:", error);
         alert("Lỗi khi xóa thuốc. Vui lòng thử lại.");
@@ -155,6 +185,7 @@ function Medication() {
       unit: "vien",
       medicinePrice: "",
       medicineQuantity: "",
+      medicalImage: null,
     });
   };
 
@@ -168,61 +199,83 @@ function Medication() {
     <div className="medicine-page">
       <div className="add-medicine-form">
         <h3>{editingMedicineId ? "Cập nhật thuốc" : "Thêm thuốc"}</h3>
+          <div className="left-form">
         <form onSubmit={handleFormSubmit}>
-          <div>
-            <label>Tên thuốc:</label>
-            <input
-              type="text"
-              name="medicineName"
-              value={addMedicine.medicineName}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div>
-            <label>Mô tả: </label>
-            <input
-              type="text"
-              name="medicineDes"
-              value={addMedicine.medicineDes}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div>
-            <label>Đơn vị tính:</label>
-            <select
-              name="unit"
-              value={addMedicine.unit}
-              onChange={handleInputChange}
-            >
-              <option value="vien">Viên</option>
-              <option value="hop">Hộp</option>
-              <option value="chai">Chai</option>
-              <option value="ong">Ống</option>
-              <option value="goi">Gói</option>
-            </select>
-          </div>
-          <div>
-            <label>Đơn Giá:</label>
-            <input
-              type="text"
-              name="medicinePrice"
-              value={addMedicine.medicinePrice}
-              onChange={handleInputChange}
-            />
-          </div>
-          <div>
-            <label>Số lượng:</label>
-            <input
-              type="text"
-              name="medicineQuantity"
-              value={addMedicine.medicineQuantity}
-              onChange={handleInputChange}
-            />
-          </div>
+            <div>
+              <label>Tên thuốc:</label>
+              <input
+                type="text"
+                name="medicineName"
+                value={addMedicine.medicineName}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div>
+              <label>Mô tả:</label>
+              <input
+                type="text"
+                name="medicineDes"
+                value={addMedicine.medicineDes}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div>
+              <label>Đơn vị tính:</label>
+              <select
+                name="unit"
+                value={addMedicine.unit}
+                onChange={handleInputChange}
+              >
+                <option value="vien">Viên</option>
+                <option value="hop">Hộp</option>
+                <option value="chai">Chai</option>
+                <option value="ong">Ống</option>
+                <option value="goi">Gói</option>
+              </select>
+            </div>
+            <div>
+              <label>Đơn Giá:</label>
+              <input
+                type="text"
+                name="medicinePrice"
+                value={addMedicine.medicinePrice}
+                onChange={handleInputChange}
+              />
+            </div>
+            <div>
+              <label>Số lượng:</label>
+              <input
+                type="text"
+                name="medicineQuantity"
+                value={addMedicine.medicineQuantity}
+                onChange={handleInputChange}
+              />
+            </div>
+         
           <button type="submit" className="btn">
             {editingMedicineId ? "Cập nhật" : "Thêm"}
           </button>
         </form>
+          </div>
+        <div className="right-form">
+            <div>
+              <label>Ảnh thuốc:</label>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleImageChange}
+              />
+            </div>
+            <div className="image-preview">
+              {addMedicine.medicalImage && (
+                <img
+                  src={addMedicine.medicalImage}
+                  alt="Medicine Preview"
+                  className="medicine-image"
+                />
+              )}
+            </div>
+          </div>
       </div>
 
       <div className="table-container">

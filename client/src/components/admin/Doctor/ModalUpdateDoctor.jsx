@@ -224,7 +224,7 @@ const ModalEditDoctor = (props) => {
 ModalEditDoctor.propTypes = {
   showEditModal: PropTypes.bool.isRequired,
   setShowEditModal: PropTypes.func.isRequired,
-  selectedUser: PropTypes.object.isRequired,
+  selectedUser: PropTypes.object,
   fetchDoctors: PropTypes.func.isRequired,
 };
 

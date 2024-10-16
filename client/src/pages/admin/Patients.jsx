@@ -132,12 +132,12 @@ function Patients() {
           phone,
           address,
           password,
-          patientImage: base64Image, // Gửi ảnh dưới dạng base64
+          patientImage: base64Image,
         });
 
         if (createdPatient && createdPatient.data) {
-          setPatients((prevPatients) => [createdPatient.data, ...prevPatients]);
-          await fetchPatients(1);
+          // setPatients((prevPatients) => [createdPatient.data, ...prevPatients]);
+          await fetchPatients(currentPage); // Gọi fetch với trang hiện tại
           toast.success("Bệnh nhân được tạo thành công!");
         }
         setNewPatient({
@@ -149,9 +149,9 @@ function Patients() {
           phone: "",
           address: "",
           password: "",
-          patientImage: null, // Reset the image after creating a patient
+          patientImage: null,
         });
-        setImagePreview(null); // Reset preview image
+        setImagePreview(null);
       } catch (error) {
         toast.error("Lỗi khi tạo bệnh nhân.");
         console.error("Error creating patient:", error.response.data);
@@ -159,7 +159,8 @@ function Patients() {
     };
 
     reader.readAsDataURL(patientImage);
-  };
+};
+
 
   return (
     <div className="patient-page">

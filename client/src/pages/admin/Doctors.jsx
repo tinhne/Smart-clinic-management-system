@@ -152,8 +152,8 @@ const Doctors = (props) => {
         });
 
 
-        if (response.success) {
-          toast.success("Tạo bác sĩ thành công.");
+        if (response.EC==1) {
+          toast.success(response.EM);
 
           // Gọi lại API để cập nhật danh sách bác sĩ
           await fetchDoctors(1); // Cập nhật trang đầu tiên

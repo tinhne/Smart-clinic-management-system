@@ -12,7 +12,7 @@ const router = express.Router();
 router.post(
   "/create-medicine",
   authenticate,
-  authorize(["admin"]),
+  authorize(["admin","doctor"]),
   createMedicine
 );
 

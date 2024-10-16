@@ -135,7 +135,7 @@ function Patients() {
           patientImage: base64Image,
         });
 
-        if (createdPatient && createdPatient.data) {
+        if (createdPatient.success) {
           // setPatients((prevPatients) => [createdPatient.data, ...prevPatients]);
           await fetchPatients(currentPage); // Gọi fetch với trang hiện tại
           toast.success("Bệnh nhân được tạo thành công!");

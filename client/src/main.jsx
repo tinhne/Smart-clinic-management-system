@@ -18,6 +18,8 @@ import LoginRegister from "./pages/users/LoginRegister.jsx";
 import Logout from "./pages/admin/Logout.jsx";
 import DoctorList from "./pages/users/DoctorList.jsx";
 import DoctorProfile from "./pages/users/DoctorProfile.jsx";
+import PatientRecord from "./pages/users/PatientRecord.jsx";
+import AppointmentSuccess from "./pages/users/AppointmentSuccess.jsx";
 const router = createBrowserRouter([
   {
     path: "/login-register",
@@ -38,6 +40,14 @@ const router = createBrowserRouter([
       {
         path: "/dat-kham/bac-si/tim-kiem",
         element: <DoctorList />,
+      },
+      {
+        path: "/dat-kham/ho-so",
+        element: <PatientRecord />,
+      },
+      {
+        path: "/dat-kham/ho-so/thanh-cong",
+        element: <AppointmentSuccess />,
       },
     ],
   },

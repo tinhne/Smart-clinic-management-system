@@ -6,6 +6,7 @@ import doctorImage from "../../assets/img/customer01.png";
 import image2 from "../../assets/img/coth1.png";
 import image from "../../assets/img/login.png";
 import { useNavigate } from "react-router-dom";
+import Chatbot from "../../components/chatbot/Chatbot";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -14,6 +15,10 @@ const HomePage = () => {
   };
   return (
     <>
+    <div className="chatbot-container">
+        <Chatbot/>
+    </div>
+    
       <div className="body-homepage">
         <div className="description-search-container">
           <p className="description_1">Ứng dụng đặt khám </p>

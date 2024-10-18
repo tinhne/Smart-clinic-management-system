@@ -6,6 +6,7 @@ const {
   getUserById,
   updateUser,
   deleteUser,
+  getAllDoctorsBySpecialty,
 } = require("../service/adminService");
 
 // Tạo tài khoản bác sĩ
@@ -19,7 +20,9 @@ exports.createDoctor = async (req, res) => {
 
   // Kiểm tra hình ảnh
   if (!doctorImage) {
-    return res.status(400).json({ message: "Không có ảnh bác sĩ được tải lên." });
+    return res
+      .status(400)
+      .json({ message: "Không có ảnh bác sĩ được tải lên." });
   }
 
   // Chắc chắn rằng ảnh là một chuỗi Base64 hợp lệ
@@ -40,8 +43,9 @@ exports.createDoctor = async (req, res) => {
     const doctorImageBase64 = response.user.imageUrl.toString("base64");
 
     return res.status(201).json({
+      EC: 1,
       success: true,
-      message: "Tạo bác sĩ thành công",
+      EM: "Tạo bác sĩ thành công",
       user: {
         ...response.user._doc, // Lấy toàn bộ các field từ user
         imageUrl: `data:image/png;base64,${doctorImageBase64}`, // Bao gồm trường ảnh
@@ -51,6 +55,33 @@ exports.createDoctor = async (req, res) => {
     return res.status(400).json({ message: response.message });
   }
 };
+// Trong controller của bạn
+exports.getDoctorsBySpecialty = async (req, res) => {
+  try {
+    console.log("Request body:", req.body); // Kiểm tra nội dung body
+    const specialty = req.body.specialty; // Lấy specialty từ req.body
+
+    if (!specialty || typeof specialty !== "string") {
+      console.error("Invalid specialty:", specialty); // Log giá trị không hợp lệ
+      return res.status(400).json({ success: false, message: "Chuyên khoa không hợp lệ" });
+    }
+
+    // Gọi hàm với specialty
+    const result = await getAllDoctorsBySpecialty(specialty);
+
+    if (!result.success) {
+      return res.status(404).json(result);
+    }
+
+    return res.status(200).json(result);
+  } catch (error) {
+    console.error("Lỗi khi gọi API lấy bác sĩ theo chuyên khoa: ", error);
+    return res.status(500).json({ success: false, message: "Lỗi server" });
+  }
+};
+
+
+
 
 exports.createPatient = async (req, res) => {
   const { patientImage, email, ...otherData } = req.body;
@@ -62,7 +93,9 @@ exports.createPatient = async (req, res) => {
 
   // Kiểm tra hình ảnh
   if (!patientImage) {
-    return res.status(400).json({ message: "Không có ảnh bệnh nhân được tải lên." });
+    return res
+      .status(400)
+      .json({ message: "Không có ảnh bệnh nhân được tải lên." });
   }
 
   // Chắc chắn rằng ảnh là một chuỗi Base64 hợp lệ
@@ -100,7 +133,6 @@ const isValidBase64 = (str) => {
   const base64Regex = /^[A-Za-z0-9+/]+={0,2}$/;
   return base64Regex.test(str);
 };
-
 
 // lay tat ca nguoi dung theo role
 exports.getAllUserByRole = async (req, res) => {

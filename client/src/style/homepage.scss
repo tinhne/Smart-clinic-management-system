@@ -171,6 +171,7 @@
 
     // Individual doctor card
     .doctor-card {
+      min-width: 276px;
       background-color: #fff;
       border-radius: 12px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -187,8 +188,8 @@
       // Doctor image
       .doctor-image {
         img {
-          width: 80px;
-          height: 80px;
+          width: 100px;
+          height: 100px;
           border-radius: 50%;
         }
       }
@@ -267,65 +268,80 @@
       &::-webkit-scrollbar-track {
         background-color: #ccc;
       }
-    }
-
-    // Individual doctor card
-    .specialty-card {
-      background-color: #fff;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      padding: 20px;
-      min-width: 270px;
-      transition: transform 0.3s ease-in-out;
-      display: inline-block;
-      border: 1px solid gray;
-      &:hover {
-        transform: translateY(-5px);
+      &.expanded {
+        display: grid;
+        grid-template-columns: repeat(7, 1fr); // Lưới 8 cột
+        grid-gap: 20px;
+        white-space: normal; // Cho phép các thẻ xuống hàng
+        max-height: none; // Loại bỏ giới hạn chiều cao
+        overflow: hidden; // Loại bỏ thanh cuộn
       }
-
-      .specialty-image {
-        img {
-          width: 134px;
-          height: 135px;
-          top: 2932px;
-          left: 385px;
-          gap: 0px;
-          border-radius: 7px 0px 0px 0px;
-          opacity: 0px;
+      .specialty-card {
+        background-color: #fff;
+        border-radius: 12px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        padding: 20px;
+        min-width: 150px;
+        transition: transform 0.3s ease-in-out;
+        display: inline-block;
+        cursor: pointer;
+        &:hover {
+          transform: translateY(-5px);
+          span {
+            color: blue ;// Đổi màu chữ của thẻ <p> thành màu xanh
+          }
         }
-      }
-
-      .specialty-info {
-        h3 {
-          font-size: 18px;
-          color: #333;
-          margin-top: 10px;
+       
+        
+  
+        .specialty-image {
+          img {
+            width: 80px;
+            height: 80px;
+            top: 2932px;
+            left: 385px;
+            gap: 0px;
+            border-radius: 7px 0px 0px 0px;
+            opacity: 0px;
+          }
         }
-
-        p {
-          font-size: 14px;
-          color: #666;
+  
+        .specialty-info {
+          h3 {
+            font-size: 18px;
+            color: #333;
+            margin-top: 10px;
+          }
+  
+          p {
+            font-size: 14px;
+            color: #666;
+          }
         }
-      }
-
-      .specialty-action {
-        button {
-          background-color: #007bff;
-          color: white;
-          padding: 10px 20px;
-          margin-top: 15px;
-          border: none;
-          border-radius: 8px;
-          cursor: pointer;
-          transition: background-color 0.3s;
-
-          &:hover {
-            background-color: #0056b3;
+  
+        .specialty-action {
+          button {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            margin-top: 15px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+  
+            &:hover {
+              background-color: #0056b3;
+            }
           }
         }
       }
+      
     }
+
+    // Individual doctor card
+  
     .view-more-button {
       background-color: #2976b5;
       color: white;
@@ -401,6 +417,7 @@
           font-weight: 300;
           line-height: 15.23px;
           text-align: left;
+          color: #000;
         }
       }
     }
@@ -410,6 +427,7 @@
       height: 100px;
       border-radius: 50%;
       object-fit: cover;
+      object-position: top;
     }
 
     .doctor_info {

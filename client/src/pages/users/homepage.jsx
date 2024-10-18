@@ -6,11 +6,43 @@ import doctorImage from "../../assets/img/customer01.png";
 import image2 from "../../assets/img/coth1.png";
 import image from "../../assets/img/login.png";
 import { useNavigate } from "react-router-dom";
+import { getAllUserByRole } from "../../utils/AuthAPI/AdminService";
+import { useEffect, useState } from "react";
+import ChandoanhinhanhIMG from "../../assets/img/Specialties/Chandoanhinhanh.jpg";
+import Coxuongkhop from "../../assets/img/Specialties/Coxuongkhop.jpg";
+import Dalieu from "../../assets/img/Specialties/Dalieu.jpg";
+import Diungmiendich from "../../assets/img/Specialties/Diungmiendich.jpg";
+import Gaymehoisuc from "../../assets/img/Specialties/Gaymehoisuc.jpg";
+import Hohap from "../../assets/img/Specialties/Hohap.jpg";
+import laobenhphoi from "../../assets/img/Specialties/laobenhphoi.jpg";
+import laokhoa from "../../assets/img/Specialties/laokhoa.jpg";
+import Nhikhoa from "../../assets/img/Specialties/Nhikhoa (1).jpg";
+import sanphukhoa from "../../assets/img/Specialties/sanphukhoa.jpg";
+import taimuihong from "../../assets/img/Specialties/taimuihong.jpg";
+import tamthan from "../../assets/img/Specialties/tamthan.jpg";
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const handleViewMoreClick = () => {
+    setIsExpanded(!isExpanded);
+  };
   const handleViewmore = () => {
     navigate("/dat-kham/bac-si/tim-kiem");
+  };
+  const [doctors, setDoctor] = useState([]);
+  useEffect(() => {
+    fetchDoctors(); // Gọi hàm fetchDoctors
+  }, []); // Thêm dependency array để hàm chỉ chạy một lần khi component mount
+
+  const fetchDoctors = async () => {
+    try {
+      const data = await getAllUserByRole("doctor", 1, 1000); // Gọi API
+      setDoctor(data.users);
+    } catch (error) {
+      console.log(error); // Log lỗi nếu có
+    }
   };
   return (
     <>
@@ -59,98 +91,30 @@ const HomePage = () => {
             </div>
           </div>
           <div className="doctor-cards">
-            <div className="doctor-card">
-              <div className="doctor-image">
-                <img src={avatar} alt="Doctor Avatar" />
-              </div>
-              <div className="doctor-info">
-                <h3>BS. CK1 Nguyễn Thành Nhân</h3>
-                <p>Tai Mũi họng</p>
-                <p>Bệnh viện Y Huế</p>
-              </div>
-              <div className="doctor-action">
-                <button>Đặt lịch khám</button>
-              </div>
-            </div>
-            <div className="doctor-card">
-              <div className="doctor-image">
-                <img src={avatar} alt="Doctor Avatar" />
-              </div>
-              <div className="doctor-info">
-                <h3>BS. CK1 Nguyễn Thành Nhân</h3>
-                <p>Tai Mũi họng</p>
-                <p>Bệnh viện Y Huế</p>
-              </div>
-              <div className="doctor-action">
-                <button>Đặt lịch khám</button>
-              </div>
-            </div>
-            <div className="doctor-card">
-              <div className="doctor-image">
-                <img src={avatar} alt="Doctor Avatar" />
-              </div>
-              <div className="doctor-info">
-                <h3>BS. CK1 Nguyễn Thành Nhân</h3>
-                <p>Tai Mũi họng</p>
-                <p>Bệnh viện Y Huế</p>
-              </div>
-              <div className="doctor-action">
-                <button>Đặt lịch khám</button>
-              </div>
-            </div>
-            <div className="doctor-card">
-              <div className="doctor-image">
-                <img src={avatar} alt="Doctor Avatar" />
-              </div>
-              <div className="doctor-info">
-                <h3>BS. CK1 Nguyễn Thành Nhân</h3>
-                <p>Tai Mũi họng</p>
-                <p>Bệnh viện Y Huế</p>
-              </div>
-              <div className="doctor-action">
-                <button>Đặt lịch khám</button>
-              </div>
-            </div>
-            <div className="doctor-card">
-              <div className="doctor-image">
-                <img src={avatar} alt="Doctor Avatar" />
-              </div>
-              <div className="doctor-info">
-                <h3>BS. CK1 Nguyễn Thành Nhân</h3>
-                <p>Tai Mũi họng</p>
-                <p>Bệnh viện Y Huế</p>
-              </div>
-              <div className="doctor-action">
-                <button>Đặt lịch khám</button>
-              </div>
-            </div>
-
-            <div className="doctor-card">
-              <div className="doctor-image">
-                <img src={avatar} alt="Doctor Avatar" />
-              </div>
-              <div className="doctor-info">
-                <h3>BS. CK1 Nguyễn Thành Nhân</h3>
-                <p>Tai Mũi họng</p>
-                <p>Bệnh viện Y Huế</p>
-              </div>
-              <div className="doctor-action">
-                <button>Đặt lịch khám</button>
-              </div>
-            </div>
-            <div className="doctor-card">
-              <div className="doctor-image">
-                <img src={avatar} alt="Doctor Avatar" />
-              </div>
-              <div className="doctor-info">
-                <h3>BS. CK1 Nguyễn Thành Nhân</h3>
-                <p>Tai Mũi họng</p>
-                <p>Bệnh viện Y Huế</p>
-              </div>
-              <div className="doctor-action">
-                <button>Đặt lịch khám</button>
-              </div>
-            </div>
+            {doctors.length > 0 ? (
+              doctors.map((doctor) => (
+                <div className="doctor-card" key={doctor._id}>
+                  <div className="doctor-image">
+                    <img
+                      src={`data:image/jpeg;base64,${doctor.imageUrl}`}
+                      alt="Doctor Avatar"
+                    />
+                  </div>
+                  <div className="doctor-info">
+                    <h3>
+                      {doctor.first_name} {doctor.last_name}
+                    </h3>
+                    <p>{doctor.specialties.join(", ")}</p>
+                    <p>{doctor.address}</p>
+                  </div>
+                  <div className="doctor-action">
+                    <button>Đặt lịch khám</button>
+                  </div>
+                </div>
+              ))
+            ) : (
+              <p>Không tìm thấy bác sĩ nào</p>
+            )}
           </div>
         </div>
         <div className="booking_specialty">
@@ -160,14 +124,24 @@ const HomePage = () => {
               Danh sách bác sĩ, bệnh viện, phòng khám, theo chuyên khoa{" "}
             </p>
           </div>
-          <div className="specialty-cards">
+          <div className={`specialty-cards ${isExpanded ? "expanded" : ""}`}>
+            {" "}
             <div className="specialty-card">
               <div className="specialty-image">
-                <img src={avatar} />
+                <img src={ChandoanhinhanhIMG} />
               </div>
               <div className="specialty-info"></div>
               <div className="specialty-action">
-                <span>Y học cổ truyền</span>
+                <span>Chuẩn đoán hình ảnh</span>
+              </div>
+            </div>
+            <div className="specialty-card">
+              <div className="specialty-image">
+                <img src={Coxuongkhop} />
+              </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Xương khớp</span>
               </div>
             </div>
             <div className="specialty-card">
@@ -181,34 +155,136 @@ const HomePage = () => {
             </div>
             <div className="specialty-card">
               <div className="specialty-image">
-                <img src={avatar} />
+                <img src={Dalieu} />
               </div>
               <div className="specialty-info"></div>
               <div className="specialty-action">
-                <span>Y học cổ truyền</span>
+                <span>Da liễu</span>
               </div>
             </div>
             <div className="specialty-card">
               <div className="specialty-image">
-                <img src={avatar} />
+                <img src={Diungmiendich} />
               </div>
               <div className="specialty-info"></div>
               <div className="specialty-action">
-                <span>Y học cổ truyền</span>
+                <span>Dị ứng miễn dịch</span>
               </div>
             </div>
             <div className="specialty-card">
               <div className="specialty-image">
-                <img src={avatar} />
+                <img src={laobenhphoi} />
               </div>
               <div className="specialty-info"></div>
               <div className="specialty-action">
-                <span>Y học cổ truyền</span>
+                <span>Lao phổi</span>
+              </div>
+            </div>
+            <div className="specialty-card">
+              <div className="specialty-image">
+                <img src={Gaymehoisuc} />
+              </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Gây mê hồi sức</span>
+              </div>
+            </div>
+            <div className="specialty-card">
+              <div className="specialty-image">
+                <img src={Hohap} />
+              </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Hô hấp</span>
+              </div>
+            </div>
+            <div className="specialty-card">
+              <div className="specialty-image">
+                <img src={Nhikhoa} />
+              </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Nhi khoa</span>
+              </div>
+            </div>
+            <div className="specialty-card">
+              <div className="specialty-image">
+                <img src={Hohap} />
+              </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Hô hấp</span>
+              </div>
+            </div>
+            <div className="specialty-card">
+              <div className="specialty-image">
+                <img src={Hohap} />
+              </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Hô hấp</span>
+              </div>
+            </div>
+            <div className="specialty-card">
+              <div className="specialty-image">
+                <img src={Hohap} />
+              </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Hô hấp</span>
+              </div>
+            </div>
+            <div className="specialty-card">
+              <div className="specialty-image">
+                <img src={Hohap} />
+              </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Hô hấp</span>
+              </div>
+            </div>
+            <div className="specialty-card">
+              <div className="specialty-image">
+                <img src={Hohap} />
+              </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Hô hấp</span>
+              </div>
+            </div>
+            <div className="specialty-card">
+              <div className="specialty-image">
+                <img src={Hohap} />
+              </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Hô hấp</span>
+              </div>
+            </div>
+            <div className="specialty-card">
+              <div className="specialty-image">
+                <img src={Hohap} />
+              </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Hô hấp</span>
+              </div>
+            </div>
+            <div className="specialty-card">
+              <div className="specialty-image">
+                <img src={Hohap} />
+              </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Hô hấp</span>
               </div>
             </div>
           </div>
           <div>
-            <button className="view-more-button">Xem Thêm &gt;</button>
+            <button className="view-more-button" onClick={handleViewMoreClick}>
+              {" "}
+              {isExpanded ? "Thu gọn" : "Xem thêm"}{" "}
+            </button>
           </div>
         </div>
 
@@ -219,41 +295,19 @@ const HomePage = () => {
 
           <div className="information_doctor_container">
             <div className="doctor_list">
-              <div className="doctor_card">
-                <img src={doctorImage} alt="Doctor" />
-                <div className="doctor_info">
-                  <p className="doctor_name">ThS.Bs Nguyễn Hồng Văn Khánh</p>
-                  <p className="specialty">Gan mật tụy - Ghép gan, Nhi</p>
-                </div>
-              </div>
-              <div className="doctor_card">
-                <img src={doctorImage} alt="Doctor" />
-                <div className="doctor_info">
-                  <p className="doctor_name">ThS.Bs Nguyễn Hồng Văn Khánh</p>
-                  <p className="specialty">Gan mật tụy - Ghép gan, Nhi</p>
-                </div>
-              </div>
-              <div className="doctor_card">
-                <img src={doctorImage} alt="Doctor" />
-                <div className="doctor_info">
-                  <p className="doctor_name">ThS.Bs Nguyễn Hồng Văn Khánh</p>
-                  <p className="specialty">Gan mật tụy - Ghép gan, Nhi</p>
-                </div>
-              </div>
-              <div className="doctor_card">
-                <img src={doctorImage} alt="Doctor" />
-                <div className="doctor_info">
-                  <p className="doctor_name">ThS.Bs Nguyễn Hồng Văn Khánh</p>
-                  <p className="specialty">Gan mật tụy - Ghép gan, Nhi</p>
-                </div>
-              </div>
-              <div className="doctor_card">
-                <img src={doctorImage} alt="Doctor" />
-                <div className="doctor_info">
-                  <p className="doctor_name">ThS.Bs Nguyễn Hồng Văn Khánh</p>
-                  <p className="specialty">Gan mật tụy - Ghép gan, Nhi</p>
-                </div>
-              </div>
+              {doctors.length > 0 ? (
+                doctors.slice(0, 5).map((doctor, index) => (
+                  <div key={index} className="doctor_card">
+                    <img src={`data:image/jpeg;base64,${doctor.imageUrl}`} alt="" />
+                    <div className="doctor_info">
+                      <p className="doctor_name">Ths.Bs {doctor.first_name} {doctor.last_name}</p>
+                      <p className="specialty">{doctor.specialties}</p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <span>Không có đội ngũ chuyên gia</span>
+              )}
             </div>
 
             <div className="doctor_description">

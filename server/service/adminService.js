@@ -124,6 +124,34 @@ exports.getAllUsersByRole = async (role, page = 1, limit = 5) => {
   }
 };
 
+// Hàm lấy tất cả bác sĩ theo chuyên khoa
+exports.getAllDoctorsBySpecialty = async (specialty) => {
+  try {
+    // Chuyển chuyên khoa truyền vào thành chữ thường để so sánh
+    const lowerCaseSpecialty = specialty.toLowerCase();
+    console.log("Specialty được truyền vào (chữ thường):", lowerCaseSpecialty);
+
+    // Tìm các bác sĩ có role là 'doctor'
+    const doctors = await User.find({ role: "doctor" });
+
+    // Lọc các bác sĩ có chuyên khoa trùng khớp
+    const matchingDoctors = doctors.filter(doctor => {
+      const lowerCaseSpecialties = doctor.specialties.map(s => s.toLowerCase().split(",").map(specialty => specialty.trim())).flat();
+      
+      return lowerCaseSpecialties.includes(lowerCaseSpecialty);
+    });
+
+    if (!matchingDoctors.length) {
+      return { success: false, message: "Không tìm thấy bác sĩ trong chuyên khoa này" };
+    }
+
+    // Trả về danh sách các bác sĩ phù hợp
+    return { success: true, doctors: matchingDoctors };
+  } catch (error) {
+    console.error("Lỗi khi lấy thông tin bác sĩ theo chuyên khoa ", error);
+    return { success: false, message: "Lỗi khi lấy thông tin bác sĩ theo chuyên khoa" };
+  }
+};
 // lay tat ca nguoi dung theo role va id
 exports.getUserById = async (userId, role) => {
   try {

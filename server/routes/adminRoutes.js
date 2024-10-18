@@ -5,7 +5,8 @@ const {
   getAllUserByRole,
   updateUser,
   deleteUser,
-  createPatient,  // Tạo tài khoản bệnh nhân (admin, doctor)
+  createPatient,
+  getDoctorsBySpecialty,  // Tạo tài khoản bệnh nhân (admin, doctor)
 } = require("../controllers/adminController");
 const { authenticate } = require("../middlewares/authenticate");
 const { authorize } = require("../middlewares/authorize");
@@ -21,10 +22,13 @@ router.get("/users/:id", authenticate, authorize(["admin"]), getUserById);
 // Lấy tất cả người dùng theo vai trò (admin only)
 router.get(
   "/users",
-  authenticate,
-  authorize(["admin", "doctor"]),
+
   getAllUserByRole
 );
+router.post(
+  "/doctor-specialties",
+  getDoctorsBySpecialty
+)
 
 // Cập nhật thông tin người dùng 
 router.put("/edit-users/:id", authenticate, updateUser);

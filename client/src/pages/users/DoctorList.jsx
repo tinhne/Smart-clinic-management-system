@@ -1,57 +1,64 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import "../../style/DoctorList/DoctorList.scss";
 import ReactPaginate from "react-paginate";
-
-const doctors = [
-  {
-    id: 1,
-    name: "ThS. BS Anh Tuấn",
-    specialties: ["Nam khoa", "Ngoại niệu"],
-    address: "23 Nguyễn Văn Đậu, Phường 5, Quận Phú Nhuận, Hồ Chí Minh",
-    img: "doctor1.png",
-  },
-  {
-    id: 2,
-    name: "TS. BS Đào Bùi Quý Quyên",
-    specialties: ["Nội thận", "Ngoại tiết niệu"],
-    address: "242 Nguyễn Chí Thanh, Phường 2, Quận 10, Hồ Chí Minh",
-    img: "doctor2.png",
-  },
-  {
-    id: 3,
-    name: "PGS. TS. BS Nguyễn Thị Bích Đào",
-    specialties: ["Nội tiết"],
-    address: "215F Nguyễn Trãi, Phường Nguyễn Cư Trinh, Quận 1, Hồ Chí Minh",
-    img: "doctor3.png",
-  },
-];
+import { getAllUserByRole, getAllDoctorsBySpecialty } from "../../utils/AuthAPI/AdminService";
 
 const categories = [
-  { name: "Tất cả", path: "/dat-kham/bac-si" },
-  { name: "Nhi khoa", path: "/dat-kham/nhi-khoa" },
-  { name: "Sản phụ khoa", path: "/dat-kham/san-phu-khoa" },
-  { name: "Da liễu", path: "/dat-kham/da-lieu" },
-  { name: "Tiêu hoá", path: "/dat-kham/tieu-hoa" },
-  { name: "Cơ xương khớp", path: "/dat-kham/co-xuong-khop" },
-  { name: "Dị ứng - miễn dịch", path: "/dat-kham/di-ung" },
-  { name: "Gây mê hồi sức", path: "/dat-kham/gay-me" },
-  { name: "Tai - mũi - họng", path: "/dat-kham/tai-mui-hong" },
-  { name: "Ung bướu", path: "/dat-kham/ung-buou" },
+  { name: "Tất cả" },
+  { name: "Nhi khoa" },
+  { name: "Sản phụ khoa" },
+  { name: "Da liễu" },
+  { name: "Tiêu hoá" },
+  { name: "Cơ xương khớp" },
+  { name: "Dị ứng - miễn dịch" },
+  { name: "Gây mê hồi sức" },
+  { name: "Tai - mũi - họng" },
+  { name: "Ung bướu" },
 ];
 
 function DoctorList() {
+  const [doctorList, setDoctorList] = useState([]);
+  const [currentCategory, setCurrentCategory] = useState("Tất cả"); 
+  const fetchDoctors = async (specialty = null) => {
+    let data;
+    
+    if (specialty === "Tất cả") {
+      data = await getAllUserByRole("doctor", 1, 1000); // Lấy tất cả bác sĩ
+      console.log(data.users); // Kiểm tra dữ liệu trả về
+
+    } else {
+      // Gọi API với cách gửi dữ liệu phù hợp
+      data = await getAllDoctorsBySpecialty({ specialty }); // Gửi một đối tượng có specialty
+    }
+  
+    if (data) {
+      setDoctorList(data.doctors || data.users);
+    } else {
+      setDoctorList([]);
+    }
+  };
+  
+
+  useEffect(() => {
+    fetchDoctors(currentCategory); // Gọi hàm lấy bác sĩ khi component mount hoặc khi currentCategory thay đổi
+  }, [currentCategory]); // Chỉ gọi lại khi currentCategory thay đổi
+
+  // Hàm xử lý khi người dùng chọn chuyên khoa
+const handleChange = (categoryName) => {
+  setCurrentCategory(categoryName); // Cập nhật chuyên khoa hiện tại
+  fetchDoctors(categoryName); // Gọi lại fetchDoctors khi thay đổi chuyên khoa
+};
+
+
   return (
     <div className="page-container">
       <aside className="sidebar">
         <nav>
           <ul>
             {categories.map((category, index) => (
-              <li key={index}>
-                <NavLink
-                  to={category.path}
-                  className={({ isActive }) => (isActive ? "active" : "")}
-                >
+              <li key={index} onClick={() => handleChange(category.name)}>
+                <NavLink to="" className={({ isActive }) => (isActive ? "active" : "")}>
                   {category.name}
                 </NavLink>
               </li>
@@ -61,29 +68,36 @@ function DoctorList() {
       </aside>
 
       <main className="doctor-list">
-        {doctors.map((doctor) => (
-          <div key={doctor.id} className="doctor-item">
-            <img src={doctor.img} alt={doctor.name} className="doctor-img" />
-            <div className="doctor-info">
-              <h3>{doctor.name}</h3>
-              <p>
-                {doctor.specialties.map((spec, index) => (
-                  <span key={index} className="specialty">
-                    {spec}
-                  </span>
-                ))}
-              </p>
-              <p>{doctor.address}</p>
+        {doctorList.length > 0 ? (
+          doctorList.map((doctor) => (
+            <div key={doctor.id} className="doctor-item">
+              <img  src={`data:image/jpeg;base64,${doctor.imageUrl}`} className="doctor-img" />
+             
+              <div className="doctor-info">
+                <h3>{doctor.first_name} {doctor.last_name}</h3>
+                <p>
+                  {doctor.specialties.map((spec, index) => (
+                    <span key={index} className="specialty">
+                      {spec}
+                    </span>
+                  ))}
+                </p>
+                <p>{doctor.address}</p>
+              </div>
+              <NavLink to="/dat-kham/bac-si/"> <button className="appointment-btn">Đặt khám</button></NavLink>
+             
             </div>
-            <button className="appointment-btn">Đặt khám</button>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p>Không tìm thấy bác sĩ nào.</p>
+        )}
+
         <ReactPaginate
           nextLabel="next >"
-          onPageChange={() => console.log(123)}
+          onPageChange={() => console.log(123)} // Hàm xử lý khi thay đổi trang
           pageRangeDisplayed={3}
           marginPagesDisplayed={2}
-          pageCount={5}
+          pageCount={5} // Bạn có thể tính toán số trang dựa trên số lượng bác sĩ
           previousLabel="< previous"
           pageClassName="page-item"
           pageLinkClassName="page-link"

@@ -103,28 +103,37 @@ const DoctorProfile = () => {
             Buổi sáng
           </div>
           <div className="time-slot-list">
-            {morningSlots.map((slot, index) => (
-              <button className="time-slot" key={index}>
-                {slot}
-              </button>
-            ))}
+            {morningSlots && morningSlots.length > 0 ? (
+              morningSlots.map((slot, index) => (
+                <button className="time-slot" key={index}>
+                  {slot}
+                </button>
+              ))
+            ) : (
+              <p>Không có khung giờ nào vào buổi sáng.</p>
+            )}
           </div>
 
           <div className="time-slot-title">
-            <span role="img" aria-label="afternoon" className="g-20">
+            <span role="img" aria-label="afternoon">
               🌇
             </span>{" "}
             Buổi chiều
           </div>
           <div className="time-slot-list">
-            {afternoonSlots.map((slot, index) => (
-              <button className="time-slot" key={index}>
-                {slot}
-              </button>
-            ))}
+            {afternoonSlots && afternoonSlots.length > 0 ? (
+              afternoonSlots.map((slot, index) => (
+                <button className="time-slot" key={index}>
+                  {slot}
+                </button>
+              ))
+            ) : (
+              <p>Không có khung giờ nào vào buổi chiều.</p>
+            )}
           </div>
         </div>
       </div>
+
       <div className="description">
         <h3>Giới thiệu</h3>
         <p>

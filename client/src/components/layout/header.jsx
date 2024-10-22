@@ -18,12 +18,16 @@ const Header = () => {
 
   useEffect(() => {
     const storedToken = Cookies.get("access_token"); // Lấy token từ cookie
-    const storedUsername =Cookies.get("username").replace(/_/g, " ");
+    const storedUsername = Cookies.get("username"); // Lấy username từ cookie
+  
     if (storedToken) {
       setToken(storedToken);
     }
+  
     if (storedUsername) {
-      setUsername(storedUsername); // Cập nhật state cho username
+      setUsername(storedUsername.replace(/_/g, " ")); // Chỉ xử lý khi storedUsername tồn tại
+    } else {
+      setUsername(""); // Nếu không có username trong cookie, đặt username thành chuỗi rỗng
     }
   }, []);
 

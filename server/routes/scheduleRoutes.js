@@ -6,9 +6,9 @@ const { authenticate } = require("../middlewares/authenticate");
 const { authorize } = require("../middlewares/authorize");
 
 // Tạo lịch cho bác sĩ (chỉ cho admin)
-router.post("/create", authenticate,authorize(["admin"]), scheduleController.createSchedule);
+router.post("/create-schedual", authenticate,authorize(["admin"]), scheduleController.createSchedule);
 
 // Lấy lịch làm việc của bác sĩ
-router.get("/:doctorId",authenticate ,authorize(["doctor", "admin"]), scheduleController.getScheduleByDoctor);
+router.get("/get-schedual/:doctorId",authenticate , scheduleController.getScheduleByDoctor);
 
 module.exports = router;

@@ -10,7 +10,10 @@ exports.authenticate = (req, res, next) => {
   }
 
   const token = authHeader.split(" ")[1];
+  console.log("Authorization header:", authHeader);
+  console.log("Token:", token);
   if (!token) {
+   
     return res.status(401).json({ message: "Token không hợp lệ" });
   }
 

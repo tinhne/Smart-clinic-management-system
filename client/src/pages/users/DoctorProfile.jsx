@@ -1,21 +1,46 @@
 import React, { useEffect, useState } from "react";
 import "../../style/DoctorProfile/DoctorProfile.scss";
-import doctor from "../../assets/img/customer01.png";
-import {getUserById} from "../../utils/AuthAPI/AdminService";
+import { getUserById } from "../../utils/AuthAPI/AdminService";
 import { useParams } from "react-router-dom";
+import getScheduleDoctorById from "../../utils/SchedualAPI/SchedualService";
 const DoctorProfile = () => {
   const { doctorId } = useParams(); // Lấy doctorId từ URL
   const [doctor, setDoctor] = useState(null);
+  const [schedule, setSchedule] = useState(null); // Lưu lịch làm việc
+
   useEffect(() => {
     const fetchDoctor = async () => {
       const doctorData = await getUserById(doctorId, "doctor");
       setDoctor(doctorData);
-      console.log("Doctor",doctorData);
+      console.log("Doctor", doctorData);
     };
-    
+    const fetchSchedule = async () => {
+      try {
+        const scheduleData = await getScheduleDoctorById(doctorId);
+        setSchedule(scheduleData); // Lưu lịch làm việc vào state
+      } catch (error) {
+        console.error("Lỗi khi lấy lịch làm việc:", error);
+      }
+    };
     fetchDoctor();
+    fetchSchedule();
   }, [doctorId]);
-
+  const morningSlots =
+    schedule &&
+    schedule[0].available_slots.filter((slot) => {
+      const hour = parseInt(slot.split(":")[0]);
+      return hour < 12; // Lọc các khung giờ buổi sáng
+    });
+  const afternoonSlots =
+    schedule &&
+    schedule[0].available_slots.filter((slot) => {
+      const hour = parseInt(slot.split(":")[0]);
+      return hour >= 12; // Lọc các khung giờ buổi chiều
+    });
+  const formatDate = (dateString) => {
+    const options = { weekday: "short", day: "2-digit", month: "2-digit" };
+    return new Date(dateString).toLocaleDateString("vi-VN", options);
+  };
   if (!doctor) {
     return <p>Loading...</p>;
   }
@@ -24,17 +49,23 @@ const DoctorProfile = () => {
     <div className="doctor-profile">
       <div className="doctor-header">
         <div className="doctor-img">
-          <img src={doctor} alt="Doctor" />
+          <img
+            src={`data:image/jpeg;base64,${doctor.user.imageUrl}`}
+            className="doctor-img"
+          />
         </div>
         <div className="doctor-info">
-          <h2 className="doctor-name">Bác sĩ chuyên khoa 2 Lê Thị Minh Hồng</h2>
+          <h2 className="doctor-name">
+            {doctor.user.first_name} {doctor.user.last_name}
+          </h2>
           <div className="doctor-details">
             <span className="doctor-title">Bác sĩ</span>
-            <span className="doctor-experience">24 năm kinh nghiệm</span>
+            <span className="doctor-experience">10 năm kinh nghiệm</span>{" "}
+            {/* Kinh nghiệm từ API */}
           </div>
           <div className="doctor-specialty">
             <span>Chuyên khoa: </span>
-            <a href="#">Nhi khoa</a>
+            <a href="#">{doctor.user.specialties}</a> {/* Chuyên khoa từ API */}
           </div>
         </div>
       </div>
@@ -53,131 +84,47 @@ const DoctorProfile = () => {
       <div className="quick-booking">
         <h3 className="section-title">Đặt khám nhanh</h3>
         <div className="date-list">
-          <div className="date-item active">
-            <span>Th 4, 16-10</span>
-            <span className="time-frame">3 khung giờ</span>
-          </div>
-          <div className="date-item ">
-            <span>Th 4, 16-10</span>
-            <span className="time-frame">3 khung giờ</span>
-          </div>
-          <div className="date-item ">
-            <span>Th 4, 16-10</span>
-            <span className="time-frame">3 khung giờ</span>
-          </div>
-          <div className="date-item ">
-            <span>Th 4, 16-10</span>
-            <span className="time-frame">3 khung giờ</span>
-          </div>
-          <div className="date-item ">
-            <span>Th 4, 16-10</span>
-            <span className="time-frame">3 khung giờ</span>
-          </div>
-          <div className="date-item ">
-            <span>Th 4, 16-10</span>
-            <span className="time-frame">3 khung giờ</span>
-          </div>
-          <div className="date-item ">
-            <span>Th 4, 16-10</span>
-            <span className="time-frame">3 khung giờ</span>
-          </div>
-          <div className="date-item">
-            <span>Th 6, 18-10</span>
-            <span className="time-frame">6 khung giờ</span>
-          </div>
-          <div className="date-item">
-            <span>Th 2, 21-10</span>
-            <span className="time-frame">6 khung giờ</span>
-          </div>
-          <div className="date-item">
-            <span>Th 4, 23-10</span>
-            <span className="time-frame">9 khung giờ</span>
-          </div>
-          <div className="date-item">
-            <span>Th 6, 25-10</span>
-            <span className="time-frame">9 khung giờ</span>
-          </div>
-          <div className="date-item">
-            <span>Th 2, 28-10</span>
-            <span className="time-frame">9 khung giờ</span>
-          </div>
+          {schedule &&
+            schedule.map((day, index) => (
+              <div className="date-item" key={index}>
+                <span>{formatDate(day.date)}</span>
+                <span className="time-frame">
+                  {day.available_slots.length} khung giờ
+                </span>
+              </div>
+            ))}
         </div>
-
+        {/* Danh sách các khung giờ theo buổi */}
         <div className="time-slot-section">
           <div className="time-slot-title">
-            <span role="img" aria-label="sun">
+            <span role="img" aria-label="morning">
               🌅
+            </span>{" "}
+            Buổi sáng
+          </div>
+          <div className="time-slot-list">
+            {morningSlots.map((slot, index) => (
+              <button className="time-slot" key={index}>
+                {slot}
+              </button>
+            ))}
+          </div>
+
+          <div className="time-slot-title">
+            <span role="img" aria-label="afternoon" className="g-20">
+              🌇
             </span>{" "}
             Buổi chiều
           </div>
           <div className="time-slot-list">
-            <button className="time-slot">18:15 - 18:30</button>
-            <button className="time-slot">18:30 - 18:45</button>
-            <button className="time-slot">18:45 - 19:00</button>
-            <button className="time-slot">18:15 - 18:30</button>
-            <button className="time-slot">18:30 - 18:45</button>
-            <button className="time-slot">18:45 - 19:00</button>
-            <button className="time-slot">18:15 - 18:30</button>
-            <button className="time-slot">18:30 - 18:45</button>
-            <button className="time-slot">18:45 - 19:00</button>
-            <button className="time-slot">18:15 - 18:30</button>
-            <button className="time-slot">18:30 - 18:45</button>
-            <button className="time-slot">18:45 - 19:00</button>
-            <button className="time-slot">18:15 - 18:30</button>
-            <button className="time-slot">18:30 - 18:45</button>
-            <button className="time-slot">18:45 - 19:00</button>
-            <button className="time-slot">18:15 - 18:30</button>
-            <button className="time-slot">18:30 - 18:45</button>
-            <button className="time-slot">18:45 - 19:00</button>
-            <button className="time-slot">18:15 - 18:30</button>
-            <button className="time-slot">18:30 - 18:45</button>
-            <button className="time-slot">18:45 - 19:00</button>
-            <button className="time-slot">18:15 - 18:30</button>
-            <button className="time-slot">18:30 - 18:45</button>
-            <button className="time-slot">18:45 - 19:00</button>
-            <button className="time-slot">18:15 - 18:30</button>
-            <button className="time-slot">18:30 - 18:45</button>
-            <button className="time-slot">18:45 - 19:00</button>
-            <button className="time-slot">18:15 - 18:30</button>
-            <button className="time-slot">18:30 - 18:45</button>
-            <button className="time-slot">18:45 - 19:00</button>
-            <button className="time-slot">18:15 - 18:30</button>
-            <button className="time-slot">18:30 - 18:45</button>
-            <button className="time-slot">18:45 - 19:00</button>
-            <button className="time-slot">18:15 - 18:30</button>
-            <button className="time-slot">18:30 - 18:45</button>
-            <button className="time-slot">18:45 - 19:00</button>
-            <button className="time-slot">18:15 - 18:30</button>
-            <button className="time-slot">18:30 - 18:45</button>
-            <button className="time-slot">18:45 - 19:00</button>
-            <button className="time-slot">18:15 - 18:30</button>
-            <button className="time-slot">18:30 - 18:45</button>
-            <button className="time-slot">18:45 - 19:00</button>
-            <button className="time-slot">18:15 - 18:30</button>
-            <button className="time-slot">18:30 - 18:45</button>
-            <button className="time-slot">18:45 - 19:00</button>
-            <button className="time-slot">18:15 - 18:30</button>
-            <button className="time-slot">18:30 - 18:45</button>
-            <button className="time-slot">18:45 - 19:00</button>
-            <button className="time-slot">18:15 - 18:30</button>
-            <button className="time-slot">18:30 - 18:45</button>
-            <button className="time-slot">18:45 - 19:00</button>
-            <button className="time-slot">18:15 - 18:30</button>
-            <button className="time-slot">18:30 - 18:45</button>
-            <button className="time-slot">18:45 - 19:00</button>
-            <button className="time-slot">18:15 - 18:30</button>
-            <button className="time-slot">18:30 - 18:45</button>
-            <button className="time-slot">18:45 - 19:00</button>
-            <button className="time-slot">18:15 - 18:30</button>
-            <button className="time-slot">18:30 - 18:45</button>
-            <button className="time-slot">18:45 - 19:00</button>
-            <button className="time-slot">18:15 - 18:30</button>
-            <button className="time-slot">18:30 - 18:45</button>
-            <button className="time-slot">18:45 - 19:00</button>
+            {afternoonSlots.map((slot, index) => (
+              <button className="time-slot" key={index}>
+                {slot}
+              </button>
+            ))}
           </div>
         </div>
       </div>
-
       <div className="description">
         <h3>Giới thiệu</h3>
         <p>

@@ -70,7 +70,7 @@ const handleChange = (categoryName) => {
       <main className="doctor-list">
         {doctorList.length > 0 ? (
           doctorList.map((doctor) => (
-            <div key={doctor.id} className="doctor-item">
+            <div key={doctor._id} className="doctor-item">
               <img  src={`data:image/jpeg;base64,${doctor.imageUrl}`} className="doctor-img" />
              
               <div className="doctor-info">

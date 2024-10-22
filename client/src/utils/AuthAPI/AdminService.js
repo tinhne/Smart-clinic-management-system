@@ -22,3 +22,7 @@ export const createPatient = (patientData) => {
 export const getAllDoctorsBySpecialty = async (specialties) => {
   return axios.post('api/admin/doctor-specialties', specialties);
 }
+export const getUserById = async (userID,role) => {
+  return axios.get(`/api/admin/users/${userID}?role=${role}`);
+ 
+}

@@ -1,8 +1,25 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import "../../style/DoctorProfile/DoctorProfile.scss";
 import doctor from "../../assets/img/customer01.png";
-
+import {getUserById} from "../../utils/AuthAPI/AdminService";
+import { useParams } from "react-router-dom";
 const DoctorProfile = () => {
+  const { doctorId } = useParams(); // Lấy doctorId từ URL
+  const [doctor, setDoctor] = useState(null);
+  useEffect(() => {
+    const fetchDoctor = async () => {
+      const doctorData = await getUserById(doctorId, "doctor");
+      setDoctor(doctorData);
+      console.log("Doctor",doctorData);
+    };
+    
+    fetchDoctor();
+  }, [doctorId]);
+
+  if (!doctor) {
+    return <p>Loading...</p>;
+  }
+
   return (
     <div className="doctor-profile">
       <div className="doctor-header">

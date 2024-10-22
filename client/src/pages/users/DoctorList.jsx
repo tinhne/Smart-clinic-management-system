@@ -84,7 +84,7 @@ const handleChange = (categoryName) => {
                 </p>
                 <p>{doctor.address}</p>
               </div>
-              <NavLink to="/dat-kham/bac-si/"> <button className="appointment-btn">Đặt khám</button></NavLink>
+              <NavLink to={`/dat-kham/bac-si/${doctor._id}?role=${doctor.role}`}> <button className="appointment-btn">Đặt khám</button></NavLink>
              
             </div>
           ))

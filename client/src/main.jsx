@@ -34,7 +34,7 @@ const router = createBrowserRouter([
         element: <HomePage />,
       },
       {
-        path: "/dat-kham/bac-si/",
+        path: "/dat-kham/bac-si/:doctorId",
         element: <DoctorProfile />,
       },
       {

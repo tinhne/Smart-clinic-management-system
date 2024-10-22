@@ -58,8 +58,9 @@ function LoginAdmin() {
           sameSite: "Strict",
         });
         Cookies.set("role", response.role, { secure: true, sameSite: "Strict" });
+        const role = Cookies.get('role');
 
-        if (response.role === "admin") {
+        if (role === "admin") {
           navigate("/admin/dashboard");
         } else {
           setErrorMessage("Bạn không có quyền truy cập vào trang này.");

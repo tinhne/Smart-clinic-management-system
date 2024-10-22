@@ -1,8 +1,24 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import "../../style/layoutAdmin/admin.scss";
+import Cookies from "js-cookie"; // Thư viện quản lý Cookies
+import { useNavigate } from "react-router-dom";
 
 const AdminSidebar = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    localStorage.clear();
+    Cookies.remove("access_token");
+    Cookies.remove("role");
+    Cookies.remove("username");
+    
+    // Kiểm tra xem cookie có bị xóa không trước khi điều hướng
+    if (!Cookies.get("access_token")) {
+      navigate("/admin/login");
+    }
+  };
+  
   return (
     <div className="admin-sidebar">
       <ul>
@@ -51,7 +67,8 @@ const AdminSidebar = () => {
             to="/admin/logout"
             className={({ isActive }) => (isActive ? "active" : "")}
           >
-            <i className="fa fa-sign-out"></i> Sign Out
+            <i className="fa fa-sign-out" onClick={() => handleLogout}></i> Sign
+            Out
           </NavLink>
         </li>
       </ul>

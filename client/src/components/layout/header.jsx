@@ -17,8 +17,8 @@ const Header = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedToken = localStorage.getItem("access_token");
-    const storedUsername = localStorage.getItem("username");
+    const storedToken = Cookies.get("access_token"); // Lấy token từ cookie
+    const storedUsername =Cookies.get("username").replace(/_/g, " ");
     if (storedToken) {
       setToken(storedToken);
     }
@@ -28,13 +28,12 @@ const Header = () => {
   }, []);
 
   const handleLogout = () => {
-    localStorage.clear();
+    localStorage.clear(); // Giữ lại nếu cần thiết
     setToken("");
     setUsername("");
     Cookies.remove("access_token");
     Cookies.remove("role");
-
-    // Xóa cả username khi logout
+    Cookies.remove("username"); // Xóa username trong cookie
   };
 
   // Thêm hàm xử lý click cho từng lựa chọn đăng nhập

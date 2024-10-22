@@ -49,6 +49,11 @@ function LoginRegister() {
             secure: true,
             sameSite: "Strict",
           });
+          const usernameSafe = res.username.replace(/ /g, "_");
+          Cookies.set("username", usernameSafe, {
+            secure: true,
+            sameSite: "Strict",
+          });
           Cookies.set("role", res.role, { secure: true, sameSite: "Strict" });
           localStorage.setItem("username", res.username);
           toast.success(res.EM);

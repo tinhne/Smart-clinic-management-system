@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../../style/adminStyle/loginAdmin.scss";
 import logoAdmin from "../../assets/img/logoAdmin.png";
 import { loginAdmin } from "../../services/loginAdmin";
+import Cookies from "js-cookie"; // Thư viện quản lý Cookies
 
 function LoginAdmin() {
   const [email, setEmail] = useState("");
@@ -47,8 +48,16 @@ function LoginAdmin() {
       console.log("Login response:", response);
 
       if (response && response.EC === 0) {
-        localStorage.setItem("access_token", response.token);
-        localStorage.setItem("role", response.role);
+        Cookies.set("access_token", response.token, {
+          secure: true,
+          sameSite: "Strict",
+        });
+        const usernameSafe = response.username.replace(/ /g, "_");
+        Cookies.set("username", usernameSafe, {
+          secure: true,
+          sameSite: "Strict",
+        });
+        Cookies.set("role", response.role, { secure: true, sameSite: "Strict" });
 
         if (response.role === "admin") {
           navigate("/admin/dashboard");

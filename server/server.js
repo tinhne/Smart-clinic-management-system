@@ -22,7 +22,12 @@ connection();
 seedAdmin();
 
 // CORS
-app.use(cors());
+app.use(cors(
+  // {
+  //   origin: 'http://localhost:5173/', // URL của frontend
+  //   credentials: true // Cho phép gửi cookie kèm theo request
+  // }
+));
 
 // Routes
 app.use("/api/auth", authRoutes);

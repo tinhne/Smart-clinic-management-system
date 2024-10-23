@@ -9,7 +9,7 @@ const ProfileSidebar = () => {
         <ul>
           <li>
             <NavLink
-              to="/thong-tin-ca-nhan/lich-kham"
+              to="/thong-tin/lich-kham"
               className={({ isActive }) => (isActive ? "active" : "")}
             >
               Lịch khám
@@ -17,20 +17,24 @@ const ProfileSidebar = () => {
           </li>
           <li>
             <NavLink
-              to="/thong-tin-ca-nhan/lich-su-thanh-toan"
+              to="/thong-tin/thanh-toan"
               className={({ isActive }) => (isActive ? "active" : "")}
             >
               Lịch sử thanh toán
             </NavLink>
           </li>
           <li>
-            <a href="ho-so" className="active">
+            {/* Changed from <a> to <NavLink> */}
+            <NavLink
+              to="/thong-tin/ho-so"
+              className={({ isActive }) => (isActive ? "active" : "")}
+            >
               Hồ sơ
-            </a>
+            </NavLink>
           </li>
           <li>
             <NavLink
-              to="/thong-tin-ca-nhan/tai-khoan"
+              to="/thong-tin/tai-khoan"
               className={({ isActive }) => (isActive ? "active" : "")}
             >
               Tài khoản

@@ -69,20 +69,20 @@ const Header = () => {
                   </div>{" "}
                   <div>
                     <NavDropdown title={username} id="basic-nav-dropdown">
-                      <NavDropdown.Item href="/dat-kham/ho-so">
+                      <NavDropdown.Item href="/thong-tin/ho-so">
                         Hồ sơ
                       </NavDropdown.Item>
-                      <NavDropdown.Item href="#action/3.3">
+                      <NavDropdown.Item href="/thong-tin/lich-kham">
                         Lịch khám
                       </NavDropdown.Item>
-                      <NavDropdown.Item href="#action/3.4">
+                      <NavDropdown.Item href="/thong-tin/thanh-toan">
                         Thanh toán
                       </NavDropdown.Item>
+                      <NavDropdown.Item href="/thong-tin/tai-khoan">
+                        Tài Khoản
+                      </NavDropdown.Item>
                       <NavDropdown.Divider />
-                      <NavDropdown.Item
-                        href="#action/3.1"
-                        onClick={handleLogout}
-                      >
+                      <NavDropdown.Item onClick={handleLogout}>
                         Đăng xuất
                       </NavDropdown.Item>
                     </NavDropdown>

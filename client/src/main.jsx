@@ -22,6 +22,7 @@ import PatientRecord from "./pages/users/PatientRecord.jsx";
 import AppointmentSuccess from "./pages/users/AppointmentSuccess.jsx";
 import Profile from "./pages/users/profile.jsx";
 import ProfileInfo from "./components/user/profileInfo.jsx";
+import ChangePassword from "./components/user/ChangePassword.jsx";
 const router = createBrowserRouter([
   {
     path: "/login-register",
@@ -52,15 +53,19 @@ const router = createBrowserRouter([
         element: <AppointmentSuccess />,
       },
       {
-        path: "/dat-kham/ho-so",
+        path: "",
         element: <Profile />,
         children: [
           {
-            path: "",
+            path: "/thong-tin/ho-so",
             element: <ProfileInfo />,
-          }
-        ]
-      }
+          },
+          {
+            path: "/thong-tin/tai-khoan",
+            element: <ChangePassword />,
+          },
+        ],
+      },
     ],
   },
   {

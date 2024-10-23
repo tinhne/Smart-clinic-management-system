@@ -60,7 +60,7 @@ exports.login = async (email, password) => {
     const username = `${user.first_name} ${user.last_name}`;
 
     const token = jwt.sign(
-      { _id: user._id, role: user.role, username: username }, 
+      { _id: user._id, role: user.role, username: username },
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
@@ -71,3 +71,34 @@ exports.login = async (email, password) => {
   }
 };
 
+// changePassword
+exports.changePassword = async (userId, currentPassword, newPassword) => {
+  try {
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return { EC: 1, EM: "Người dùng không tồn tại" };
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return { EC: 2, EM: "Mật khẩu hiện tại không chính xác" };
+    }
+
+    if (newPassword.length < 6) {
+      return { EC: 3, EM: "Mật khẩu mới phải có ít nhất 6 ký tự" };
+    }
+    if (currentPassword === newPassword) {
+      return { EC: 4, EM: "Mật khẩu mới không được trùng với mật khẩu cũ" };
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+
+    await user.save();
+
+    return { EC: 0, EM: "Đổi mật khẩu thành công" };
+  } catch (error) {
+    return { EC: -1, EM: "Đã xảy ra lỗi. Vui lòng thử lại." };
+  }
+};

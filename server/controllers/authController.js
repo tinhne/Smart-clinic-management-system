@@ -39,3 +39,27 @@ exports.register = async (req, res) => {
     res.status(400).json({ EC: 1, EM: err.message });
   }
 };
+
+exports.changePassword = async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    // Call the service function to change the password
+    const result = await userService.changePassword(
+      req.user._id,
+      currentPassword,
+      newPassword
+    );
+
+    // Check if the operation was successful
+    if (result.EC === 0) {
+      return res.status(200).json({ message: result.EM });
+    } else {
+      return res.status(400).json({ message: result.EM });
+    }
+  } catch (error) {
+    return res
+      .status(500)
+      .json({ message: "Đã xảy ra lỗi. Vui lòng thử lại." });
+  }
+};

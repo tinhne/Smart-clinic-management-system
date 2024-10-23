@@ -20,6 +20,8 @@ import DoctorList from "./pages/users/DoctorList.jsx";
 import DoctorProfile from "./pages/users/DoctorProfile.jsx";
 import PatientRecord from "./pages/users/PatientRecord.jsx";
 import AppointmentSuccess from "./pages/users/AppointmentSuccess.jsx";
+import Profile from "./pages/users/profile.jsx";
+import ProfileInfo from "./components/user/profileInfo.jsx";
 const router = createBrowserRouter([
   {
     path: "/login-register",
@@ -42,13 +44,23 @@ const router = createBrowserRouter([
         element: <DoctorList />,
       },
       {
-        path: "/dat-kham/ho-so",
+        path: "/dat-kham/ho-so-lich",
         element: <PatientRecord />,
       },
       {
         path: "/dat-kham/ho-so/thanh-cong",
         element: <AppointmentSuccess />,
       },
+      {
+        path: "/dat-kham/ho-so",
+        element: <Profile />,
+        children: [
+          {
+            path: "",
+            element: <ProfileInfo />,
+          }
+        ]
+      }
     ],
   },
   {

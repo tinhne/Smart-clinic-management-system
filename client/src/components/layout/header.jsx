@@ -69,21 +69,21 @@ const Header = () => {
                   </div>{" "}
                   <div>
                     <NavDropdown title={username} id="basic-nav-dropdown">
+                      <NavDropdown.Item href="/dat-kham/ho-so">
+                        Hồ sơ
+                      </NavDropdown.Item>
+                      <NavDropdown.Item href="#action/3.3">
+                        Lịch khám
+                      </NavDropdown.Item>
+                      <NavDropdown.Item href="#action/3.4">
+                        Thanh toán
+                      </NavDropdown.Item>
+                      <NavDropdown.Divider />
                       <NavDropdown.Item
                         href="#action/3.1"
                         onClick={handleLogout}
                       >
                         Đăng xuất
-                      </NavDropdown.Item>
-                      <NavDropdown.Item href="#action/3.2">
-                        Hành động khác
-                      </NavDropdown.Item>
-                      <NavDropdown.Item href="#action/3.3">
-                        Một thứ gì đó
-                      </NavDropdown.Item>
-                      <NavDropdown.Divider />
-                      <NavDropdown.Item href="#action/3.4">
-                        Liên kết tách biệt
                       </NavDropdown.Item>
                     </NavDropdown>
                   </div>

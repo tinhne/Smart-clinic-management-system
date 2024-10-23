@@ -3,9 +3,14 @@ import axios from '../../config/axios.customize';
 import React, { useState, useEffect } from 'react';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { getUserById, editUser } from '../../utils/AuthAPI/userService';
+import jwt_decode from "jwt-decode";
+import Cookies from "js-cookie";
+
 
 const ContentProfile = () => {
     const [isEditing, setIsEditing] = useState(false);
+    const [loading, setLoading] = useState(false); // Trạng thái loading
     const [profile, setProfile] = useState({
         first_name: '',
         last_name: '',
@@ -17,26 +22,36 @@ const ContentProfile = () => {
         imageUrl: '',
     });
 
-    useEffect(() => {
-        // Fetch user profile data
-        const fetchProfile = async () => {
-            const userId = localStorage.getItem('userId');
-            if (!userId) {
-                toast.error('User ID not found');
+    const fetchUser = async () => {
+        try {
+            const token = Cookies.get("access_token");
+            const role = Cookies.get("role");
+            if (!token) {
+                toast.error("Không tìm thấy token.");
                 return;
             }
 
-            try {
-                const response = await axios.get(`/users/${userId}`);
-                setProfile(response.user);
-            } catch (error) {
-                console.error("Failed to fetch profile:", error);
-                toast.error('Failed to fetch profile');
+            // Decode the token to extract the user ID
+            const decodedToken = jwt_decode(token);
+            const userId = decodedToken._id;
+            const data = await getUserById(userId, role);
+            console.log(data);
+            if (data && data.user) { // Ensure data.users exists
+                setProfile(data.user);
+            } else {
+                toast.error("Không thể tải bệnh nhân");
             }
-        };
+        } catch (error) {
+            console.error("Error fetching users by role:", error);
+            toast.error("Lỗi khi kết nối tới server.");
+        }
+        setLoading(false);
 
-        fetchProfile();
-    }, []);
+    }
+
+    useEffect(() => {
+        fetchUser();
+    }, []); // Empty dependency array to run once on mount
 
     const handleEditClick = () => {
         setIsEditing(true);
@@ -47,20 +62,15 @@ const ContentProfile = () => {
     };
 
     const handleUpdateClick = async () => {
-        const userId = localStorage.getItem('userId');
-        if (!userId) {
-            toast.error('User ID not found');
-            return;
-        }
-
         try {
-            const response = await axios.put(`/users/${userId}`, profile);
-            setProfile(response.user);
-            setIsEditing(false);
-            toast.success('Cập nhật thông tin thành công!');
+            const userID = jwt_decode(Cookies.get("access_token"))._id;
+            const res = await editUser(userID, profile);
+            setProfile(res.user)
+            setIsEditing(false)
+            toast.success("Cập nhật thông tin thành công")
         } catch (error) {
-            console.error("Failed to update profile:", error);
-            toast.error('Cập nhật thông tin thất bại!');
+            console.error("Error fetching users by role:", error);
+            toast.error("Lỗi khi kết nối tới server.");
         }
     };
 
@@ -126,7 +136,7 @@ const ContentProfile = () => {
                                 <div className="profile-avatar w-12 h-12 bg-blue-500 text-white flex items-center justify-center rounded-full">TE</div>
                                 <div className="profile-info ml-4">
                                     <div className="profile-name font-bold">{profile.first_name} {profile.last_name}</div>
-                                    <div className="profile-id text-gray-500">Mã BN: YMP241975317</div>
+                                    {/* <div className="profile-id text-gray-500">Mã BN: {profile._id}</div> */}
                                 </div>
                             </div>
                             <div className="profile-warning mb-4 text-red-500">

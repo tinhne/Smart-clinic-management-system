@@ -10,6 +10,7 @@ const serviceRoutes = require("./routes/serviceRoutes");
 const BlogRoutes = require("./routes/BlogRouter");
 const medicineRoutes = require("./routes/medicineRoutes");
 const ScheduleRoutes = require("./routes/scheduleRoutes");
+const userRoutes = require("./routes/userRoutes")
 const app = express();
 
 // Middleware
@@ -37,6 +38,7 @@ app.use("/api/medicines", medicineRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/blog", BlogRoutes);
 app.use("/api/schedule", ScheduleRoutes);
+app.use("/api/user", userRoutes);
 
 // Khởi tạo server
 const PORT = process.env.PORT || 5000;

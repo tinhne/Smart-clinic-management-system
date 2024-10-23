@@ -17,7 +17,7 @@ router.post("/create-doctor", authenticate, authorize(["admin"]), createDoctor);
 // Tạo tài khoản bệnh nhân (admin, doctor)
 router.post("/create-patient", authenticate, authorize(["admin","doctor"]), createPatient);
 // Lấy thông tin người dùng theo ID 
-router.get("/users/:id", authenticate,getUserById);
+router.get("/users/:id", authenticate, getUserById);
 
 // Lấy tất cả người dùng theo vai trò (admin only)
 router.get(

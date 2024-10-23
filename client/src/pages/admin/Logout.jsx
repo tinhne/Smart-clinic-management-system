@@ -1,13 +1,14 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-
+import Cookies from "js-cookie";
 const Logout = () => {
   const navigate = useNavigate();
-
+  const [token, setToken] = useState("");
+  const [username, setUsername] = useState("");
   useEffect(() => {
-    // Clear user data from localStorage
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("role");
+    Cookies.remove("access_token");
+    Cookies.remove("role");
+    Cookies.remove("username");
 
     navigate("/admin/login");
   }, [navigate]);

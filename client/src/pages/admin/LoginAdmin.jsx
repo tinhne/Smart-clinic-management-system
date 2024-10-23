@@ -57,10 +57,15 @@ function LoginAdmin() {
           secure: true,
           sameSite: "Strict",
         });
-        Cookies.set("role", response.role, { secure: true, sameSite: "Strict" });
-        const role = Cookies.get('role');
+        Cookies.set("role", response.role, {
+          secure: true,
+          sameSite: "Strict",
+        });
+        // const role = Cookies.get("role");
+        // console.log("Role:", role);
+        console.log(response);
 
-        if (role === "admin") {
+        if (response.role === "admin") {
           navigate("/admin/dashboard");
         } else {
           setErrorMessage("Bạn không có quyền truy cập vào trang này.");

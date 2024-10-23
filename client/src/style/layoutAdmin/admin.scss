@@ -2,8 +2,7 @@
 .admin-layout {
   display: flex;
   flex-direction: row;
-  margin-top: 20px;
-  height: 90vh; /* Ensure the full height of the viewport is used */
+  height: 100vh; /* Ensure the full height of the viewport is used */
   overflow: hidden;
 }
 .admin-content {
@@ -19,7 +18,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 20px;
+  padding: 5px 10px 5px 10px;
   width: 85%; 
   margin-left: 15%; 
   position: fixed; 
@@ -43,7 +42,7 @@
   display: flex;
   align-items: center;
 }
-.search-input {
+.searchh-input {
   width: 300px;
   border-radius: 5px;
   border: none;

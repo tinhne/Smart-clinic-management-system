@@ -4,13 +4,17 @@ import Cookies from "js-cookie"; // Thư viện quản lý Cookies
 
 // eslint-disable-next-line react/prop-types
 const PrivateRoute = ({ allowedRoles }) => {
-  const token = Cookies.get("access_token"); // Check for token in localStorage
-  const role = Cookies.get('role');
+  const token = Cookies.get("access_token"); // Lấy token từ Cookies
+  const role = Cookies.get("role"); // Lấy role từ Cookies
+
+  // Kiểm tra xem token và vai trò có hợp lệ hay không
   // eslint-disable-next-line react/prop-types
   if (!token || !allowedRoles.includes(role)) {
-    // Redirect to login page if not authenticated or role not allowed
+    // Nếu không hợp lệ, điều hướng về trang đăng nhập
     return <Navigate to="/admin/login" />;
   }
+
+  // Nếu hợp lệ, render các thành phần con
   return <Outlet />;
 };
 

@@ -11,7 +11,7 @@ function AdminHeader() {
         <img src={menu} alt="menu-header" />
       </div>
       <div className="header-search">
-        <input type="text" className="search-input" placeholder="Seach here" />
+        <input type="text" className="searchh-input" placeholder="Seach here" />
         <CiSearch className="search-icon"></CiSearch>
       </div>
       <div className="header-right">

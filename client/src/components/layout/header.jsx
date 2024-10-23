@@ -17,13 +17,13 @@ const Header = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedToken = Cookies.get("access_token"); // Lấy token từ cookie
-    const storedUsername = Cookies.get("username"); // Lấy username từ cookie
-  
+    const storedToken = Cookies.get("access_token");
+    const storedUsername = Cookies.get("username");
+
     if (storedToken) {
       setToken(storedToken);
     }
-  
+
     if (storedUsername) {
       setUsername(storedUsername.replace(/_/g, " ")); // Chỉ xử lý khi storedUsername tồn tại
     } else {

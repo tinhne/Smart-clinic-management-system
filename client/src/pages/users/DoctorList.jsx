@@ -25,7 +25,6 @@ function DoctorList() {
     
     if (specialty === "Tất cả") {
       data = await getAllUserByRole("doctor", 1, 1000); // Lấy tất cả bác sĩ
-      console.log(data.users); // Kiểm tra dữ liệu trả về
 
     } else {
       // Gọi API với cách gửi dữ liệu phù hợp
@@ -84,7 +83,7 @@ const handleChange = (categoryName) => {
                 </p>
                 <p>{doctor.address}</p>
               </div>
-              <NavLink to={`/dat-kham/bac-si/${doctor._id}?role=${doctor.role}`}> <button className="appointment-btn">Đặt khám</button></NavLink>
+              <NavLink to={`/dat-kham/bac-si/${doctor._id}`}> <button className="appointment-btn">Đặt khám</button></NavLink>
              
             </div>
           ))

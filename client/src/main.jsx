@@ -44,7 +44,7 @@ const router = createBrowserRouter([
         element: <DoctorList />,
       },
       {
-        path: "/dat-kham/ho-so-lich",
+        path: "/dat-kham/ho-so-lich/:idDoctor/:idPatient",
         element: <PatientRecord />,
       },
       {

@@ -139,16 +139,19 @@
       margin-bottom: 16px;
   
       .doctor-img {
-        width: 50px;
-        height: 50px;
+        width: 130px;
+        height: 150px;
         border-radius: 50%;
-        overflow: hidden;
+     
         margin-right: 12px;
-  
+       
         img {
           width: 100%;
           height: 100%;
           object-fit: cover;
+          object-position: top;
+          border-radius: 50px;
+    
         }
       }
   
@@ -183,7 +186,7 @@
     }
   
     .booking-button {
-      width: 100%;
+      width: 47%;
       padding: 12px;
       background-color: #007bff;
       color: white;
@@ -192,7 +195,8 @@
       cursor: pointer;
       font-size: 16px;
       font-weight: bold;
-      margin-top: 30px;
+      margin-top: 50px;
+      margin-left: 100px;
   
       &:hover {
         background-color: #0056b3;

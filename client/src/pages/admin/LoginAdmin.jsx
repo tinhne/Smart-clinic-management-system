@@ -61,6 +61,10 @@ function LoginAdmin() {
           secure: true,
           sameSite: "Strict",
         });
+        Cookies.set("id", response._id, {
+          secure: true,
+          sameSite: "Strict",
+        });
         // const role = Cookies.get("role");
         // console.log("Role:", role);
         console.log(response);

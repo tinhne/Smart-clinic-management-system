@@ -1,46 +1,67 @@
 import React, { useEffect, useState } from "react";
 import "../../style/DoctorProfile/DoctorProfile.scss";
 import { getUserById } from "../../utils/AuthAPI/AdminService";
-import { useParams } from "react-router-dom";
+import { NavLink, useParams } from "react-router-dom";
 import getScheduleDoctorById from "../../utils/SchedualAPI/SchedualService";
-const DoctorProfile = () => {
-  const { doctorId } = useParams(); // Lấy doctorId từ URL
-  const [doctor, setDoctor] = useState(null);
-  const [schedule, setSchedule] = useState(null); // Lưu lịch làm việc
+import Cookies from "js-cookie";
+// import jwt_decode from "jwt-decode"; // Import thư viện giải mã JWT
 
+const DoctorProfile = () => {
+  const { doctorId } = useParams();
+  const [doctor, setDoctor] = useState(null);
+  const [schedule, setSchedule] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedSlot, setSelectedSlot] = useState(null);
+  // Thêm state để lưu patient_id
+  const patientId = Cookies.get("id");
   useEffect(() => {
     const fetchDoctor = async () => {
       const doctorData = await getUserById(doctorId, "doctor");
       setDoctor(doctorData);
-      console.log("Doctor", doctorData);
     };
+
     const fetchSchedule = async () => {
       try {
         const scheduleData = await getScheduleDoctorById(doctorId);
-        setSchedule(scheduleData); // Lưu lịch làm việc vào state
+        setSchedule(scheduleData);
+        setSelectedDate(scheduleData[0]?.date);
       } catch (error) {
         console.error("Lỗi khi lấy lịch làm việc:", error);
       }
     };
+
     fetchDoctor();
     fetchSchedule();
   }, [doctorId]);
-  const morningSlots =
-    schedule &&
-    schedule[0].available_slots.filter((slot) => {
-      const hour = parseInt(slot.split(":")[0]);
-      return hour < 12; // Lọc các khung giờ buổi sáng
-    });
-  const afternoonSlots =
-    schedule &&
-    schedule[0].available_slots.filter((slot) => {
-      const hour = parseInt(slot.split(":")[0]);
-      return hour >= 12; // Lọc các khung giờ buổi chiều
-    });
+
+  const handleDateClick = (date) => {
+    setSelectedDate(date);
+    setSelectedSlot(null);
+  };
+
+  const handleSlotClick = (slot) => {
+    setSelectedSlot(slot);
+  };
+
+  const selectedDaySchedule = schedule?.find(
+    (day) => day.date === selectedDate
+  );
+
+  const morningSlots = selectedDaySchedule?.available_slots.filter((slot) => {
+    const hour = parseInt(slot.split(":")[0]);
+    return hour < 12;
+  });
+
+  const afternoonSlots = selectedDaySchedule?.available_slots.filter((slot) => {
+    const hour = parseInt(slot.split(":")[0]);
+    return hour >= 12;
+  });
+
   const formatDate = (dateString) => {
     const options = { weekday: "short", day: "2-digit", month: "2-digit" };
     return new Date(dateString).toLocaleDateString("vi-VN", options);
   };
+
   if (!doctor) {
     return <p>Loading...</p>;
   }
@@ -60,12 +81,11 @@ const DoctorProfile = () => {
           </h2>
           <div className="doctor-details">
             <span className="doctor-title">Bác sĩ</span>
-            <span className="doctor-experience">10 năm kinh nghiệm</span>{" "}
-            {/* Kinh nghiệm từ API */}
+            <span className="doctor-experience">10 năm kinh nghiệm</span>
           </div>
           <div className="doctor-specialty">
             <span>Chuyên khoa: </span>
-            <a href="#">{doctor.user.specialties}</a> {/* Chuyên khoa từ API */}
+            <a href="#">{doctor.user.specialties}</a>
           </div>
         </div>
       </div>
@@ -86,7 +106,13 @@ const DoctorProfile = () => {
         <div className="date-list">
           {schedule &&
             schedule.map((day, index) => (
-              <div className="date-item" key={index}>
+              <div
+                className={`date-item ${
+                  selectedDate === day.date ? "selected" : ""
+                }`}
+                key={index}
+                onClick={() => handleDateClick(day.date)}
+              >
                 <span>{formatDate(day.date)}</span>
                 <span className="time-frame">
                   {day.available_slots.length} khung giờ
@@ -94,7 +120,7 @@ const DoctorProfile = () => {
               </div>
             ))}
         </div>
-        {/* Danh sách các khung giờ theo buổi */}
+
         <div className="time-slot-section">
           <div className="time-slot-title">
             <span role="img" aria-label="morning">
@@ -105,7 +131,13 @@ const DoctorProfile = () => {
           <div className="time-slot-list">
             {morningSlots && morningSlots.length > 0 ? (
               morningSlots.map((slot, index) => (
-                <button className="time-slot" key={index}>
+                <button
+                  className={`time-slot ${
+                    selectedSlot === slot ? "selected" : ""
+                  }`}
+                  key={index}
+                  onClick={() => handleSlotClick(slot)}
+                >
                   {slot}
                 </button>
               ))
@@ -123,7 +155,13 @@ const DoctorProfile = () => {
           <div className="time-slot-list">
             {afternoonSlots && afternoonSlots.length > 0 ? (
               afternoonSlots.map((slot, index) => (
-                <button className="time-slot" key={index}>
+                <button
+                  className={`time-slot ${
+                    selectedSlot === slot ? "selected" : ""
+                  }`}
+                  key={index}
+                  onClick={() => handleSlotClick(slot)}
+                >
                   {slot}
                 </button>
               ))
@@ -163,7 +201,18 @@ const DoctorProfile = () => {
         <span className="support-text">
           Hỗ trợ đặt khám <strong>0935038810</strong>
         </span>
-        <button className="book-now-button">Đặt khám ngay</button>
+        <NavLink
+          to={{
+            pathname: `/dat-kham/ho-so-lich/${doctor.user._id}/${patientId}`, // Đường dẫn với ID bác sĩ và bệnh nhân
+          }}
+          state={{
+            doctor,
+            selectedDate, // Truyền ngày khám
+            selectedSlot, // Truyền khung giờ
+          }}
+        >
+          <button className="book-now-button">Đặt khám ngay</button>
+        </NavLink>
       </div>
     </div>
   );

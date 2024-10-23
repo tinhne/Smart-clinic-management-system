@@ -174,8 +174,8 @@
             cursor: pointer;
             transition: background-color 0.3s;
     
-            &:hover {
-              background-color: #e6e6e6;
+            &.selected {
+              background-color: #07010131;
             }
           }
         }
@@ -232,7 +232,7 @@
       }
   
       .book-now-button {
-        width: 70%;
+        height: 45px;
         margin-right: 20px;
         background-color: #007bff;
         color: #fff;

@@ -1,7 +1,14 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "../../style/AppointmentSuccess/AppointmentSuccess.scss";
+import { useLocation } from 'react-router-dom';
 
 const AppointmentSuccess = () => {
+  const location = useLocation();
+  const { doctor } = location.state || {}; // Lấy dữ liệu bác sĩ từ state
+
+  // Kiểm tra xem dữ liệu bác sĩ có tồn tại không
+  console.log("Dữ liệu bác sĩ:", doctor);
+
   return (
     <div className="appointment-success">
       {/* Success Message */}

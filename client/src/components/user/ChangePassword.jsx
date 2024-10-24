@@ -4,10 +4,14 @@ import "../../style/userProfile/ChangePassword.scss";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import icons
+import { changePassword } from "../../utils/AuthAPI/userService";
+import Cookies from "js-cookie"
 
 const ChangePassword = () => {
   const [currentPasswordVisible, setCurrentPasswordVisible] = useState(false);
   const [newPasswordVisible, setNewPasswordVisible] = useState(false);
+  const [newPassword, setNewPassword] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
 
   const toggleCurrentPasswordVisibility = () => {
     setCurrentPasswordVisible(!currentPasswordVisible);
@@ -17,16 +21,66 @@ const ChangePassword = () => {
     setNewPasswordVisible(!newPasswordVisible);
   };
 
+  // const handleChangePassword = async (e) => {
+  //   e.preventDefault(); // Prevent the default form submission behavior
+  //   const token = Cookies.get("access_token");
+  //   console.log(token)
+  //   console.log("Current Password:", currentPassword); // Kiểm tra giá trị mật khẩu hiện tại
+  //   console.log("New Password:", newPassword); // Kiểm tra giá trị mật khẩu mới
+
+  //   // Check if both fields are filled
+  //   if (!newPassword || !currentPassword) {
+  //     toast.error("Vui lòng nhập đầy đủ thông tin!");
+  //     return;
+  //   }
+
+  //   try {
+  //     // Call the API to change password
+  //     const res = await changePassword(currentPassword, newPassword, token);
+  //       toast.success("Mật khẩu đã được thay đổi thành công!");
+  //       setCurrentPassword(""); // Reset input fields after success
+  //       setNewPassword("");
+ 
+  //   } catch (error) {
+  //     console.error("Error response:", error.response);
+  //     toast.error("Đã có lỗi xảy ra khi thay đổi mật khẩu");
+  //   }
+  // };
+  // ChangePassword.jsx
+const handleChangePassword = async (e) => {
+  e.preventDefault();
+
+  if (!newPassword || !currentPassword) {
+      toast.error("Vui lòng nhập đầy đủ thông tin!");
+      return;
+  }
+
+  try {
+      const res = await changePassword(currentPassword, newPassword,); // Gọi hàm API
+          toast.success("Mật khẩu đã được thay đổi thành công!");
+          setCurrentPassword("");
+          setNewPassword("");
+
+  } catch (error) {
+    if (error.response && error.response.data && error.response.data.message) {
+      toast.error(error.response.data.message);  // Hiển thị lỗi cụ thể từ backend
+    } else {
+      toast.error("Đã có lỗi xảy ra khi thay đổi mật khẩu");
+    }
+  }
+};
   return (
     <div className="change-password-container">
       <h2>Thay đổi mật khẩu</h2>
-      <form>
+      <form onSubmit={handleChangePassword}>
         <div className="form-group">
           <label>Mật khẩu hiện tại</label>
           <div className="password-input-container">
             <input
               type={currentPasswordVisible ? "text" : "password"}
               placeholder="Mật khẩu hiện tại"
+              value={currentPassword}
+              onChange={(e) => setCurrentPassword(e.target.value)}
             />
             <span
               className="toggle-password-icon"
@@ -43,6 +97,8 @@ const ChangePassword = () => {
             <input
               type={newPasswordVisible ? "text" : "password"}
               placeholder="Nhập mật khẩu mới"
+              value={newPassword} // Liên kết giá trị với state
+              onChange={(e) => setNewPassword(e.target.value)} // Cập nhật state
             />
             <span
               className="toggle-password-icon"

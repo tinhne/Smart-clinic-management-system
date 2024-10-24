@@ -1,0 +1,81 @@
+// Định dạng container
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 50px;
+}
+
+// Tiêu đề của bảng
+h2 {
+  font-size: 28px;
+  text-align: center;
+  font-weight: bold;
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.form-controll {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  width: 20%;
+  margin-left: 180px;
+}
+
+.table-service {
+  width: 80%;
+  border-collapse: collapse;
+  margin: 20px auto;
+
+  th {
+    background-color: #f8f9fa;
+    padding: 10px;
+    font-weight: bold;
+    border-bottom: 2px solid #ddd;
+  }
+
+  td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+  }
+
+  tr:nth-child(even) {
+    background-color: #f2f2f2; // Màu nền xen kẽ
+  }
+
+  tr:hover {
+    background-color: #e9ecef; // Hiệu ứng hover
+  }
+}
+
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+
+  .page-item {
+    margin: 0 5px;
+
+    .page-link {
+      padding: 8px 12px;
+      background-color: #fff;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      color: #007bff;
+      cursor: pointer;
+      text-decoration: none;
+      font-size: 14px;
+
+      &:hover {
+        background-color: #007bff;
+        color: #fff;
+      }
+    }
+
+    &.active .page-link {
+      background-color: #007bff;
+      color: #fff;
+    }
+  }
+}

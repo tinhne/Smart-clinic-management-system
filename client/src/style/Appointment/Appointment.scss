@@ -1,0 +1,170 @@
+.appointment-container {
+  display: flex;
+  width: 800px;
+  margin-top: 40px;
+  background-color: #fdfbfb;
+}
+
+.appointment-list {
+  width: 350px;
+
+  padding: 20px;
+  border-radius: 8px;
+}
+.appointment-list h2 {
+  font-size: 18px;
+}
+
+.appointment-details {
+  flex: 2;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.search-bar {
+  outline: none;
+  height: 35px;
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.appointment-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  cursor: pointer;
+}
+.appointment-item h3,
+.appointment-item p,
+.appointment-item h4 {
+  font-size: 16px;
+}
+
+.appointment-item h4 {
+  margin-top: -10px;
+}
+
+.appointment-item:last-child {
+  border-bottom: none;
+}
+
+.stt {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.status {
+  color: rgb(13, 175, 13);
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.status.cancelled {
+  color: red;
+}
+
+.icon {
+  color: #00bfa6; /* Set the color of the icon (blue/green) */
+  margin-right: 10px;
+}
+
+.appointment-details h2 {
+  margin-bottom: 20px;
+}
+.appointment-info {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: rgb(13, 175, 13);
+  font-weight: bold;
+
+  .time {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+}
+
+.details-header {
+  margin-top: 30px;
+  display: flex;
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.doctor-img {
+  width: 70px;
+  height: 70px;
+  border-radius: 50%;
+}
+
+.doctor-info-app {
+  margin-left: 20px;
+}
+
+.info-section {
+  margin-bottom: 20px;
+  h3 {
+    font-size: 18px;
+    margin-bottom: 20px;
+    font-weight: 700;
+  }
+}
+
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  padding: 5px 0;
+  line-height: 30px;
+}
+
+.label {
+  flex: 1;
+  text-align: left;
+  font-weight: 600;
+}
+
+.value {
+  flex: 1;
+  text-align: right;
+  color: #555; /* You can adjust the color of the value */
+}
+.appointment-result {
+  margin-top: 20px;
+}
+
+.appointment-result h3 {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.result-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.result-image {
+  width: 70px;
+  height: 70px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  border-radius: 50%;
+}
+
+.result-container p {
+  color: #7d7d7d; /* Light gray color */
+  font-size: 16px;
+}

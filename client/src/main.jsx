@@ -23,6 +23,7 @@ import AppointmentSuccess from "./pages/users/AppointmentSuccess.jsx";
 import Profile from "./pages/users/profile.jsx";
 import ProfileInfo from "./components/user/profileInfo.jsx";
 import ChangePassword from "./components/user/ChangePassword.jsx";
+import Appointment from "./components/user/Appointment.jsx";
 const router = createBrowserRouter([
   {
     path: "/login-register",
@@ -63,6 +64,10 @@ const router = createBrowserRouter([
           {
             path: "/thong-tin/tai-khoan",
             element: <ChangePassword />,
+          },
+          {
+            path: "/thong-tin/lich-kham",
+            element: <Appointment />,
           },
         ],
       },

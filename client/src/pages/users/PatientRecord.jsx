@@ -1,21 +1,27 @@
 import React, { useEffect, useState } from "react";
 import "../../style/PatientRecord/PatientRecord.scss";
-import { useLocation, useParams } from "react-router-dom";
-import { getUserById } from "../../utils/AuthAPI/AdminService"; // Import API service
-
+import { NavLink, useLocation, useParams } from "react-router-dom";
+import { getUserById } from "../../utils/AuthAPI/AdminService"; // API lấy thông tin user
+import { BookingAppointment } from "../../utils/AppointmentAPI/AppointmentService"; // API đặt lịch hẹn
+import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { useNavigate } from "react-router-dom";
 const PatientRecord = () => {
   const { idDoctor, idPatient } = useParams(); // Lấy doctorId và patientId từ URL
   const [doctor, setDoctor] = useState(null);
   const [patient, setPatient] = useState(null);
-  const location = useLocation(); 
-  const { selectedDate, selectedSlot } = location.state || {}; // Nhận dữ liệu được truyền
+  const [note, setNote] = useState(""); // Lưu ghi chú từ bệnh nhân
+  const location = useLocation();
+  const { selectedDate, selectedSlot } = location.state || {};
+  const navigate = useNavigate(); // Nhận dữ liệu được truyền từ route
   const formatDate = (isoDateString) => {
     const date = new Date(isoDateString);
-    return date.toLocaleDateString("vi-VN"); // "vi-VN" để định dạng theo kiểu Việt Nam: dd/mm/yyyy
+    return date.toLocaleDateString("vi-VN"); // Định dạng ngày theo kiểu Việt Nam
   };
-  const dateFormat= formatDate(selectedDate);
+  const dateFormat = formatDate(selectedDate);
+
   useEffect(() => {
-    // Gọi API để lấy thông tin bác sĩ
+    // Lấy thông tin bác sĩ
     const fetchDoctor = async () => {
       try {
         const doctorData = await getUserById(idDoctor, "doctor");
@@ -25,7 +31,7 @@ const PatientRecord = () => {
       }
     };
 
-    // Gọi API để lấy thông tin bệnh nhân
+    // Lấy thông tin bệnh nhân
     const fetchPatient = async () => {
       try {
         const patientData = await getUserById(idPatient, "patient");
@@ -38,10 +44,49 @@ const PatientRecord = () => {
     if (idDoctor) fetchDoctor();
     if (idPatient) fetchPatient();
   }, [idDoctor, idPatient]);
-  console.log("selectedDate, selectedSlot ",selectedDate, selectedSlot);
+
+  const handleBooking = async (isOnline) => {
+    const appointmentType = isOnline ? "online" : "in-person";
+    const videoCallLink = isOnline ? `http://localhost:5173/room` : null;
+
+    const appointmentData = {
+      appointment_date: selectedDate,
+      time_slot: selectedSlot,
+      patient_id: idPatient,
+      doctor_id: idDoctor,
+      note: note || "Không có ghi chú",
+      appointment_type: appointmentType,
+      video_call_link: videoCallLink,
+    };
+
+    try {
+      const response = await BookingAppointment(appointmentData);
+      toast.success("Đặt lịch thành công!");
+
+      console.log("Video Call Link:", videoCallLink); // Log the video call link
+
+      // Navigate and log state
+      navigate("/dat-kham/ho-so/thanh-cong", {
+        state: {
+          doctor,
+          patient,
+          selectedDate,
+          selectedSlot,
+          note,
+          appointmentType,
+          videoCallLink
+        },
+      });
+    } catch (error) {
+      console.error("Lỗi khi đặt lịch:", error);
+      toast.error("Đặt lịch thất bại.");
+    }
+};
+
+
 
   if (!doctor || !patient) {
-    return <p>Loading...</p>; // Hiển thị khi dữ liệu đang tải
+    return <p>Loading...</p>; // Hiển thị loading khi dữ liệu chưa có
   }
 
   return (
@@ -86,14 +131,14 @@ const PatientRecord = () => {
           </div>
         </div>
 
-        <div className="infor">
-          <p>Thông tin bổ sung (không bắt buộc)</p>
-        </div>
-
         {/* Patient Note Section */}
         <div className="patient-note">
           <h4>Ghi chú </h4>
-          <textarea name="" id="" placeholder="Triệu chứng..."></textarea>
+          <textarea
+            placeholder="Triệu chứng..."
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+          ></textarea>
         </div>
       </div>
 
@@ -123,11 +168,11 @@ const PatientRecord = () => {
         <div className="booking-time">
           <div className="time-item">
             <span className="label">Ngày khám</span>
-            <span>{dateFormat }</span> {/* Hiển thị ngày được chọn */}
+            <span>{dateFormat}</span>
           </div>
           <div className="time-item">
             <span className="label">Khung giờ</span>
-            <span>{selectedSlot}</span> {/* Hiển thị khung giờ được chọn */}
+            <span>{selectedSlot}</span>
           </div>
           <div className="time-item">
             <span className="label">Bệnh nhân</span>
@@ -137,8 +182,13 @@ const PatientRecord = () => {
           </div>
         </div>
 
-        {/* Booking Button */}
-        <button className="booking-button">Đặt lịch</button>
+        {/* Booking Buttons */}
+        <button className="booking-button" onClick={() => handleBooking(false)}>
+          Đặt lịch khám trực tuyến
+        </button>
+        <button className="booking-button" onClick={() => handleBooking(true)}>
+          Đặt lịch khám online
+        </button>
       </div>
     </div>
   );

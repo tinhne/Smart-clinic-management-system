@@ -1,13 +1,28 @@
-import React, { useEffect } from "react";
+import React from "react";
 import "../../style/AppointmentSuccess/AppointmentSuccess.scss";
-import { useLocation } from 'react-router-dom';
+import { useLocation } from "react-router-dom";
 
 const AppointmentSuccess = () => {
   const location = useLocation();
-  const { doctor } = location.state || {}; // Lấy dữ liệu bác sĩ từ state
+  const {
+    doctor,
+    patient,
+    selectedDate,
+    selectedSlot,
+    note,
+    appointmentType,
+    videoCallLink,
+  } = location.state || {};
 
-  // Kiểm tra xem dữ liệu bác sĩ có tồn tại không
-  console.log("Dữ liệu bác sĩ:", doctor);
+  // Log doctor and patient data for debugging
+  console.log("Doctor data:", doctor);
+  console.log("Location state:", location.state);
+
+  // Function to format date to Vietnamese format
+  const formatDateToVN = (dateString) => {
+    const options = { year: "numeric", month: "numeric", day: "numeric" };
+    return new Date(dateString).toLocaleDateString("vi-VN", options);
+  };
 
   return (
     <div className="appointment-success">
@@ -19,16 +34,23 @@ const AppointmentSuccess = () => {
         <h2>Đặt lịch thành công</h2>
       </div>
 
-      {/* Row 1: Doctor Info and QR Code */}
+      {/* Row 1: Doctor Info */}
       <div className="row">
         <div className="doctor-info">
           <div className="doctor-img">
-            <img src="https://via.placeholder.com/70" alt="Doctor" />
+            <img
+              src={`data:image/jpeg;base64,${doctor?.user.imageUrl}`}
+              alt="Doctor"
+            />
           </div>
           <div className="doctor-details">
-            <div className="doctor-name">Lâm Việt Trung</div>
+            <div className="doctor-name">
+              {doctor
+                ? `${doctor.user.first_name} ${doctor.user.last_name}`
+                : "N/A"}
+            </div>
             <div className="doctor-address">
-              53 Phạm Hữu Chí, P.12, Q.5, TP.HCM
+              {doctor?.user.address || "Địa chỉ chưa được cung cấp"}
             </div>
           </div>
         </div>
@@ -40,20 +62,26 @@ const AppointmentSuccess = () => {
         <div className="info-column">
           <h4>Thông tin đặt khám</h4>
           <div className="info-item">
-            <span className="label">Mã phiếu khám</span>
-            <span>YMA2410160853</span>
-          </div>
-          <div className="info-item">
-            <span className="label">STT</span>
-            <span>29</span>
-          </div>
-          <div className="info-item">
             <span className="label">Ngày khám</span>
-            <span>16/10/2024</span>
+            <span>{selectedDate ? formatDateToVN(selectedDate) : "N/A"}</span>
+          </div>
+          <div className="info-item">
+            <span className="label">Khung giờ</span>
+            <span>{selectedSlot ? selectedSlot : "N/A"}</span>
           </div>
           <div className="info-item">
             <span className="label">Chuyên khoa</span>
-            <span>Tiêu hóa</span>
+            <span>{doctor?.user.specialties || "N/A"}</span>
+          </div>
+          <div className="info-item">
+            <span className="label">Hình thức</span>
+            <span>
+              {appointmentType === "in-person" ? "Trực tuyến" : "Online"}
+            </span>
+          </div>
+          <div className="info-item">
+            <span className="label">Đường Link tham gia</span>
+            <span>{videoCallLink ? videoCallLink : "Không có liên kết"}</span>
           </div>
         </div>
 
@@ -62,28 +90,31 @@ const AppointmentSuccess = () => {
           <h4>Thông tin bệnh nhân</h4>
           <div className="info-item">
             <span className="label">Bệnh nhân</span>
-            <span>Dũng</span>
+            <span>
+              {patient
+                ? `${patient.user.first_name} ${patient.user.last_name}`
+                : "N/A"}
+            </span>
           </div>
           <div className="info-item">
             <span className="label">Điện thoại</span>
-            <span>0935038810</span>
+            <span>{patient?.user.phone || "N/A"}</span>
           </div>
           <div className="info-item">
             <span className="label">Ngày sinh</span>
-            <span>02/09/2020</span>
+            <span>{patient?.user.birthdate || "N/A"}</span>
           </div>
           <div className="info-item">
             <span className="label">Giới tính</span>
-            <span>Nam</span>
+            <span>{patient?.user.gender || "N/A"}</span>
           </div>
-
           <div className="info-item">
             <span className="label">Địa chỉ</span>
-            <span>---</span>
+            <span>{patient?.user.address || "N/A"}</span>
           </div>
           <div className="info-item">
             <span className="label">Ghi chú</span>
-            <span>---</span>
+            <span>{note || "N/A"}</span>
           </div>
         </div>
       </div>

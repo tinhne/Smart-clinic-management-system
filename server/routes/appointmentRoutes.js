@@ -6,7 +6,7 @@ const { authenticate } = require("../middlewares/authenticate");
 const { authorize } = require("../middlewares/authorize");
 
 // Bệnh nhân đặt lịch hẹn
-router.post("/book", authenticate, authorize(["patient"]), appointmentController.bookAppointment);
+router.post("/book-appointment", authenticate, appointmentController.BookingAppointment);
 
 // Admin xác nhận lịch hẹn và gửi SMS
 router.put("/confirm/:id", authenticate, authorize(["admin"]), appointmentController.confirmAppointment);
@@ -20,4 +20,5 @@ router.get("/doctor/:doctorId", authenticate, authorize(["doctor"]), appointment
 // Lấy lịch hẹn của bệnh nhân
 router.get("/patient", authenticate, authorize(["patient"]), appointmentController.getPatientAppointments);
 
+router.get('/appointments/:doctorId', appointmentController.checkDoctorSchedule);
 module.exports = router;

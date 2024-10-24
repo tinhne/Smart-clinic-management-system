@@ -4,36 +4,42 @@ const User = require('../models/User');
 const { sendSMS } = require('./smsService'); // Adjust the path if needed
 
 // Bệnh nhân đặt lịch hẹn
-exports.bookAppointment = async (appointmentData, patientId) => {
-  const { appointment_date, time_slot, doctor_id } = appointmentData;
+exports.BookingAppointment = async (appointmentData) => {
+  // Lấy dữ liệu từ appointmentData
+  const { appointment_date, time_slot, patient_id, doctor_id, note, appointment_type, video_call_link } = appointmentData;
 
-  // Kiểm tra xem bác sĩ có lịch làm việc trong thời gian đó không
-  const schedule = await Schedule.findOne({ doctor_id, date: appointment_date });
-  if (!schedule || !schedule.available_slots.includes(time_slot)) {
-    throw new Error("Khung giờ không có sẵn");
+  // Kiểm tra các trường bắt buộc
+  if (!appointment_date || !time_slot || !patient_id || !doctor_id || !appointment_type) {
+    throw new Error("Thiếu thông tin bắt buộc");
   }
 
-  // Kiểm tra xem có lịch hẹn nào đã tồn tại không
-  const existingAppointment = await Appointment.findOne({ 
-    doctor_id, 
-    appointment_date, 
-    time_slot 
+  // Kiểm tra xem đã có lịch hẹn nào với bác sĩ và khung giờ này chưa
+  const existingAppointment = await Appointment.findOne({
+    doctor_id,
+    appointment_date: new Date(appointment_date),
+    time_slot,
   });
+
   if (existingAppointment) {
-    throw new Error("Lịch hẹn đã tồn tại cho thời gian này");
+    throw new Error("Lịch hẹn này đã được đặt. Vui lòng chọn thời gian khác.");
   }
 
-  const appointment = new Appointment({
+  // Tạo mới lịch hẹn
+  const newAppointment = new Appointment({
     appointment_date,
     time_slot,
-    patient_id: patientId,
+    patient_id,
     doctor_id,
+    note,
+    appointment_type,
+    video_call_link: appointment_type === "online" ? video_call_link : "", // Chỉ lưu link nếu là khám online
   });
 
-  await appointment.save();
-  return appointment;
-};
+  // Lưu vào database
+  await newAppointment.save();
 
+  return newAppointment; // Trả về lịch hẹn đã tạo
+};
 // Admin xác nhận lịch hẹn và gửi SMS
 exports.confirmAppointment = async (id) => {
   try {
@@ -85,14 +91,7 @@ exports.cancelAppointment = async (appointmentId) => {
   return appointment;
 };
 
-// Lấy lịch hẹn cho bác sĩ
-exports.getDoctorAppointments = async (doctorId) => {
-  const appointments = await Appointment.find({ doctor_id: doctorId });
-  if (!appointments.length) {
-    throw new Error("Không có lịch hẹn nào cho bác sĩ này.");
-  }
-  return appointments;
-};
+
 
 // Lấy lịch hẹn của bệnh nhân
 exports.getPatientAppointments = async (patientId) => {
@@ -101,4 +100,42 @@ exports.getPatientAppointments = async (patientId) => {
     throw new Error("Không có lịch hẹn nào cho bệnh nhân này.");
   }
   return appointments;
+};
+
+
+exports.getDoctorAppointments = async (doctorId) => {
+  try {
+    // Lấy tất cả các lịch hẹn đã đặt cho bác sĩ
+    const appointments = await Appointment.find({ doctor_id: doctorId })
+      .select('appointment_date time_slot') // Chỉ chọn các trường cần thiết
+      .lean();
+
+    // Tạo một đối tượng để chứa các ngày và khung giờ
+    const schedule = {};
+
+    appointments.forEach((appointment) => {
+      const appointmentDate = appointment.appointment_date.toISOString().split('T')[0]; // Lấy ngày
+      const timeSlot = appointment.time_slot;
+
+      // Thêm ngày vào đối tượng nếu chưa có
+      if (!schedule[appointmentDate]) {
+        schedule[appointmentDate] = {
+          timeSlots: [],
+        };
+      }
+
+      // Thêm khung giờ đã đặt vào mảng
+      schedule[appointmentDate].timeSlots.push(timeSlot);
+    });
+
+    // Chuyển đổi đối tượng thành mảng
+    const availableSchedule = Object.keys(schedule).map((date) => ({
+      bookedDates: date,
+      bookedSlots: schedule[date].timeSlots,
+    }));
+
+    return availableSchedule;
+  } catch (error) {
+    throw new Error("Error fetching appointments: " + error.message);
+  }
 };

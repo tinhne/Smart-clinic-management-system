@@ -3,8 +3,8 @@ import "../../style/DoctorProfile/DoctorProfile.scss";
 import { getUserById } from "../../utils/AuthAPI/AdminService";
 import { NavLink, useParams } from "react-router-dom";
 import getScheduleDoctorById from "../../utils/SchedualAPI/SchedualService";
+import { checkDoctorSchedule } from "../../utils/AppointmentAPI/AppointmentService";
 import Cookies from "js-cookie";
-// import jwt_decode from "jwt-decode"; // Import thư viện giải mã JWT
 
 const DoctorProfile = () => {
   const { doctorId } = useParams();
@@ -12,8 +12,11 @@ const DoctorProfile = () => {
   const [schedule, setSchedule] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedSlot, setSelectedSlot] = useState(null);
-  // Thêm state để lưu patient_id
+  const [bookedDates, setBookedDates] = useState([]);
+  const [bookedSlots, setBookedSlots] = useState([]);
+  const[bookedList, setBookedList] = useState([]);
   const patientId = Cookies.get("id");
+
   useEffect(() => {
     const fetchDoctor = async () => {
       const doctorData = await getUserById(doctorId, "doctor");
@@ -23,6 +26,7 @@ const DoctorProfile = () => {
     const fetchSchedule = async () => {
       try {
         const scheduleData = await getScheduleDoctorById(doctorId);
+        console.log(`Schedule`, scheduleData);
         setSchedule(scheduleData);
         setSelectedDate(scheduleData[0]?.date);
       } catch (error) {
@@ -30,36 +34,63 @@ const DoctorProfile = () => {
       }
     };
 
+    const fetchBookedDates = async () => {
+      try {
+        const appointments = await checkDoctorSchedule(doctorId);
+        setBookedList(appointments);
+        if (Array.isArray(appointments)) {
+          const dates = appointments.map(app => app.appointment_date);
+          setBookedDates(dates);
+          
+          const slots = appointments.flatMap(app => app.time_slots || []);
+          setBookedSlots(slots);
+        }
+      } catch (error) {
+        console.error("Lỗi khi lấy lịch hẹn:", error);
+      }
+    };
+
     fetchDoctor();
     fetchSchedule();
-  }, [doctorId]);
-
+    fetchBookedDates();
+  }, [doctorId, patientId]);
+  useEffect(() => {
+    console.log("Updated Booked List:", bookedList); // Kiểm tra dữ liệu sau khi bookedList thay đổi
+  }, [bookedList]);
+  
+  
   const handleDateClick = (date) => {
     setSelectedDate(date);
+    console.log("Date clicked", date);
     setSelectedSlot(null);
   };
 
   const handleSlotClick = (slot) => {
     setSelectedSlot(slot);
+    console.log("Slot clicked", slot);
   };
 
   const selectedDaySchedule = schedule?.find(
     (day) => day.date === selectedDate
   );
-
+  
   const morningSlots = selectedDaySchedule?.available_slots.filter((slot) => {
     const hour = parseInt(slot.split(":")[0]);
-    return hour < 12;
+    return hour < 12 && !bookedSlots.includes(slot);
   });
 
   const afternoonSlots = selectedDaySchedule?.available_slots.filter((slot) => {
     const hour = parseInt(slot.split(":")[0]);
-    return hour >= 12;
+    return hour >= 12 && !bookedSlots.includes(slot);
   });
 
   const formatDate = (dateString) => {
     const options = { weekday: "short", day: "2-digit", month: "2-digit" };
     return new Date(dateString).toLocaleDateString("vi-VN", options);
+  };
+
+  const isSlotBooked = (date, slot) => {
+    return bookedDates.includes(date) && bookedSlots.includes(slot);
   };
 
   if (!doctor) {
@@ -73,6 +104,7 @@ const DoctorProfile = () => {
           <img
             src={`data:image/jpeg;base64,${doctor.user.imageUrl}`}
             className="doctor-img"
+            alt={`${doctor.user.first_name} ${doctor.user.last_name}`}
           />
         </div>
         <div className="doctor-info">
@@ -105,20 +137,21 @@ const DoctorProfile = () => {
         <h3 className="section-title">Đặt khám nhanh</h3>
         <div className="date-list">
           {schedule &&
-            schedule.map((day, index) => (
-              <div
-                className={`date-item ${
-                  selectedDate === day.date ? "selected" : ""
-                }`}
-                key={index}
-                onClick={() => handleDateClick(day.date)}
-              >
-                <span>{formatDate(day.date)}</span>
-                <span className="time-frame">
-                  {day.available_slots.length} khung giờ
-                </span>
-              </div>
-            ))}
+            schedule.map((day, index) => {
+              const isBooked = bookedDates.includes(day.date);
+              return (
+                <div
+                  className="date-item"
+                  key={index}
+                  onClick={() => !isBooked && handleDateClick(day.date)}
+                >
+                  <span>{formatDate(day.date)}</span>
+                  <span className="time-frame">
+                    {day.available_slots.length} khung giờ
+                  </span>
+                </div>
+              );
+            })}
         </div>
 
         <div className="time-slot-section">
@@ -134,9 +167,12 @@ const DoctorProfile = () => {
                 <button
                   className={`time-slot ${
                     selectedSlot === slot ? "selected" : ""
-                  }`}
+                  } ${isSlotBooked(selectedDate, slot) ? "disabled" : ""}`}
                   key={index}
-                  onClick={() => handleSlotClick(slot)}
+                  onClick={() =>
+                    !isSlotBooked(selectedDate, slot) && handleSlotClick(slot)
+                  }
+                  disabled={isSlotBooked(selectedDate, slot)} // Disable button if booked
                 >
                   {slot}
                 </button>
@@ -158,9 +194,12 @@ const DoctorProfile = () => {
                 <button
                   className={`time-slot ${
                     selectedSlot === slot ? "selected" : ""
-                  }`}
+                  } ${isSlotBooked(selectedDate, slot) ? "disabled" : ""}`}
                   key={index}
-                  onClick={() => handleSlotClick(slot)}
+                  onClick={() =>
+                    !isSlotBooked(selectedDate, slot) && handleSlotClick(slot)
+                  }
+                  disabled={isSlotBooked(selectedDate, slot)} // Disable button if booked
                 >
                   {slot}
                 </button>
@@ -203,12 +242,12 @@ const DoctorProfile = () => {
         </span>
         <NavLink
           to={{
-            pathname: `/dat-kham/ho-so-lich/${doctor.user._id}/${patientId}`, // Đường dẫn với ID bác sĩ và bệnh nhân
+            pathname: `/dat-kham/ho-so-lich/${doctor.user._id}/${patientId}`,
           }}
           state={{
             doctor,
-            selectedDate, // Truyền ngày khám
-            selectedSlot, // Truyền khung giờ
+            selectedDate,
+            selectedSlot,
           }}
         >
           <button className="book-now-button">Đặt khám ngay</button>

@@ -121,7 +121,7 @@
 
   .info-booking {
     height: 400px;
-    width: 360px;
+    width: 420px;
     border: 1px solid #ddd;
     border-radius: 8px;
     background-color: white;
@@ -186,8 +186,7 @@
     }
   
     .booking-button {
-      width: 47%;
-      padding: 12px;
+      width: 40%;
       background-color: #007bff;
       color: white;
       border: none;
@@ -196,7 +195,7 @@
       font-size: 16px;
       font-weight: bold;
       margin-top: 50px;
-      margin-left: 100px;
+      margin-right: 38px;
   
       &:hover {
         background-color: #0056b3;

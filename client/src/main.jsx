@@ -24,6 +24,7 @@ import Profile from "./pages/users/profile.jsx";
 import ProfileInfo from "./components/user/profileInfo.jsx";
 import ChangePassword from "./components/user/ChangePassword.jsx";
 import Appointment from "./components/user/Appointment.jsx";
+import VideoPage from "./pages/videocall/VideoHomePage.jsx";
 const router = createBrowserRouter([
   {
     path: "/login-register",
@@ -104,6 +105,10 @@ const router = createBrowserRouter([
         ],
       },
     ],
+  },
+  {
+    path: '/room/:id',
+    element: <VideoPage/>
   },
   {
     path: "/admin/login", // Public login page

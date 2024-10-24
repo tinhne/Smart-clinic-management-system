@@ -8,6 +8,7 @@ export default defineConfig({
     host: true,
   },
   optimizeDeps: {
-    include: ["jwt-decode"], // Add this line to ensure jwt-decode is bundled properly
+    include: ["jwt-decode"],
+    exclude: ['@zegocloud/zego-uikit-prebuilt'], // Add this line to ensure jwt-decode is bundled properly
   },
 });

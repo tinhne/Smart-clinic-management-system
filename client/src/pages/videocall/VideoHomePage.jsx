@@ -1,45 +1,39 @@
-// eslint-disable-next-line no-unused-vars
-import React from 'react'
-import { ZegoUIKitPrebuilt } from '@zegocloud/zego-uikit-prebuilt';
+import React from 'react';
 import { useParams } from 'react-router-dom';
-import { APP_ID,SEVER_SECRET } from './Constant';
+import * as ZegoUIKitPrebuilt from "@zegocloud/zego-uikit-prebuilt";
+import { APP_ID, SEVER_SECRET } from './Constant';
+
 const VideoPage = () => {
-  const {id}=useParams();
-  const roomID=id;
-      let myMeeting = async (element) => {
-     // generate Kit Token
+  const { id } = useParams();
+  const roomID = id;
+
+  const myMeeting = async (element) => {
+    try {
       const appID = APP_ID;
       const serverSecret = SEVER_SECRET;
-      const kitToken =  ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, roomID,  Date.now().toString(),);
 
-    
-     // Create instance object from Kit Token.
+      // Verify if this function exists
+      const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(appID, serverSecret, roomID, Date.now().toString());
+
       const zp = ZegoUIKitPrebuilt.create(kitToken);
-      // start the call
       zp.joinRoom({
         container: element,
         sharedLinks: [
           {
             name: 'Personal link',
-            url:
-             window.location.protocol + '//' + 
-             window.location.host + window.location.pathname +
-              '?roomID=' +
-              roomID,
+            url: `${window.location.protocol}//${window.location.host}${window.location.pathname}?roomID=${roomID}`,
           },
         ],
         scenario: {
-          mode: ZegoUIKitPrebuilt.OneONoneCall, // To implement 1-on-1 calls, modify the parameter here to [ZegoUIKitPrebuilt.OneONoneCall].
+          mode: ZegoUIKitPrebuilt.OneONoneCall,
         },
       });
-
-    
+    } catch (error) {
+      console.error("Error initializing video meeting:", error);
+    }
   };
-  return (
-    <div ref={myMeeting}>
-      
-    </div>
-  )
-}
 
-export default VideoPage
+  return <div ref={myMeeting}></div>;
+};
+
+export default VideoPage;

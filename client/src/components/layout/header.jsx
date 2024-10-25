@@ -37,7 +37,8 @@ const Header = () => {
     setUsername("");
     Cookies.remove("access_token");
     Cookies.remove("role");
-    Cookies.remove("username"); // Xóa username trong cookie
+    Cookies.remove("username");
+    navigate("/");
   };
 
   // Thêm hàm xử lý click cho từng lựa chọn đăng nhập
@@ -60,6 +61,7 @@ const Header = () => {
               <Nav.Link href="#home">Đặt khám</Nav.Link>
               <Nav.Link href="#">Tư vấn trực tuyến</Nav.Link>
               <Nav.Link href="/tin-tuc/">Tin y tế</Nav.Link>
+              <Nav.Link href="/dich-vu-kham">Dịch vụ</Nav.Link>
             </Nav>
             <div className="navbar-buttons">
               {username ? (

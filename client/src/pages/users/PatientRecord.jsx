@@ -47,7 +47,7 @@ const PatientRecord = () => {
 
   const handleBooking = async (isOnline) => {
     const appointmentType = isOnline ? "online" : "in-person";
-    const videoCallLink = isOnline ? `http://localhost:5173/room` : null;
+    const videoCallLink = isOnline ? `http://localhost:5173/room` : "";
 
     const appointmentData = {
       appointment_date: selectedDate,
@@ -58,10 +58,12 @@ const PatientRecord = () => {
       appointment_type: appointmentType,
       video_call_link: videoCallLink,
     };
+    console.log("appointmentData:", appointmentData);
 
     try {
       const response = await BookingAppointment(appointmentData);
       toast.success("Đặt lịch thành công!");
+      console.log("Response:", response.data);
 
       console.log("Video Call Link:", videoCallLink); // Log the video call link
 
@@ -74,16 +76,18 @@ const PatientRecord = () => {
           selectedSlot,
           note,
           appointmentType,
-          videoCallLink
+          videoCallLink,
         },
       });
     } catch (error) {
-      console.error("Lỗi khi đặt lịch:", error);
+      if (error.response) {
+        console.error("Chi tiết lỗi từ server:", error.response.data); // In ra chi tiết lỗi từ server
+      } else {
+        console.error("Lỗi không xác định:", error.message);
+      }
       toast.error("Đặt lịch thất bại.");
     }
-};
-
-
+  };
 
   if (!doctor || !patient) {
     return <p>Loading...</p>; // Hiển thị loading khi dữ liệu chưa có

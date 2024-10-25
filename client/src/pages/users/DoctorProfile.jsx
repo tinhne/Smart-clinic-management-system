@@ -14,42 +14,61 @@ const DoctorProfile = () => {
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [bookedDates, setBookedDates] = useState([]);
   const [bookedSlots, setBookedSlots] = useState([]);
-  const [bookedList, setBookedList] = useState([]);
-  const patientId = Cookies.get("id");
+  const [patientId, setPatientId] = useState(Cookies.get("id"));
   const [morningSlots, setMorningSlots] = useState([]);
   const [afternoonSlots, setAfternoonSlots] = useState([]);
+  const [formattedToday, setFormattedToday] = useState("");
 
   useEffect(() => {
-    const fetchDoctor = async () => {
-      const doctorData = await getUserById(doctorId, "doctor");
-      setDoctor(doctorData);
+    const fetchDoctorData = async () => {
+      try {
+        const doctorData = await getUserById(doctorId, "doctor");
+        setDoctor(doctorData);
+      } catch (error) {
+        console.error("Error fetching doctor data:", error);
+      }
     };
 
-    const fetchSchedule = async () => {
+    const fetchScheduleData = async () => {
       try {
         const scheduleData = await getScheduleDoctorById(doctorId);
         setSchedule(scheduleData);
-
-        // Set selectedDate to the first available date
         const today = new Date();
-        const futureSchedule = scheduleData.filter(day => new Date(day.date) >= today);
+        const formattedToday = today.toISOString().split("T")[0]; // 2024-10-25
+        setFormattedToday(formattedToday);
+
+        console.log("Formatted Today:", formattedToday); // Added log
+        console.log("Schedule Data:", scheduleData); // Added log
+
+        const futureSchedule = scheduleData.filter((day) => {
+          const scheduleDate = new Date(day.date).toISOString().split("T")[0];
+          return scheduleDate >= formattedToday;
+        });
+
         if (futureSchedule.length > 0) {
-          const firstDate = futureSchedule[0].date;
-          setSelectedDate(firstDate);
+          setSelectedDate(futureSchedule[0].date);
+        }
+
+        const currentDateInSchedule = futureSchedule.find(
+          (day) => day.date.split("T")[0] === formattedToday
+        );
+        if (currentDateInSchedule) {
+          console.log("Current date is in schedule:", formattedToday); // Added log
+          setSelectedDate(currentDateInSchedule.date);
+        } else {
+          console.log("Current date is NOT in schedule"); // Added log
         }
       } catch (error) {
         console.error("Error fetching schedule:", error);
       }
     };
 
-    const fetchBookedDates = async () => {
+    const fetchBookedDatesData = async () => {
       try {
         const appointments = await checkDoctorSchedule(doctorId);
-        setBookedList(appointments);
         if (Array.isArray(appointments)) {
           const dates = appointments.map((app) => app.appointment_date);
           setBookedDates(dates);
-
           const slots = appointments.flatMap((app) => app.time_slots || []);
           setBookedSlots(slots);
         }
@@ -58,9 +77,9 @@ const DoctorProfile = () => {
       }
     };
 
-    fetchDoctor();
-    fetchSchedule();
-    fetchBookedDates();
+    fetchDoctorData();
+    fetchScheduleData();
+    fetchBookedDatesData();
   }, [doctorId, patientId]);
 
   const handleDateClick = (date) => {
@@ -73,26 +92,55 @@ const DoctorProfile = () => {
   };
 
   useEffect(() => {
-    if (selectedDate && schedule) {
+    const now = new Date();
+    const nowDateStr = now.toISOString().split("T")[0]; // Get today's date in "YYYY-MM-DD" format
+    console.log("Current Date String", nowDateStr); // Log the current date in "YYYY-MM-DD" format
+
+    if (selectedDate && schedule.length) {
       const selectedDaySchedule = schedule.find(
         (day) => day.date === selectedDate
       );
-      const isPastDate = selectedDate && new Date(selectedDate) < new Date();
+      const isPastDate = new Date(selectedDate) < new Date();
+
+      console.log("Selected Day Schedule:", selectedDaySchedule); // Added log
+      console.log("Is Past Date:", isPastDate); // Added log
 
       if (selectedDaySchedule) {
-        setMorningSlots(
-          selectedDaySchedule.available_slots.filter((slot) => {
-            const hour = parseInt(slot.split(":")[0]);
-            return hour < 12 && !bookedSlots.includes(slot) && !isPastDate;
-          })
-        );
+        const currentTime = now.getHours() * 60 + now.getMinutes();
 
-        setAfternoonSlots(
-          selectedDaySchedule.available_slots.filter((slot) => {
-            const hour = parseInt(slot.split(":")[0]);
-            return hour >= 12 && !bookedSlots.includes(slot) && !isPastDate;
-          })
-        );
+        const selectedDateFomat = selectedDate.split("T")[0];
+        console.log("Formatted Selected Date:", selectedDateFomat); // Added log
+
+        if (selectedDateFomat === nowDateStr) {
+          // Check if selected date is today
+          setMorningSlots(
+            selectedDaySchedule.available_slots.filter(
+              (slot) => parseInt(slot.split(":")[0]) < 12
+            )
+          );
+          setAfternoonSlots(
+            selectedDaySchedule.available_slots.filter(
+              (slot) => parseInt(slot.split(":")[0]) >= 12
+            )
+          );
+        } else {
+          setMorningSlots(
+            selectedDaySchedule.available_slots.filter(
+              (slot) =>
+                parseInt(slot.split(":")[0]) < 12 &&
+                !bookedSlots.includes(slot) &&
+                !isPastDate
+            )
+          );
+          setAfternoonSlots(
+            selectedDaySchedule.available_slots.filter(
+              (slot) =>
+                parseInt(slot.split(":")[0]) >= 12 &&
+                !bookedSlots.includes(slot) &&
+                !isPastDate
+            )
+          );
+        }
       }
     }
   }, [selectedDate, schedule, bookedSlots]);
@@ -116,8 +164,8 @@ const DoctorProfile = () => {
         <div className="doctor-img">
           <img
             src={`data:image/jpeg;base64,${doctor.user.imageUrl}`}
-            className="doctor-img"
             alt={`${doctor.user.first_name} ${doctor.user.last_name}`}
+            className="doctor-img"
           />
         </div>
         <div className="doctor-info">
@@ -134,55 +182,56 @@ const DoctorProfile = () => {
           </div>
         </div>
       </div>
-
       <div className="note-container">
         <div className="note-header">
           <span className="note-icon">⚠️</span>
           <h3 className="note-title">Lưu ý</h3>
         </div>
         <p className="note-content">
-          * Nếu bệnh nhân bận việc không đến khám được vui lòng hủy lịch khám đã
-          đặt và đặt lại ngày khác. Xin cảm ơn!
+          * Nếu bệnh nhân bận việc không đến khám được, vui lòng hủy lịch khám
+          đã đặt và đặt lại ngày khác. Xin cảm ơn!
         </p>
       </div>
-
       <div className="quick-booking">
         <h3 className="section-title">Đặt khám nhanh</h3>
         <div className="date-list">
-          {schedule &&
-            schedule
-              .filter(day => new Date(day.date) >= new Date()) // Filter for today and future dates
-              .map((day, index) => {
-                const isBooked = bookedDates.includes(day.date);
-                return (
-                  <div
-                    className={`date-item ${isBooked ? "booked" : ""}`}
-                    key={index}
-                    onClick={() => !isBooked && handleDateClick(day.date)}
-                  >
-                    <span>{formatDate(day.date)}</span>
-                    <span className="time-frame">
-                      {day.available_slots.length} khung giờ
-                    </span>
-                  </div>
-                );
-              })}
+          {schedule
+            .filter((day) => {
+              const scheduleDate = new Date(day.date)
+                .toISOString()
+                .split("T")[0];
+              return scheduleDate >= formattedToday;
+            })
+            .sort((a, b) => new Date(a.date) - new Date(b.date)) // Sort dates from smallest to largest
+            .map((day, index) => {
+              const isBooked = bookedDates.includes(day.date);
+              return (
+                <div
+                  className={`date-item ${isBooked ? "booked" : ""}`}
+                  key={index}
+                  onClick={() => !isBooked && handleDateClick(day.date)}
+                >
+                  <span>{formatDate(day.date)}</span>
+                  <span className="time-frame">
+                    {day.available_slots.length} khung giờ
+                  </span>
+                </div>
+              );
+            })}
         </div>
-
         <div className="time-slot-section">
-          <div className="time-slot-title">
-            <span role="img" aria-label="morning">
-              🌅
-            </span>{" "}
-            Buổi sáng
-          </div>
+          <div className="time-slot-title">Buổi sáng</div>
           <div className="time-slot-list">
-            {morningSlots && morningSlots.length > 0 ? (
+            {morningSlots.length > 0 ? (
               morningSlots.map((slot, index) => (
                 <button
-                  className={`time-slot ${selectedSlot === slot ? "selected" : ""} ${isSlotBooked(selectedDate, slot) ? "disabled" : ""}`}
+                  className={`time-slot ${
+                    selectedSlot === slot ? "selected" : ""
+                  } ${isSlotBooked(selectedDate, slot) ? "disabled" : ""}`}
                   key={index}
-                  onClick={() => !isSlotBooked(selectedDate, slot) && handleSlotClick(slot)}
+                  onClick={() =>
+                    !isSlotBooked(selectedDate, slot) && handleSlotClick(slot)
+                  }
                   disabled={isSlotBooked(selectedDate, slot)}
                 >
                   {slot}
@@ -192,20 +241,18 @@ const DoctorProfile = () => {
               <p>Không có khung giờ nào vào buổi sáng.</p>
             )}
           </div>
-
-          <div className="time-slot-title">
-            <span role="img" aria-label="afternoon">
-              🌇
-            </span>{" "}
-            Buổi chiều
-          </div>
+          <div className="time-slot-title">Buổi chiều</div>
           <div className="time-slot-list">
-            {afternoonSlots && afternoonSlots.length > 0 ? (
+            {afternoonSlots.length > 0 ? (
               afternoonSlots.map((slot, index) => (
                 <button
-                  className={`time-slot ${selectedSlot === slot ? "selected" : ""} ${isSlotBooked(selectedDate, slot) ? "disabled" : ""}`}
+                  className={`time-slot ${
+                    selectedSlot === slot ? "selected" : ""
+                  } ${isSlotBooked(selectedDate, slot) ? "disabled" : ""}`}
                   key={index}
-                  onClick={() => !isSlotBooked(selectedDate, slot) && handleSlotClick(slot)}
+                  onClick={() =>
+                    !isSlotBooked(selectedDate, slot) && handleSlotClick(slot)
+                  }
                   disabled={isSlotBooked(selectedDate, slot)}
                 >
                   {slot}
@@ -218,20 +265,13 @@ const DoctorProfile = () => {
         </div>
       </div>
 
-      <div className="description">
-        <h3>Giới thiệu</h3>
-        <p>
-          Bác sĩ Chuyên khoa II Lê Thị Minh Hồng hiện đang là Phó Giám đốc Bệnh
-          viện Nhi Đồng 2. Bác sĩ trực tiếp khám bệnh theo yêu cầu chất lượng
-          cao tại Bệnh Viện Nhi Đồng 2 và phòng khám Nhi khoa (250 Nguyễn Xí,
-          Phường 13, Bình Thạnh, TP.HCM).
-        </p>
-        <ul>
+      <div className="doctor-info-section">
+        <h3 className="doctor-info-title">Thông tin bác sĩ</h3>
+        <ul className="doctor-info-list">
           <li>
-            Khám và điều trị các bệnh lý Nhi khoa: tiêu hóa, hô hấp, thận,
-            nhiễm, dị ứng, tai mũi họng,...
+            Khám và điều trị các bệnh lý về nội khoa, nhi khoa, tâm thần kinh.
           </li>
-          <li>Khám tư vấn dinh dưỡng và phát triển thể chất cho trẻ em.</li>
+          <li>Tư vấn về dinh dưỡng và phát triển thể chất cho trẻ em.</li>
           <li>
             Khám và tư vấn về sức khỏe, phòng ngừa bệnh cho trẻ em và phụ nữ
             mang thai.
@@ -242,7 +282,6 @@ const DoctorProfile = () => {
           </li>
         </ul>
       </div>
-
       <div className="booking-footer">
         <span className="support-text">
           Hỗ trợ đặt khám <strong>0935038810</strong>
@@ -251,11 +290,7 @@ const DoctorProfile = () => {
           to={{
             pathname: `/dat-kham/ho-so-lich/${doctor.user._id}/${patientId}`,
           }}
-          state={{
-            doctor,
-            selectedDate,
-            selectedSlot,
-          }}
+          state={{ doctor, selectedDate, selectedSlot }}
         >
           <button className="book-now-button">Đặt khám ngay</button>
         </NavLink>

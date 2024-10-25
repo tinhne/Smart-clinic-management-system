@@ -47,7 +47,7 @@ const PatientRecord = () => {
 
   const handleBooking = async (isOnline) => {
     const appointmentType = isOnline ? "online" : "in-person";
-    const videoCallLink = isOnline ? `http://localhost:5173/room` : null;
+    const videoCallLink = isOnline ? `http://localhost:5173/room/${idDoctor}` : null;
 
     const appointmentData = {
       appointment_date: selectedDate,

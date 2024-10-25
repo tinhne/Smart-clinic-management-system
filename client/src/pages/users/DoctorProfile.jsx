@@ -9,13 +9,15 @@ import Cookies from "js-cookie";
 const DoctorProfile = () => {
   const { doctorId } = useParams();
   const [doctor, setDoctor] = useState(null);
-  const [schedule, setSchedule] = useState(null);
+  const [schedule, setSchedule] = useState([]);
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [bookedDates, setBookedDates] = useState([]);
   const [bookedSlots, setBookedSlots] = useState([]);
-  const[bookedList, setBookedList] = useState([]);
+  const [bookedList, setBookedList] = useState([]);
   const patientId = Cookies.get("id");
+  const [morningSlots, setMorningSlots] = useState([]);
+  const [afternoonSlots, setAfternoonSlots] = useState([]);
 
   useEffect(() => {
     const fetchDoctor = async () => {
@@ -26,11 +28,17 @@ const DoctorProfile = () => {
     const fetchSchedule = async () => {
       try {
         const scheduleData = await getScheduleDoctorById(doctorId);
-        console.log(`Schedule`, scheduleData);
         setSchedule(scheduleData);
-        setSelectedDate(scheduleData[0]?.date);
+
+        // Set selectedDate to the first available date
+        const today = new Date();
+        const futureSchedule = scheduleData.filter(day => new Date(day.date) >= today);
+        if (futureSchedule.length > 0) {
+          const firstDate = futureSchedule[0].date;
+          setSelectedDate(firstDate);
+        }
       } catch (error) {
-        console.error("Lỗi khi lấy lịch làm việc:", error);
+        console.error("Error fetching schedule:", error);
       }
     };
 
@@ -39,14 +47,14 @@ const DoctorProfile = () => {
         const appointments = await checkDoctorSchedule(doctorId);
         setBookedList(appointments);
         if (Array.isArray(appointments)) {
-          const dates = appointments.map(app => app.appointment_date);
+          const dates = appointments.map((app) => app.appointment_date);
           setBookedDates(dates);
-          
-          const slots = appointments.flatMap(app => app.time_slots || []);
+
+          const slots = appointments.flatMap((app) => app.time_slots || []);
           setBookedSlots(slots);
         }
       } catch (error) {
-        console.error("Lỗi khi lấy lịch hẹn:", error);
+        console.error("Error fetching appointments:", error);
       }
     };
 
@@ -54,35 +62,40 @@ const DoctorProfile = () => {
     fetchSchedule();
     fetchBookedDates();
   }, [doctorId, patientId]);
-  useEffect(() => {
-    console.log("Updated Booked List:", bookedList); // Kiểm tra dữ liệu sau khi bookedList thay đổi
-  }, [bookedList]);
-  
-  
+
   const handleDateClick = (date) => {
     setSelectedDate(date);
-    console.log("Date clicked", date);
     setSelectedSlot(null);
   };
 
   const handleSlotClick = (slot) => {
     setSelectedSlot(slot);
-    console.log("Slot clicked", slot);
   };
 
-  const selectedDaySchedule = schedule?.find(
-    (day) => day.date === selectedDate
-  );
-  
-  const morningSlots = selectedDaySchedule?.available_slots.filter((slot) => {
-    const hour = parseInt(slot.split(":")[0]);
-    return hour < 12 && !bookedSlots.includes(slot);
-  });
+  useEffect(() => {
+    if (selectedDate && schedule) {
+      const selectedDaySchedule = schedule.find(
+        (day) => day.date === selectedDate
+      );
+      const isPastDate = selectedDate && new Date(selectedDate) < new Date();
 
-  const afternoonSlots = selectedDaySchedule?.available_slots.filter((slot) => {
-    const hour = parseInt(slot.split(":")[0]);
-    return hour >= 12 && !bookedSlots.includes(slot);
-  });
+      if (selectedDaySchedule) {
+        setMorningSlots(
+          selectedDaySchedule.available_slots.filter((slot) => {
+            const hour = parseInt(slot.split(":")[0]);
+            return hour < 12 && !bookedSlots.includes(slot) && !isPastDate;
+          })
+        );
+
+        setAfternoonSlots(
+          selectedDaySchedule.available_slots.filter((slot) => {
+            const hour = parseInt(slot.split(":")[0]);
+            return hour >= 12 && !bookedSlots.includes(slot) && !isPastDate;
+          })
+        );
+      }
+    }
+  }, [selectedDate, schedule, bookedSlots]);
 
   const formatDate = (dateString) => {
     const options = { weekday: "short", day: "2-digit", month: "2-digit" };
@@ -137,21 +150,23 @@ const DoctorProfile = () => {
         <h3 className="section-title">Đặt khám nhanh</h3>
         <div className="date-list">
           {schedule &&
-            schedule.map((day, index) => {
-              const isBooked = bookedDates.includes(day.date);
-              return (
-                <div
-                  className="date-item"
-                  key={index}
-                  onClick={() => !isBooked && handleDateClick(day.date)}
-                >
-                  <span>{formatDate(day.date)}</span>
-                  <span className="time-frame">
-                    {day.available_slots.length} khung giờ
-                  </span>
-                </div>
-              );
-            })}
+            schedule
+              .filter(day => new Date(day.date) >= new Date()) // Filter for today and future dates
+              .map((day, index) => {
+                const isBooked = bookedDates.includes(day.date);
+                return (
+                  <div
+                    className={`date-item ${isBooked ? "booked" : ""}`}
+                    key={index}
+                    onClick={() => !isBooked && handleDateClick(day.date)}
+                  >
+                    <span>{formatDate(day.date)}</span>
+                    <span className="time-frame">
+                      {day.available_slots.length} khung giờ
+                    </span>
+                  </div>
+                );
+              })}
         </div>
 
         <div className="time-slot-section">
@@ -165,14 +180,10 @@ const DoctorProfile = () => {
             {morningSlots && morningSlots.length > 0 ? (
               morningSlots.map((slot, index) => (
                 <button
-                  className={`time-slot ${
-                    selectedSlot === slot ? "selected" : ""
-                  } ${isSlotBooked(selectedDate, slot) ? "disabled" : ""}`}
+                  className={`time-slot ${selectedSlot === slot ? "selected" : ""} ${isSlotBooked(selectedDate, slot) ? "disabled" : ""}`}
                   key={index}
-                  onClick={() =>
-                    !isSlotBooked(selectedDate, slot) && handleSlotClick(slot)
-                  }
-                  disabled={isSlotBooked(selectedDate, slot)} // Disable button if booked
+                  onClick={() => !isSlotBooked(selectedDate, slot) && handleSlotClick(slot)}
+                  disabled={isSlotBooked(selectedDate, slot)}
                 >
                   {slot}
                 </button>
@@ -192,14 +203,10 @@ const DoctorProfile = () => {
             {afternoonSlots && afternoonSlots.length > 0 ? (
               afternoonSlots.map((slot, index) => (
                 <button
-                  className={`time-slot ${
-                    selectedSlot === slot ? "selected" : ""
-                  } ${isSlotBooked(selectedDate, slot) ? "disabled" : ""}`}
+                  className={`time-slot ${selectedSlot === slot ? "selected" : ""} ${isSlotBooked(selectedDate, slot) ? "disabled" : ""}`}
                   key={index}
-                  onClick={() =>
-                    !isSlotBooked(selectedDate, slot) && handleSlotClick(slot)
-                  }
-                  disabled={isSlotBooked(selectedDate, slot)} // Disable button if booked
+                  onClick={() => !isSlotBooked(selectedDate, slot) && handleSlotClick(slot)}
+                  disabled={isSlotBooked(selectedDate, slot)}
                 >
                   {slot}
                 </button>

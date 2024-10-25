@@ -47,10 +47,10 @@ const HomePage = () => {
   };
   return (
     <>
-    <div className="chatbot-container">
-        <Chatbot/>
-    </div>
-    
+      <div className="chatbot-container">
+        <Chatbot />
+      </div>
+
       <div className="body-homepage">
         <div className="description-search-container">
           <p className="description_1">Ứng dụng đặt khám </p>
@@ -303,9 +303,14 @@ const HomePage = () => {
               {doctors.length > 0 ? (
                 doctors.slice(0, 5).map((doctor, index) => (
                   <div key={index} className="doctor_card">
-                    <img src={`data:image/jpeg;base64,${doctor.imageUrl}`} alt="" />
+                    <img
+                      src={`data:image/jpeg;base64,${doctor.imageUrl}`}
+                      alt=""
+                    />
                     <div className="doctor_info">
-                      <p className="doctor_name">Ths.Bs {doctor.first_name} {doctor.last_name}</p>
+                      <p className="doctor_name">
+                        Ths.Bs {doctor.first_name} {doctor.last_name}
+                      </p>
                       <p className="specialty">{doctor.specialties}</p>
                     </div>
                   </div>
@@ -453,7 +458,7 @@ const HomePage = () => {
 
           <p className="description">
             Với nhiều năm kinh nghiệm trong lĩnh vực Y tế, chúng tôi hiểu rằng,
-            dữ liệu sức khỏe của bạn chỉ thuộc về bạn, YouMed tuân thủ các chính
+            dữ liệu sức khỏe của bạn chỉ thuộc về bạn, và tuân thủ các chính
             sách bảo mật dữ liệu cao nhất trên thế giới.
           </p>
         </div>

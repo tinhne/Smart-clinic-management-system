@@ -26,6 +26,7 @@ import ChangePassword from "./components/user/ChangePassword.jsx";
 import Appointment from "./components/user/Appointment.jsx";
 import VideoPage from "./pages/videocall/VideoHomePage.jsx";
 import ServiceClinic from "./pages/users/ServiceClinic.jsx";
+import ClinicInfo from "./pages/users/ClinicInfor.jsx";
 const router = createBrowserRouter([
   {
     path: "/login-register",
@@ -38,6 +39,10 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <HomePage />,
+      },
+      {
+        path: "gioi-thieu",
+        element: <ClinicInfo />,
       },
       {
         path: "/dich-vu-kham",

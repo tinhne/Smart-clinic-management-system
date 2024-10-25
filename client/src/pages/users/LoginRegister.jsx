@@ -169,13 +169,13 @@ function LoginRegister() {
               <div className="login__input-group">
                 <input
                   type="text"
-                  placeholder="First Name"
+                  placeholder="Họ và tên đệm"
                   value={firstName}
                   onChange={(e) => setFirstName(e.target.value)}
                 />
                 <input
                   type="text"
-                  placeholder="Last Name"
+                  placeholder="Tên"
                   value={lastName}
                   onChange={(e) => setLastName(e.target.value)}
                 />
@@ -189,7 +189,7 @@ function LoginRegister() {
                 />
                 <input
                   type="text"
-                  placeholder="Phone"
+                  placeholder="Số điện thoại"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                 />
@@ -197,7 +197,7 @@ function LoginRegister() {
               <div className="login__input-group">
                 <input
                   type="text"
-                  placeholder="Address"
+                  placeholder="Địa chỉ"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                 />
@@ -206,10 +206,10 @@ function LoginRegister() {
                   onChange={(e) => setGender(e.target.value)}
                 >
                   <option value="" disabled>
-                    Gender
+                    Gioi tinh
                   </option>
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
+                  <option value="Male">Nam</option>
+                  <option value="Female">Nữ</option>
                 </select>
               </div>
               <div className="login__input-group">
@@ -234,6 +234,7 @@ function LoginRegister() {
               <div className="login__input-group">
                 <input
                   type="email"
+                  className="login_email"
                   placeholder="Email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
@@ -243,13 +244,14 @@ function LoginRegister() {
               <div className="login__input-group">
                 <input
                   type="password"
+                  className="login_password"
                   placeholder="Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
                 />
               </div>
-              <button type="submit" className="login__button sign-in-btn">
+              <button type="submit" className="login__button sign-in-btn ">
                 Sign in
               </button>
               <p className="login__forgot-password">

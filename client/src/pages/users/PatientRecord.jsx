@@ -187,12 +187,21 @@ const PatientRecord = () => {
         </div>
 
         {/* Booking Buttons */}
-        <button className="booking-button" onClick={() => handleBooking(false)}>
-          Đặt lịch khám trực tuyến
-        </button>
-        <button className="booking-button" onClick={() => handleBooking(true)}>
-          Đặt lịch khám online
-        </button>
+        <div className="btn-booking-clinic">
+          <button
+            className="booking-button-tt"
+            onClick={() => handleBooking(false)}
+          >
+            Đặt lịch khám:
+            <span>Trực tiếp</span>
+          </button>
+          <button
+            className="booking-button-ol"
+            onClick={() => handleBooking(true)}
+          >
+            Đặt lịch khám: <span>Online</span>
+          </button>
+        </div>
       </div>
     </div>
   );

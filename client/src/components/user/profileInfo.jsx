@@ -92,6 +92,7 @@ const ContentProfile = () => {
                   </label>
                   <input
                     type="text"
+                    placeholder="Họ"
                     name="first_name"
                     value={profile.first_name}
                     onChange={handleChange}
@@ -99,6 +100,7 @@ const ContentProfile = () => {
                   />
                   <input
                     type="text"
+                    placeholder="Tên"
                     name="last_name"
                     value={profile.last_name}
                     onChange={handleChange}

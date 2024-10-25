@@ -14,7 +14,7 @@ const DoctorProfile = () => {
   const [selectedSlot, setSelectedSlot] = useState(null);
   const [bookedDates, setBookedDates] = useState([]);
   const [bookedSlots, setBookedSlots] = useState([]);
-  const[bookedList, setBookedList] = useState([]);
+  const [bookedList, setBookedList] = useState([]);
   const patientId = Cookies.get("id");
 
   useEffect(() => {
@@ -39,10 +39,10 @@ const DoctorProfile = () => {
         const appointments = await checkDoctorSchedule(doctorId);
         setBookedList(appointments);
         if (Array.isArray(appointments)) {
-          const dates = appointments.map(app => app.appointment_date);
+          const dates = appointments.map((app) => app.appointment_date);
           setBookedDates(dates);
-          
-          const slots = appointments.flatMap(app => app.time_slots || []);
+
+          const slots = appointments.flatMap((app) => app.time_slots || []);
           setBookedSlots(slots);
         }
       } catch (error) {
@@ -57,8 +57,7 @@ const DoctorProfile = () => {
   useEffect(() => {
     console.log("Updated Booked List:", bookedList); // Kiểm tra dữ liệu sau khi bookedList thay đổi
   }, [bookedList]);
-  
-  
+
   const handleDateClick = (date) => {
     setSelectedDate(date);
     console.log("Date clicked", date);
@@ -73,7 +72,7 @@ const DoctorProfile = () => {
   const selectedDaySchedule = schedule?.find(
     (day) => day.date === selectedDate
   );
-  
+
   const morningSlots = selectedDaySchedule?.available_slots.filter((slot) => {
     const hour = parseInt(slot.split(":")[0]);
     return hour < 12 && !bookedSlots.includes(slot);
@@ -130,6 +129,9 @@ const DoctorProfile = () => {
         <p className="note-content">
           * Nếu bệnh nhân bận việc không đến khám được vui lòng hủy lịch khám đã
           đặt và đặt lại ngày khác. Xin cảm ơn!
+        </p>
+        <p className="note-content">
+          * Đặt lịch phải trước 4h so với giờ khám. Xin cảm ơn!
         </p>
       </div>
 

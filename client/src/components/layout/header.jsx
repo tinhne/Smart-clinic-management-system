@@ -6,14 +6,12 @@ import "../../style/header.scss";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { useEffect, useState } from "react";
 import NavDropdown from "react-bootstrap/NavDropdown";
-import { FaRegUserCircle } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import Cookies from "js-cookie";
-import customer from "../../assets/img/customer01.png";
 
 const Header = () => {
   const [token, setToken] = useState("");
-  const [username, setUsername] = useState(""); // Thêm useState cho username
+  const [username, setUsername] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -25,14 +23,14 @@ const Header = () => {
     }
 
     if (storedUsername) {
-      setUsername(storedUsername.replace(/_/g, " ")); // Chỉ xử lý khi storedUsername tồn tại
+      setUsername(storedUsername.replace(/_/g, " "));
     } else {
-      setUsername(""); // Nếu không có username trong cookie, đặt username thành chuỗi rỗng
+      setUsername("");
     }
   }, []);
 
   const handleLogout = () => {
-    localStorage.clear(); // Giữ lại nếu cần thiết
+    localStorage.clear();
     setToken("");
     setUsername("");
     Cookies.remove("access_token");
@@ -41,69 +39,65 @@ const Header = () => {
     navigate("/");
   };
 
-  // Thêm hàm xử lý click cho từng lựa chọn đăng nhập
   const handleLogin = () => {
+    navigate("/login-register");
+  };
+  const handleSignup = () => {
     navigate("/login-register");
   };
 
   return (
-    <>
-      <Navbar expand="lg" className="navbar-custom bg-body-tertiary">
-        <Container>
-          <Navbar.Brand href="/">
-            <h1 className="logoMain">
-              Caps<span>tone1</span>
-            </h1>
-          </Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
-          <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="nav-links">
-              <Nav.Link href="#home">Đặt khám</Nav.Link>
-              <Nav.Link href="#">Tư vấn trực tuyến</Nav.Link>
-              <Nav.Link href="/tin-tuc/">Tin y tế</Nav.Link>
-              <Nav.Link href="/dich-vu-kham">Dịch vụ</Nav.Link>
-            </Nav>
-            <div className="navbar-buttons">
-              {username ? (
-                <div className="user_info">
-                  <div className="user_img">
-                    <img src={customer} alt="" />
-                  </div>{" "}
-                  <div>
-                    <NavDropdown title={username} id="basic-nav-dropdown">
-                      <NavDropdown.Item href="/thong-tin/ho-so">
-                        Hồ sơ
-                      </NavDropdown.Item>
-                      <NavDropdown.Item href="/thong-tin/lich-kham">
-                        Lịch khám
-                      </NavDropdown.Item>
-                      <NavDropdown.Item href="/thong-tin/thanh-toan">
-                        Thanh toán
-                      </NavDropdown.Item>
-                      <NavDropdown.Item href="/thong-tin/tai-khoan">
-                        Tài Khoản
-                      </NavDropdown.Item>
-                      <NavDropdown.Divider />
-                      <NavDropdown.Item onClick={handleLogout}>
-                        Đăng xuất
-                      </NavDropdown.Item>
-                    </NavDropdown>
-                  </div>
-                </div>
-              ) : (
-                <>
-                  <div className="login-dropdown-container">
-                    <Button className="btn_login" onClick={handleLogin}>
-                      Đăng nhập
-                    </Button>
-                  </div>
-                </>
-              )}
-            </div>
-          </Navbar.Collapse>
-        </Container>
-      </Navbar>
-    </>
+    <Navbar expand="lg" className="navbar-custom bg-body-tertiary">
+      <Container>
+        <Navbar.Brand href="/">
+          <h1 className="logoMain">
+            Caps<span>tone1</span>
+          </h1>
+        </Navbar.Brand>
+        <Navbar.Toggle aria-controls="basic-navbar-nav" />
+        <Navbar.Collapse id="basic-navbar-nav">
+          <Nav className="nav-links">
+            <Nav.Link href="/dat-kham/bac-si/tim-kiem">Đặt lịch khám</Nav.Link>
+            <Nav.Link href="/gioi-thieu">Giới thiệu</Nav.Link>
+            <Nav.Link href="/tin-tuc/">Tin y tế</Nav.Link>
+            <Nav.Link href="/dich-vu-kham">Dịch vụ khám</Nav.Link>
+          </Nav>
+          <div className="navbar-buttons">
+            {username ? (
+              <div className="user_info">
+                <NavDropdown title={username} id="basic-nav-dropdown">
+                  <NavDropdown.Item href="/thong-tin/ho-so">
+                    Hồ sơ
+                  </NavDropdown.Item>
+                  <NavDropdown.Item href="/thong-tin/lich-kham">
+                    Lịch khám
+                  </NavDropdown.Item>
+                  <NavDropdown.Item href="/thong-tin/thanh-toan">
+                    Thanh toán
+                  </NavDropdown.Item>
+                  <NavDropdown.Item href="/thong-tin/tai-khoan">
+                    Tài Khoản
+                  </NavDropdown.Item>
+                  <NavDropdown.Divider />
+                  <NavDropdown.Item onClick={handleLogout}>
+                    Đăng xuất
+                  </NavDropdown.Item>
+                </NavDropdown>
+              </div>
+            ) : (
+              <div className="login-dropdown-container">
+                <Button className="btn_signup" onClick={handleSignup}>
+                  Đăng ký
+                </Button>
+                <Button className="btn_login" onClick={handleLogin}>
+                  Đăng nhập
+                </Button>
+              </div>
+            )}
+          </div>
+        </Navbar.Collapse>
+      </Container>
+    </Navbar>
   );
 };
 

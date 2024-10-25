@@ -10,7 +10,7 @@ const appointmentSchema = new Schema(
     },
     status: {
       type: String,
-      enum: ["confirmed", "cancelled", "pending"],
+      enum: ["confirmed", "cancelled"],
       default: "pending",
     },
     time_slot: {

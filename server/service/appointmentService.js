@@ -32,6 +32,7 @@ exports.BookingAppointment = async (appointmentData) => {
     doctor_id,
     note,
     appointment_type,
+    status:"confirmed",
     video_call_link: appointment_type === "online" ? video_call_link : "", // Chỉ lưu link nếu là khám online
   });
 

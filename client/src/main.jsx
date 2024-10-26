@@ -11,7 +11,8 @@ import Medication from "./pages/admin/Medication.jsx";
 import Services from "./pages/admin/Services.jsx";
 import Blog from "./pages/Blog/Blog.jsx";
 import LoginAdmin from "./pages/admin/LoginAdmin.jsx";
-import PrivateRoute from "./components/Private/PrivateRoute.jsx"; // Import PrivateRoute
+import PrivateRouteAdmin from "./components/Private/PrivateRouteAdmin.jsx"; // Import PrivateRoute
+import PrivateRouteDoctor from "./components/Private/PrivateRouteDoctor.jsx"; // Import PrivateRoute
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import LoginRegister from "./pages/users/LoginRegister.jsx";
@@ -27,6 +28,10 @@ import Appointment from "./components/user/Appointment.jsx";
 import VideoPage from "./pages/videocall/VideoHomePage.jsx";
 import ServiceClinic from "./pages/users/ServiceClinic.jsx";
 import ClinicInfo from "./pages/users/ClinicInfor.jsx";
+import DoctorApp from "./DoctorApp.jsx";
+import DoctorInfor from "./pages/Doctor/DoctorInfor.jsx";
+import ViewPatientRecord from "./pages/Doctor/ViewPatientRecord.jsx";
+import ViewSchedule from "./pages/Doctor/ViewSchedule.jsx";
 const router = createBrowserRouter([
   {
     path: "/login-register",
@@ -86,7 +91,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/admin",
-    element: <PrivateRoute allowedRoles={["admin"]} />,
+    element: <PrivateRouteAdmin allowedRoles={["admin"]} />,
     children: [
       {
         element: <AdminApp />,
@@ -135,6 +140,31 @@ const router = createBrowserRouter([
       {
         index: true,
         element: <Blog />,
+      },
+    ],
+  },
+
+  {
+    path: "",
+    // element: <PrivateRouteDoctor allowedRoles={["doctor"]} />,
+    children: [
+      {
+        element: <DoctorApp />,
+        children: [
+          {
+            index: true,
+            path: "bac-si/ho-so",
+            element: <DoctorInfor />,
+          },
+          {
+            path: "bac-si/ho-so-benh-nhan",
+            element: <ViewPatientRecord />,
+          },
+          {
+            path: "bac-si/lich-hen",
+            element: <ViewSchedule />,
+          },
+        ],
       },
     ],
   },

@@ -3,7 +3,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import Cookies from "js-cookie"; // Thư viện quản lý Cookies
 
 // eslint-disable-next-line react/prop-types
-const PrivateRoute = ({ allowedRoles }) => {
+const PrivateRouteAdmin = ({ allowedRoles }) => {
   const token = Cookies.get("access_token"); // Lấy token từ Cookies
   const role = Cookies.get("role"); // Lấy role từ Cookies
 
@@ -18,4 +18,4 @@ const PrivateRoute = ({ allowedRoles }) => {
   return <Outlet />;
 };
 
-export default PrivateRoute;
+export default PrivateRouteAdmin;

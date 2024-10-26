@@ -43,7 +43,25 @@ function LoginRegister() {
         if (res.role === "admin") {
           toast.error("Admin không được phép đăng nhập ở đây");
           return; // Ngăn không cho tiếp tục lưu thông tin
-        } else if (res.role === "patient" || res.role === "doctor") {
+        } else if (res.role === "doctor") {
+          Cookies.set("access_token", res.token, {
+            secure: true,
+            sameSite: "Strict",
+          });
+          const usernameSafe = res.username.replace(/ /g, "_");
+          Cookies.set("username", usernameSafe, {
+            secure: true,
+            sameSite: "Strict",
+          });
+          Cookies.set("role", res.role, { secure: true, sameSite: "Strict" });
+          Cookies.set("id", res._id, {
+            secure: true,
+            sameSite: "Strict",
+          });
+          localStorage.setItem("username", res.username);
+          toast.success(res.EM);
+          navigate("/");
+        } else if (res.role === "patient") {
           // Lưu token và role vào cookies
           Cookies.set("access_token", res.token, {
             secure: true,

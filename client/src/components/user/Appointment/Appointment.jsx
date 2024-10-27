@@ -105,20 +105,31 @@ const Appointment = () => {
               appointments.map((appointment) => (
                 <li
                   key={appointment._id}
-                  className="appointment-item"
+                  className={`appointment-item ${
+                    selectedAppointment &&
+                    selectedAppointment._id === appointment._id
+                      ? "active"
+                      : ""
+                  }`}
                   onClick={() => handleSelectAppointment(appointment)}
                 >
                   <div>
                     <h3>
                       {doctorsInfo[appointment.doctor_id]
-                        ? `${doctorsInfo[appointment.doctor_id].first_name} ${doctorsInfo[appointment.doctor_id].last_name}`
+                        ? `${doctorsInfo[appointment.doctor_id].first_name} ${
+                            doctorsInfo[appointment.doctor_id].last_name
+                          }`
                         : "Bác sĩ không xác định"}
                     </h3>
                     <p>
                       {appointment.time_slot} -{" "}
-                      {new Date(appointment.appointment_date).toLocaleDateString()}
+                      {new Date(
+                        appointment.appointment_date
+                      ).toLocaleDateString()}
                     </p>
-                    <h4>{appointment.appointment_type}</h4>
+                    <h4 className="appointment-type">
+                      {appointment.appointment_type}
+                    </h4>
                     <span
                       className={`status ${
                         appointment.status === "cancelled" ? "cancelled" : ""
@@ -133,24 +144,27 @@ const Appointment = () => {
                         ? "Đã hủy"
                         : "Đã đặt lịch"}
                     </span>
+                    <div className="countdown-container">
+                      <Countdown
+                        targetDate={parseAppointmentTime(appointment)}
+                        onCountdownEnd={() =>
+                          handleCountdownEnd(appointment._id)
+                        }
+                        isActive={!countdownFinished[appointment._id]}
+                      />
+                      {shouldShowButton(appointment) && (
+                        <button
+                          className="countdown"
+                          onClick={() =>
+                            window.open(appointment.video_call_link, "_blank")
+                          }
+                        >
+                          Tham gia cuộc họp
+                        </button>
+                      )}
+                    </div>
                   </div>
                   <span className="stt">STT: {appointment._id.slice(-2)}</span>
-                  <div className="countdown-container">
-                    <Countdown
-                      targetDate={parseAppointmentTime(appointment)}
-                      onCountdownEnd={() => handleCountdownEnd(appointment._id)}
-                      isActive={!countdownFinished[appointment._id]}
-                    />
-                    {shouldShowButton(appointment) && (
-                      <button
-                        onClick={() =>
-                          window.open(appointment.video_call_link, "_blank")
-                        }
-                      >
-                        Tham gia cuộc họp
-                      </button>
-                    )}
-                  </div>
                 </li>
               ))
             ) : (
@@ -163,7 +177,9 @@ const Appointment = () => {
       {selectedAppointment && (
         <div className="appointment-details">
           <div className="appointment-info">
-            <span className="stt">STT: {selectedAppointment._id.slice(-2)}</span>
+            <span className="stt">
+              STT: {selectedAppointment._id.slice(-2)}
+            </span>
             <span className="time">
               <FaCalendarAlt />{" "}
               {selectedAppointment.status === "confirmed"
@@ -175,7 +191,9 @@ const Appointment = () => {
             <img
               src={
                 doctorsInfo[selectedAppointment.doctor_id]?.imageUrl
-                  ? `data:image/jpeg;base64,${doctorsInfo[selectedAppointment.doctor_id].imageUrl}`
+                  ? `data:image/jpeg;base64,${
+                      doctorsInfo[selectedAppointment.doctor_id].imageUrl
+                    }`
                   : doctorPlaceholder
               }
               alt="Doctor"
@@ -184,7 +202,9 @@ const Appointment = () => {
             <div className="doctor-info-app">
               <h3>
                 {doctorsInfo[selectedAppointment.doctor_id]
-                  ? `${doctorsInfo[selectedAppointment.doctor_id].first_name} ${doctorsInfo[selectedAppointment.doctor_id].last_name}`
+                  ? `${doctorsInfo[selectedAppointment.doctor_id].first_name} ${
+                      doctorsInfo[selectedAppointment.doctor_id].last_name
+                    }`
                   : "Bác sĩ không xác định"}
               </h3>
               <p>
@@ -203,7 +223,9 @@ const Appointment = () => {
             <div className="info-row">
               <p className="label">Ngày khám:</p>
               <p className="value">
-                {new Date(selectedAppointment.appointment_date).toLocaleDateString()}
+                {new Date(
+                  selectedAppointment.appointment_date
+                ).toLocaleDateString()}
               </p>
             </div>
             <div className="info-row">

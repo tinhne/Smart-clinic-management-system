@@ -1,8 +1,12 @@
 import React from "react";
 import "../../style/AppointmentSuccess/AppointmentSuccess.scss";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const AppointmentSuccess = () => {
+  const navigate = useNavigate();
+  const handleViewAppointments = () => {
+    navigate("/thong-tin/lich-kham"); // Redirect to the target page
+  };
   const location = useLocation();
   const {
     doctor,
@@ -117,6 +121,13 @@ const AppointmentSuccess = () => {
             <span>{note || "N/A"}</span>
           </div>
         </div>
+      </div>
+
+      {/* Row 3: Button View Appointment */}
+      <div className="row-btn">
+        <button className="btn btn-primary" onClick={handleViewAppointments}>
+          Xem lịch hẹn
+        </button>
       </div>
     </div>
   );

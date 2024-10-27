@@ -1,13 +1,13 @@
 .appointment-container {
   display: flex;
-  max-width: 700px; /* Đặt chiều rộng tối đa là 700px */
+  max-width: 1000px; /* Đặt chiều rộng tối đa là 700px */
   width: 100%; /* Để đảm bảo chiếm toàn bộ chiều rộng có sẵn */
   margin-top: 40px;
   background-color: #fdfbfb;
 }
 
 .appointment-list {
-  width: 350px;
+  width: 500px;
   padding: 20px;
   border-radius: 8px;
   display: flex;
@@ -46,6 +46,11 @@ ul {
   padding: 10px;
   border-bottom: 1px solid #ccc;
   cursor: pointer;
+
+  &.active {
+    background-color: #e0f7fa;
+    border-left: 2px solid #007bff;
+  }
 }
 
 .appointment-item h3,
@@ -55,7 +60,8 @@ ul {
 }
 
 .appointment-item h4 {
-  margin-top: -10px;
+  text-transform: uppercase;
+  font-weight: bold;
 }
 
 .appointment-item:last-child {
@@ -125,7 +131,7 @@ ul {
 
 .info-section {
   margin-bottom: 20px;
-  
+
   h3 {
     font-size: 18px;
     margin-bottom: 20px;
@@ -182,18 +188,25 @@ ul {
 }
 
 .countdown-container {
-  display: flex; /* Sử dụng flexbox để sắp xếp các phần tử con */
-  align-items: center; /* Căn giữa theo chiều dọc */
-  justify-content: space-between; /* Giữa các phần tử */
-  gap: 10px; /* Khoảng cách giữa countdown và nút */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
 }
 
 .countdown {
-  font-size: 12px; /* Kích thước font nhỏ hơn */
-  color: #333; /* Màu chữ */
-  min-width: 80px; /* Thiết lập chiều rộng tối thiểu để không bị co lại quá nhỏ */
-  padding: 5px; /* Thêm padding để tạo không gian */
-  background-color: #f0f0f0; /* Thêm màu nền nhẹ để nổi bật */
-  border-radius: 4px; /* Bo tròn góc */
-  text-align: center; /* Căn giữa nội dung */
+  font-size: 16px;
+  color: #333;
+  min-width: 80px;
+  padding: 5px;
+  font-weight: bold;
+  background-color: #f0f0f0;
+  border-radius: 4px;
+  text-align: center;
+  border: none;
+}
+.countdown:hover {
+  background-color: #36b6f1;
+  color: white;
+  cursor: pointer;
 }

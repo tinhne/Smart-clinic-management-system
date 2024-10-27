@@ -24,7 +24,7 @@ import AppointmentSuccess from "./pages/users/AppointmentSuccess.jsx";
 import Profile from "./pages/users/profile.jsx";
 import ProfileInfo from "./components/user/profileInfo.jsx";
 import ChangePassword from "./components/user/ChangePassword.jsx";
-import Appointment from "./components/user/Appointment.jsx";
+import Appointment from "./components/user/Appointment/Appointment.jsx";
 import VideoPage from "./pages/videocall/VideoHomePage.jsx";
 import ServiceClinic from "./pages/users/ServiceClinic.jsx";
 import ClinicInfo from "./pages/users/ClinicInfor.jsx";

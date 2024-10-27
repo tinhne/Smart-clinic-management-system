@@ -18,7 +18,7 @@ router.delete("/cancel/:id", authenticate, authorize(["patient"]), appointmentCo
 router.get("/doctor/:doctorId", authenticate, authorize(["doctor"]), appointmentController.getDoctorAppointments);
 
 // Lấy lịch hẹn của bệnh nhân
-router.get("/patient", authenticate, authorize(["patient"]), appointmentController.getPatientAppointments);
+router.get("/patient/:patientId", authenticate, appointmentController.getPatientAppointments);
 
 router.get('/appointments/:doctorId', appointmentController.checkDoctorSchedule);
 module.exports = router;

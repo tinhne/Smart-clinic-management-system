@@ -1,24 +1,21 @@
 .appointment-container {
   display: flex;
-  width: 800px;
+  max-width: 700px; /* Đặt chiều rộng tối đa là 700px */
+  width: 100%; /* Để đảm bảo chiếm toàn bộ chiều rộng có sẵn */
   margin-top: 40px;
   background-color: #fdfbfb;
 }
 
 .appointment-list {
   width: 350px;
-
   padding: 20px;
   border-radius: 8px;
+  display: flex;
+  flex-direction: column; /* Sắp xếp theo cột */
 }
+
 .appointment-list h2 {
   font-size: 18px;
-}
-
-.appointment-details {
-  flex: 2;
-  padding: 20px;
-  border-radius: 8px;
 }
 
 .search-bar {
@@ -31,9 +28,16 @@
   border-radius: 4px;
 }
 
+.appointment-content {
+  max-height: 600px; /* Chiều cao tối đa cho danh sách */
+  overflow-y: auto; /* Thêm thanh cuộn dọc */
+  flex-grow: 1; /* Cho phần này chiếm không gian còn lại */
+}
+
 ul {
   list-style-type: none;
   padding: 0;
+  margin: 0; /* Đặt margin bằng 0 để không bị tràn */
 }
 
 .appointment-item {
@@ -43,6 +47,7 @@ ul {
   border-bottom: 1px solid #ccc;
   cursor: pointer;
 }
+
 .appointment-item h3,
 .appointment-item p,
 .appointment-item h4 {
@@ -79,9 +84,14 @@ ul {
   margin-right: 10px;
 }
 
-.appointment-details h2 {
-  margin-bottom: 20px;
+.appointment-details {
+  flex: 1; /* Để phần này chiếm không gian còn lại */
+  padding: 20px;
+  border-radius: 8px;
+  max-height: 700px; /* Chiều cao tối đa cho chi tiết lịch hẹn */
+  overflow-y: auto; /* Thêm thanh cuộn dọc cho phần thông tin chi tiết */
 }
+
 .appointment-info {
   display: flex;
   justify-content: space-between;
@@ -115,6 +125,7 @@ ul {
 
 .info-section {
   margin-bottom: 20px;
+  
   h3 {
     font-size: 18px;
     margin-bottom: 20px;
@@ -138,8 +149,9 @@ ul {
 .value {
   flex: 1;
   text-align: right;
-  color: #555; /* You can adjust the color of the value */
+  color: #555; /* Bạn có thể điều chỉnh màu sắc của giá trị */
 }
+
 .appointment-result {
   margin-top: 20px;
 }
@@ -165,6 +177,23 @@ ul {
 }
 
 .result-container p {
-  color: #7d7d7d; /* Light gray color */
+  color: #7d7d7d; /* Màu xám nhạt */
   font-size: 16px;
+}
+
+.countdown-container {
+  display: flex; /* Sử dụng flexbox để sắp xếp các phần tử con */
+  align-items: center; /* Căn giữa theo chiều dọc */
+  justify-content: space-between; /* Giữa các phần tử */
+  gap: 10px; /* Khoảng cách giữa countdown và nút */
+}
+
+.countdown {
+  font-size: 12px; /* Kích thước font nhỏ hơn */
+  color: #333; /* Màu chữ */
+  min-width: 80px; /* Thiết lập chiều rộng tối thiểu để không bị co lại quá nhỏ */
+  padding: 5px; /* Thêm padding để tạo không gian */
+  background-color: #f0f0f0; /* Thêm màu nền nhẹ để nổi bật */
+  border-radius: 4px; /* Bo tròn góc */
+  text-align: center; /* Căn giữa nội dung */
 }

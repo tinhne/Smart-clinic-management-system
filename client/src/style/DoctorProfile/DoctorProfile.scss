@@ -152,6 +152,10 @@
           cursor: not-allowed; // Hiển thị con trỏ không cho phép khi hover
           opacity: 0.6; // Làm mờ ngày đã đặt
         }
+        &.selected-date {
+          background-color: #007bff;
+          color: #fff;
+        }
       }
     }
 

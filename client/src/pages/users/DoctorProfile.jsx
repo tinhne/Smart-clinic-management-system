@@ -93,57 +93,65 @@ const DoctorProfile = () => {
 
   useEffect(() => {
     const now = new Date();
-    const nowDateStr = now.toISOString().split("T")[0]; // Get today's date in "YYYY-MM-DD" format
-    console.log("Current Date String", nowDateStr); // Log the current date in "YYYY-MM-DD" format
+    const nowDateStr = now.toISOString().split("T")[0];
+    const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes();
+    const fourHoursLater = currentTimeInMinutes + 240; // 4 hours ahead
 
     if (selectedDate && schedule.length) {
       const selectedDaySchedule = schedule.find(
         (day) => day.date === selectedDate
       );
-      const isPastDate = new Date(selectedDate) < new Date();
-
-      console.log("Selected Day Schedule:", selectedDaySchedule); // Added log
-      console.log("Is Past Date:", isPastDate); // Added log
 
       if (selectedDaySchedule) {
-        const currentTime = now.getHours() * 60 + now.getMinutes();
-
         const selectedDateFomat = selectedDate.split("T")[0];
-        console.log("Formatted Selected Date:", selectedDateFomat); // Added log
 
         if (selectedDateFomat === nowDateStr) {
-          // Check if selected date is today
           setMorningSlots(
-            selectedDaySchedule.available_slots.filter(
-              (slot) => parseInt(slot.split(":")[0]) < 12
-            )
+            selectedDaySchedule.available_slots.filter((slot) => {
+              const slotTimeInMinutes =
+                parseInt(slot.split(":")[0]) * 60 +
+                parseInt(slot.split(":")[1]);
+
+              return (
+                slotTimeInMinutes >= fourHoursLater &&
+                slotTimeInMinutes < 12 * 60
+              );
+            })
           );
+
           setAfternoonSlots(
-            selectedDaySchedule.available_slots.filter(
-              (slot) => parseInt(slot.split(":")[0]) >= 12
-            )
+            selectedDaySchedule.available_slots.filter((slot) => {
+              const slotTimeInMinutes =
+                parseInt(slot.split(":")[0]) * 60 +
+                parseInt(slot.split(":")[1]);
+              return (
+                slotTimeInMinutes >= fourHoursLater &&
+                slotTimeInMinutes >= 12 * 60
+              );
+            })
           );
         } else {
           setMorningSlots(
             selectedDaySchedule.available_slots.filter(
               (slot) =>
-                parseInt(slot.split(":")[0]) < 12 &&
-                !bookedSlots.includes(slot) &&
-                !isPastDate
+                parseInt(slot.split(":")[0]) < 12 && !bookedSlots.includes(slot)
             )
           );
           setAfternoonSlots(
             selectedDaySchedule.available_slots.filter(
               (slot) =>
                 parseInt(slot.split(":")[0]) >= 12 &&
-                !bookedSlots.includes(slot) &&
-                !isPastDate
+                !bookedSlots.includes(slot)
             )
           );
         }
       }
     }
   }, [selectedDate, schedule, bookedSlots]);
+
+  useEffect(() => {
+    console.log("Updated Morning Slots:", morningSlots);
+  }, [morningSlots]);
 
   const formatDate = (dateString) => {
     const options = { weekday: "short", day: "2-digit", month: "2-digit" };
@@ -205,22 +213,24 @@ const DoctorProfile = () => {
             .sort((a, b) => new Date(a.date) - new Date(b.date)) // Sort dates from smallest to largest
             .map((day, index) => {
               const isBooked = bookedDates.includes(day.date);
+              const totalSlots = day.available_slots.length; // Calculate the total slots (morning + afternoon)
+
               return (
                 <div
-                  className={`date-item ${isBooked ? "booked" : ""}`}
+                  className={`date-item ${isBooked ? "booked" : ""} ${selectedDate === day.date ? "selected-date" : ""}`}
                   key={index}
                   onClick={() => !isBooked && handleDateClick(day.date)}
                 >
                   <span>{formatDate(day.date)}</span>
-                  <span className="time-frame">
-                    {day.available_slots.length} khung giờ
-                  </span>
+                  <span className="time-frame">{totalSlots} khung giờ</span>
                 </div>
               );
             })}
         </div>
         <div className="time-slot-section">
-          <div className="time-slot-title">Buổi sáng</div>
+          <div className="time-slot-title">
+            🌅 Buổi sáng ({morningSlots.length} khung giờ)
+          </div>
           <div className="time-slot-list">
             {morningSlots.length > 0 ? (
               morningSlots.map((slot, index) => (
@@ -241,7 +251,10 @@ const DoctorProfile = () => {
               <p>Không có khung giờ nào vào buổi sáng.</p>
             )}
           </div>
-          <div className="time-slot-title">Buổi chiều</div>
+
+          <div className="time-slot-title">
+            🌇 Buổi chiều ({afternoonSlots.length} khung giờ)
+          </div>
           <div className="time-slot-list">
             {afternoonSlots.length > 0 ? (
               afternoonSlots.map((slot, index) => (

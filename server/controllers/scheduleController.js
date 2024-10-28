@@ -1,6 +1,6 @@
 // controllers/scheduleController.js
 const Schedule = require("../models/Schedule");
-
+const Appointment = require("../models/Appointment");
 // Hàm để tạo các khung giờ dựa trên thời gian làm việc và độ dài khung giờ
 const generateAvailableSlots = (startTime, endTime, slotDuration) => {
   const slots = [];
@@ -48,16 +48,50 @@ exports.createSchedule = async (req, res) => {
 };
 
 // Lấy lịch làm việc của bác sĩ
+// Lấy lịch làm việc của bác sĩ
 exports.getScheduleByDoctor = async (req, res) => {
   try {
     const { doctorId } = req.params;
+
+    // Tìm lịch làm việc của bác sĩ
     const schedules = await Schedule.find({ doctor_id: doctorId });
 
     if (schedules.length === 0) {
       return res.status(404).json({ msg: "Không tìm thấy lịch cho bác sĩ" });
     }
 
-    res.status(200).json(schedules);
+    // Lấy tất cả lịch hẹn của bác sĩ để kiểm tra khung giờ đã đặt
+    const appointments = await Appointment.find({ doctor_id: doctorId });
+    const bookedSlots = appointments.map(appointment => ({
+      date: appointment.appointment_date.toISOString().split('T')[0], // Chỉ lấy ngày
+      timeSlot: appointment.time_slot,
+    }));
+    // Xây dựng lịch khả dụng
+    const availableSchedules = schedules.map(schedule => {
+      const scheduleDate = schedule.date.toISOString().split('T')[0]; // Định dạng ngày của lịch làm việc
+      const available_slots = schedule.available_slots.filter(slot => {
+        // Kiểm tra xem có cuộc hẹn nào trong bookedSlots cho cùng một ngày
+        const appointmentForDate = bookedSlots.find(booked => booked.date === scheduleDate);
+        console.log("apointmentForDate>>>>>>>>>>>>>",appointmentForDate)
+        // Nếu không có cuộc hẹn nào cho ngày đó, tất cả khung giờ sẽ khả dụng
+        if (!appointmentForDate) return true;
+        
+        // So sánh slot hiện tại với slot đã đặt
+        return slot !== appointmentForDate.timeSlot;
+      });
+    
+      return {
+        doctor_id: schedule.doctor_id,
+        date: schedule.date,
+        working_hours: schedule.working_hours,
+        slot_duration: schedule.slot_duration,
+        available_slots, // Chỉ các khung giờ còn trống
+      };
+    });
+    console.log("appointments>>>>>>>>>>>>>>>>>>>>>>>>",appointments)
+    console.log("availableSchedules>>>>>>>>>>>>>>>>>>>", availableSchedules);
+
+    res.status(200).json(availableSchedules);
   } catch (error) {
     res.status(500).json({ msg: "Có lỗi xảy ra khi lấy lịch", error: error.message });
   }

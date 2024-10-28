@@ -112,7 +112,7 @@ exports.getDoctorAppointments = async (doctorId) => {
       .lean();
 
     // Tạo một đối tượng để chứa các ngày và khung giờ
-    const schedule = {};
+    const schedule = {};  
 
     appointments.forEach((appointment) => {
       const appointmentDate = appointment.appointment_date.toISOString().split('T')[0]; // Lấy ngày

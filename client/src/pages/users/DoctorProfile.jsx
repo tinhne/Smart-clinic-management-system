@@ -37,9 +37,6 @@ const DoctorProfile = () => {
         const formattedToday = today.toISOString().split("T")[0]; // 2024-10-25
         setFormattedToday(formattedToday);
 
-        console.log("Formatted Today:", formattedToday); // Added log
-        console.log("Schedule Data:", scheduleData); // Added log
-
         const futureSchedule = scheduleData.filter((day) => {
           const scheduleDate = new Date(day.date).toISOString().split("T")[0];
           return scheduleDate >= formattedToday;
@@ -53,7 +50,6 @@ const DoctorProfile = () => {
           (day) => day.date.split("T")[0] === formattedToday
         );
         if (currentDateInSchedule) {
-          console.log("Current date is in schedule:", formattedToday); // Added log
           setSelectedDate(currentDateInSchedule.date);
         } else {
           console.log("Current date is NOT in schedule"); // Added log
@@ -104,14 +100,16 @@ const DoctorProfile = () => {
 
       if (selectedDaySchedule) {
         const selectedDateFomat = selectedDate.split("T")[0];
-
+        console.log("selectedDaySchedule:", selectedDaySchedule); 
+        console.log("selectedDateFomat:", selectedDateFomat);
+        console.log("nowDateStr:", nowDateStr);
         if (selectedDateFomat === nowDateStr) {
           setMorningSlots(
             selectedDaySchedule.available_slots.filter((slot) => {
               const slotTimeInMinutes =
                 parseInt(slot.split(":")[0]) * 60 +
                 parseInt(slot.split(":")[1]);
-
+                  
               return (
                 slotTimeInMinutes >= fourHoursLater &&
                 slotTimeInMinutes < 12 * 60
@@ -210,14 +208,16 @@ const DoctorProfile = () => {
                 .split("T")[0];
               return scheduleDate >= formattedToday;
             })
-            .sort((a, b) => new Date(a.date) - new Date(b.date)) // Sort dates from smallest to largest
+            .sort((a, b) => new Date(a.date) - new Date(b.date))
             .map((day, index) => {
               const isBooked = bookedDates.includes(day.date);
-              const totalSlots = day.available_slots.length; // Calculate the total slots (morning + afternoon)
+              const totalSlots = day.available_slots.length; 
 
               return (
                 <div
-                  className={`date-item ${isBooked ? "booked" : ""} ${selectedDate === day.date ? "selected-date" : ""}`}
+                  className={`date-item ${isBooked ? "booked" : ""} ${
+                    selectedDate === day.date ? "selected-date" : ""
+                  }`}
                   key={index}
                   onClick={() => !isBooked && handleDateClick(day.date)}
                 >

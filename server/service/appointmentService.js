@@ -81,11 +81,7 @@ exports.confirmAppointment = async (id) => {
 
 // Bệnh nhân hủy lịch hẹn
 exports.cancelAppointment = async (appointmentId) => {
-  const appointment = await Appointment.findByIdAndUpdate(
-    appointmentId,
-    { status: "cancelled" },
-    { new: true }
-  );
+  const appointment = await Appointment.findByIdAndDelete(appointmentId);
   if (!appointment) {
     throw new Error("Lịch hẹn không tồn tại");
   }
@@ -96,7 +92,7 @@ exports.cancelAppointment = async (appointmentId) => {
 
 // Lấy lịch hẹn của bệnh nhân
 exports.getPatientAppointments = async (patientId) => {
-  const appointments = await Appointment.find({ patient_id: patientId });
+  const appointments = await Appointment.find({ patient_id: patientId }).sort({appointment_date: 1});
   if (!appointments.length) {
     throw new Error("Không có lịch hẹn nào cho bệnh nhân này.");
   }

@@ -12,4 +12,7 @@ const checkDoctorSchedule = async (doctorId) => {
 const getAppointmentPatient = async (patientId) => {
   return axios.get(`/api/appointment/patient/${patientId}`)
 }
-export { BookingAppointment, checkDoctorSchedule, getAppointmentPatient };
+const deleteAppointment = async (appointmentId) => {
+  return axios.delete(`/api/appointment/cancel/${appointmentId}`)
+}
+export { BookingAppointment, checkDoctorSchedule, getAppointmentPatient, deleteAppointment };

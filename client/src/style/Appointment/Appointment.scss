@@ -84,6 +84,21 @@ ul {
 .status.cancelled {
   color: red;
 }
+.delete-button {
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
+
+.delete-button:hover {
+  background-color: #ff3333;
+}
+
 
 .icon {
   color: #00bfa6; /* Set the color of the icon (blue/green) */

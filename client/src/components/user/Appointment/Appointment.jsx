@@ -3,7 +3,7 @@ import { FaCalendarAlt, FaTimesCircle } from "react-icons/fa";
 import "../../../style/Appointment/Appointment.scss";
 import doctorPlaceholder from "../../../assets/img/customer01.png"; // Hình ảnh mặc định
 import { getUserById } from "../../../utils/AuthAPI/AdminService";
-import { getAppointmentPatient } from "../../../utils/AppointmentAPI/AppointmentService";
+import { getAppointmentPatient, deleteAppointment } from "../../../utils/AppointmentAPI/AppointmentService";
 import Countdown from "./Countdown";
 
 const Appointment = () => {
@@ -90,6 +90,23 @@ const Appointment = () => {
     return now >= oneHourBefore && !countdownFinished[appointment._id]; // Kiểm tra xem đã đủ 1 tiếng trước thời gian khám hay chưa
   };
 
+  const handleCancelAppointment = async (appointmentId) => {
+    if (!window.confirm("Bạn có chắc chắn muốn hủy lịch hẹn này không?")) return;
+  
+    try {
+      await deleteAppointment(appointmentId); // Gọi API xoá lịch hẹn từ database
+      setAppointments((prevAppointments) =>
+        prevAppointments.filter((appt) => appt._id !== appointmentId) // Xoá lịch đã hẹn khỏi state
+      );
+      setSelectedAppointment(null); // Đặt lại lịch đã chọn nếu là lịch hẹn bị xoá
+      alert("Lịch hẹn đã được hủy thành công.");
+    } catch (error) {
+      console.error("Error cancelling appointment:", error);
+      alert("Có lỗi xảy ra khi hủy lịch hẹn.");
+    }
+  };
+  
+
   return (
     <div className="appointment-container">
       <div className="appointment-list">
@@ -163,6 +180,17 @@ const Appointment = () => {
                         </button>
                       )}
                     </div>
+                    <div>
+                    <button
+          className="delete-button"
+          onClick={(e) => {
+            e.stopPropagation(); // Ngăn không cho sự kiện onClick của li kích hoạt
+            handleCancelAppointment(appointment._id);
+          }}
+        >
+          Xóa
+        </button>
+                    </div>
                   </div>
                   <span className="stt">STT: {appointment._id.slice(-2)}</span>
                 </li>
@@ -193,7 +221,7 @@ const Appointment = () => {
                 doctorsInfo[selectedAppointment.doctor_id]?.imageUrl
                   ? `data:image/jpeg;base64,${
                       doctorsInfo[selectedAppointment.doctor_id].imageUrl
-                    }`
+                    }`         
                   : doctorPlaceholder
               }
               alt="Doctor"

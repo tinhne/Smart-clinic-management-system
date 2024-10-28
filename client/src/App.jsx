@@ -2,11 +2,12 @@ import React from "react";
 import { Outlet } from "react-router-dom";
 import Header from "./components/layout/header";
 import Footer from "./components/layout/footer";
-// import LoginRegister from "./pages/LoginRegister";
+import Chatbot from "./components/layout/Chatbot";
+
 function App() {
   return (
     <>
-      {/* <LoginRegister></LoginRegister> */}
+      <Chatbot></Chatbot>
       <Header></Header>
       <Outlet></Outlet>
       <Footer></Footer> 

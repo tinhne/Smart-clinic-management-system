@@ -13,8 +13,6 @@ import Blog from "./pages/Blog/Blog.jsx";
 import LoginAdmin from "./pages/admin/LoginAdmin.jsx";
 import PrivateRouteAdmin from "./components/Private/PrivateRouteAdmin.jsx"; // Import PrivateRoute
 import PrivateRouteDoctor from "./components/Private/PrivateRouteDoctor.jsx"; // Import PrivateRoute
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 import LoginRegister from "./pages/users/LoginRegister.jsx";
 import Logout from "./pages/admin/Logout.jsx";
 import DoctorList from "./pages/users/DoctorList.jsx";
@@ -171,19 +169,8 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <RouterProvider router={router} />
-    <ToastContainer
-      position="top-right"
-      autoClose={5000}
-      hideProgressBar={false}
-      newestOnTop={false}
-      closeOnClick
-      rtl={false}
-      pauseOnFocusLoss
-      draggable
-      pauseOnHover
-      theme="light"
-    />
-  </React.StrictMode>
+    
+  // {/* </React.StrictMode> */}
 );

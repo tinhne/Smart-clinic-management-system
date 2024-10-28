@@ -16,8 +16,6 @@ const theme = {
 
 // Hàm phân tích đầu vào của người dùng
 function analyzeInput(input) {
-  // const inputNormalized = input ? input.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase() : ''; // Chuẩn hóa và chuyển đổi thành chữ thường
-
   const inputLower = input ? input.toLowerCase() : '';
 
   if (inputLower.includes('đau đầu')) {
@@ -26,10 +24,11 @@ function analyzeInput(input) {
     return 'Đau bụng có thể do tiêu hóa kém, nhiễm trùng, hoặc các vấn đề nội tạng. Nếu kéo dài hoặc kèm triệu chứng nặng, hãy đi khám ngay.';
   } else if (inputLower.includes('mệt mỏi')) {
     return 'Mệt mỏi có thể do căng thẳng, thiếu ngủ hoặc thiếu dinh dưỡng. Nghỉ ngơi và ăn uống đầy đủ có thể giúp cải thiện.';
+  } else if (inputLower.includes('cần bác sĩ') || inputLower.includes('bác sĩ chăm sóc')) {
+    return 'Chuyển đến phần chọn bác sĩ';
   } else {
     return 'Tôi chưa nhận diện được triệu chứng này. Bạn có thể mô tả rõ hơn hoặc tìm lời khuyên từ bác sĩ.';
   }
-  
 }
 
 function OpenLink() {
@@ -37,9 +36,20 @@ function OpenLink() {
   return <span>Đang chuyển hướng tới trang đặt lịch khám online...</span>;
 }
 
+function ChooseDoctor() {
+  window.location.href = 'http://localhost:5173/dat-kham/bac-si/6710ab1a8e822374686d3a41';
+  return <span>Đang chuyển hướng tới trang chọn bác sĩ...</span>;
+}
+
+function BookDirectAppointment() {
+  window.location.href = 'http://localhost:5173/dat-kham/bac-si/tim-kiem';
+  return <span>Đang chuyển hướng tới trang đặt lịch khám trực tiếp...</span>;
+}
+
 function NewChatBot() {
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme}> 
+
       <ChatBot
         steps={[
           {
@@ -60,12 +70,13 @@ function NewChatBot() {
           {
             id: '4',
             user: true,
-            trigger: '5',
+            trigger: '6',
           },
           {
             id: '5',
             message: ({ previousValue }) => analyzeInput(previousValue),
-            trigger: '6',
+            trigger: ({ previousValue }) =>
+              analyzeInput(previousValue) === 'Chuyển đến phần chọn bác sĩ' ? '10' : '6',
           },
           {
             id: '6',
@@ -84,7 +95,8 @@ function NewChatBot() {
           },
           {
             id: '7',
-            message: 'Cảm ơn bạn đã chọn đặt lịch khám trực tiếp.',
+            component: <BookDirectAppointment />,
+            asMessage: true,
             end: true,
           },
           {
@@ -96,6 +108,12 @@ function NewChatBot() {
           {
             id: '9',
             message: 'Cảm ơn bạn đã chọn đặt lịch khám online.',
+            end: true,
+          },
+          {
+            id: '10',
+            component: <ChooseDoctor />,
+            asMessage: true,
             end: true,
           },
         ]}

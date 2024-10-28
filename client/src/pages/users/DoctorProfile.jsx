@@ -23,6 +23,7 @@ const DoctorProfile = () => {
     const fetchDoctorData = async () => {
       try {
         const doctorData = await getUserById(doctorId, "doctor");
+        // console.log(doctorData);
         setDoctor(doctorData);
       } catch (error) {
         console.error("Error fetching doctor data:", error);

@@ -20,7 +20,7 @@ import Nhikhoa from "../../assets/img/Specialties/Nhikhoa (1).jpg";
 import sanphukhoa from "../../assets/img/Specialties/sanphukhoa.jpg";
 import taimuihong from "../../assets/img/Specialties/taimuihong.jpg";
 import tamthan from "../../assets/img/Specialties/tamthan.jpg";
-import Chatbot from "../../components/chatbot/Chatbot";
+// import Chatbot from "../../components/chatbot/Chatbot";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -47,9 +47,9 @@ const HomePage = () => {
   };
   return (
     <>
-      <div className="chatbot-container">
+      {/* <div className="chatbot-container">
         <Chatbot />
-      </div>
+      </div> */}
 
       <div className="body-homepage">
         <div className="description-search-container">

@@ -12,6 +12,7 @@ const Appointment = () => {
   const [doctorsInfo, setDoctorsInfo] = useState({});
   const [patientInfo, setPatientInfo] = useState(null);
   const [countdownFinished, setCountdownFinished] = useState({});
+  const [searchTerm, setSearchTerm] = useState(""); // State cho tìm kiếm
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -87,7 +88,7 @@ const Appointment = () => {
     const now = new Date();
     const appointmentTime = parseAppointmentTime(appointment);
     const oneHourBefore = new Date(appointmentTime.getTime() - 60 * 60 * 1000);
-    return now >= oneHourBefore && !countdownFinished[appointment._id]; // Kiểm tra xem đã đủ 1 tiếng trước thời gian khám hay chưa
+    return appointment.appointment_type === "online" && now >= oneHourBefore && !countdownFinished[appointment._id]; // Kiểm tra xem đã đủ 1 tiếng trước thời gian khám hay chưa
   };
 
   const handleCancelAppointment = async (appointmentId) => {
@@ -105,7 +106,27 @@ const Appointment = () => {
       alert("Có lỗi xảy ra khi hủy lịch hẹn.");
     }
   };
-  
+
+  const normalizeString = (str) => {
+    return str
+      .normalize("NFD") // Phân tách dấu
+      .replace(/[\u0300-\u036f]/g, "") // Xóa dấu
+      .toLowerCase(); // Chuyển thành chữ thường
+  };
+  // Hàm lọc lịch hẹn dựa trên từ khóa tìm kiếm
+  const filteredAppointments = appointments.filter((appointment) => {
+    const doctorName = `${doctorsInfo[appointment.doctor_id]?.first_name || ""} ${doctorsInfo[appointment.doctor_id]?.last_name || ""}`;
+    const normalizedSearchTerm = normalizeString(searchTerm);
+
+    return (
+      normalizeString(doctorName).includes(normalizedSearchTerm) ||
+      normalizeString(appointment.appointment_type).includes(normalizedSearchTerm) ||
+      normalizeString(appointment.time_slot).includes(normalizedSearchTerm) ||
+      normalizeString(new Date(appointment.appointment_date).toLocaleDateString()).includes(normalizedSearchTerm) ||
+      normalizeString(appointment._id).includes(normalizedSearchTerm) // Tìm kiếm theo ID
+    );
+  });
+
 
   return (
     <div className="appointment-container">
@@ -115,11 +136,13 @@ const Appointment = () => {
           type="text"
           placeholder="Mã giao dịch, tên dịch vụ, tên bệnh nhân..."
           className="search-bar"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)} // Cập nhật giá trị tìm kiếm
         />
         <div className="appointment-content">
           <ul>
-            {appointments.length > 0 ? (
-              appointments.map((appointment) => (
+            {filteredAppointments.length > 0 ? (
+              filteredAppointments.map((appointment) => (
                 <li
                   key={appointment._id}
                   className={`appointment-item ${
@@ -181,15 +204,15 @@ const Appointment = () => {
                       )}
                     </div>
                     <div>
-                    <button
-          className="delete-button"
-          onClick={(e) => {
-            e.stopPropagation(); // Ngăn không cho sự kiện onClick của li kích hoạt
-            handleCancelAppointment(appointment._id);
-          }}
-        >
-          Xóa
-        </button>
+                      <button
+                        className="delete-button"
+                        onClick={(e) => {
+                          e.stopPropagation(); // Ngăn không cho sự kiện onClick của li kích hoạt
+                          handleCancelAppointment(appointment._id);
+                        }}
+                      >
+                        Xóa
+                      </button>
                     </div>
                   </div>
                   <span className="stt">STT: {appointment._id.slice(-2)}</span>

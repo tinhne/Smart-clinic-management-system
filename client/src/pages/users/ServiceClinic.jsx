@@ -41,7 +41,7 @@ const ServiceClinic = () => {
 
   return (
     <div className="container">
-      <h2 className="text-center my-4">BẢNG GIÁ DỊCH VỤ</h2>
+      <h2 className="text-center my-4 service-clinic">BẢNG GIÁ DỊCH VỤ</h2>
 
       <div className="d-flex justify-content-between mb-3">
         <input type="text" className="form-controll" placeholder="Search..." />

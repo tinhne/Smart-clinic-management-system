@@ -11,12 +11,14 @@ import Cookies from "js-cookie";
 
 const Header = () => {
   const [token, setToken] = useState("");
+  const [role, setRole] = useState("");
   const [username, setUsername] = useState("");
   const navigate = useNavigate();
 
   useEffect(() => {
     const storedToken = Cookies.get("access_token");
     const storedUsername = Cookies.get("username");
+    const storedRole = Cookies.get("role");
 
     if (storedToken) {
       setToken(storedToken);
@@ -26,6 +28,9 @@ const Header = () => {
       setUsername(storedUsername.replace(/_/g, " "));
     } else {
       setUsername("");
+    }
+    if (storedRole) {
+      setRole(storedRole); // Lưu role vào state
     }
   }, []);
 
@@ -58,6 +63,9 @@ const Header = () => {
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="nav-links">
             <Nav.Link href="/dat-kham/bac-si/tim-kiem">Đặt lịch khám</Nav.Link>
+            {role === "doctor" && (
+              <Nav.Link href="/bac-si/ho-so">Bác sĩ</Nav.Link>
+            )}
             <Nav.Link href="/gioi-thieu">Giới thiệu</Nav.Link>
             <Nav.Link href="/tin-tuc/">Tin y tế</Nav.Link>
             <Nav.Link href="/dich-vu-kham">Dịch vụ khám</Nav.Link>

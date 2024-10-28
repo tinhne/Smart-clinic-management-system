@@ -88,68 +88,40 @@ const DoctorProfile = () => {
   };
 
   useEffect(() => {
-    const now = new Date();
-    const nowDateStr = now.toISOString().split("T")[0];
-    const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes();
-    const fourHoursLater = currentTimeInMinutes + 240; // 4 hours ahead
-
+    // Check if selectedDate and schedule are available
     if (selectedDate && schedule.length) {
       const selectedDaySchedule = schedule.find(
         (day) => day.date === selectedDate
       );
-
+      console.log(selectedDaySchedule)
+  
+      // Ensure selectedDaySchedule is defined
       if (selectedDaySchedule) {
-        const selectedDateFomat = selectedDate.split("T")[0];
-        console.log("selectedDaySchedule:", selectedDaySchedule); 
-        console.log("selectedDateFomat:", selectedDateFomat);
-        console.log("nowDateStr:", nowDateStr);
-        if (selectedDateFomat === nowDateStr) {
+        // Corrected variable name from selectedDateFomat to selectedDateFormat
+       
           setMorningSlots(
             selectedDaySchedule.available_slots.filter((slot) => {
-              const slotTimeInMinutes =
-                parseInt(slot.split(":")[0]) * 60 +
-                parseInt(slot.split(":")[1]);
-                  
-              return (
-                slotTimeInMinutes >= fourHoursLater &&
-                slotTimeInMinutes < 12 * 60
-              );
+              const hour = parseInt(slot.split(":")[0]);
+              return hour < 12 && !bookedSlots.includes(slot);
             })
           );
-
+  
           setAfternoonSlots(
             selectedDaySchedule.available_slots.filter((slot) => {
-              const slotTimeInMinutes =
-                parseInt(slot.split(":")[0]) * 60 +
-                parseInt(slot.split(":")[1]);
-              return (
-                slotTimeInMinutes >= fourHoursLater &&
-                slotTimeInMinutes >= 12 * 60
-              );
+              const hour = parseInt(slot.split(":")[0]);
+              return hour >= 12 && !bookedSlots.includes(slot);
             })
           );
-        } else {
-          setMorningSlots(
-            selectedDaySchedule.available_slots.filter(
-              (slot) =>
-                parseInt(slot.split(":")[0]) < 12 && !bookedSlots.includes(slot)
-            )
-          );
-          setAfternoonSlots(
-            selectedDaySchedule.available_slots.filter(
-              (slot) =>
-                parseInt(slot.split(":")[0]) >= 12 &&
-                !bookedSlots.includes(slot)
-            )
-          );
-        }
+        
       }
     }
+
   }, [selectedDate, schedule, bookedSlots]);
+  
 
   useEffect(() => {
-    console.log("Updated Morning Slots:", morningSlots);
-  }, [morningSlots]);
+    console.log("Updated Morning Slots:", schedule);
+  }, [schedule]);
 
   const formatDate = (dateString) => {
     const options = { weekday: "short", day: "2-digit", month: "2-digit" };

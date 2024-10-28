@@ -67,9 +67,20 @@ exports.getScheduleByDoctor = async (req, res) => {
       timeSlot: appointment.time_slot,
     }));
 
+    // Lấy thời gian hiện tại
+    const now = new Date();
+    const nowDateStr = now.toISOString().split('T')[0];
+    const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes();
+    const fourHoursLater = currentTimeInMinutes + 240; // Tính 4 giờ sau
+
     // Xây dựng lịch khả dụng
     const availableSchedules = schedules.map(schedule => {
       const scheduleDate = schedule.date.toISOString().split('T')[0]; // Định dạng ngày của lịch làm việc
+
+      // Bỏ qua lịch làm việc trước ngày hôm nay
+      if (scheduleDate < nowDateStr) {
+        return null; // Không đưa lịch này vào
+      }
 
       // Lấy tất cả timeSlot đã đặt cho ngày hiện tại trong lịch làm việc
       const bookedSlotsForDate = bookedSlots
@@ -77,7 +88,17 @@ exports.getScheduleByDoctor = async (req, res) => {
         .map(booked => booked.timeSlot);
 
       // Lọc ra các slot khả dụng
-      const available_slots = schedule.available_slots.filter(slot => !bookedSlotsForDate.includes(slot));
+      const available_slots = schedule.available_slots.filter(slot => {
+        const slotTimeInMinutes = parseInt(slot.split(':')[0]) * 60 + parseInt(slot.split(':')[1]);
+
+        // Đối với ngày hôm nay, kiểm tra xem khung giờ có cách hiện tại ít nhất 4 giờ không
+        if (scheduleDate === nowDateStr) {
+          return slotTimeInMinutes >= fourHoursLater && !bookedSlotsForDate.includes(slot);
+        }
+
+        // Đối với các ngày tương lai, chỉ cần kiểm tra xem slot có bị đặt hay không
+        return !bookedSlotsForDate.includes(slot);
+      });
 
       return {
         doctor_id: schedule.doctor_id,
@@ -86,7 +107,7 @@ exports.getScheduleByDoctor = async (req, res) => {
         slot_duration: schedule.slot_duration,
         available_slots, // Chỉ các khung giờ còn trống
       };
-    });
+    }).filter(schedule => schedule !== null); // Loại bỏ các lịch null
 
     res.status(200).json(availableSchedules);
   } catch (error) {

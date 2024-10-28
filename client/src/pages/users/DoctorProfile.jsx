@@ -94,31 +94,28 @@ const DoctorProfile = () => {
       const selectedDaySchedule = schedule.find(
         (day) => day.date === selectedDate
       );
-      console.log(selectedDaySchedule)
-  
+      console.log(selectedDaySchedule);
+
       // Ensure selectedDaySchedule is defined
       if (selectedDaySchedule) {
         // Corrected variable name from selectedDateFomat to selectedDateFormat
-       
-          setMorningSlots(
-            selectedDaySchedule.available_slots.filter((slot) => {
-              const hour = parseInt(slot.split(":")[0]);
-              return hour < 12 && !bookedSlots.includes(slot);
-            })
-          );
-  
-          setAfternoonSlots(
-            selectedDaySchedule.available_slots.filter((slot) => {
-              const hour = parseInt(slot.split(":")[0]);
-              return hour >= 12 && !bookedSlots.includes(slot);
-            })
-          );
-        
+
+        setMorningSlots(
+          selectedDaySchedule.available_slots.filter((slot) => {
+            const hour = parseInt(slot.split(":")[0]);
+            return hour < 12 && !bookedSlots.includes(slot);
+          })
+        );
+
+        setAfternoonSlots(
+          selectedDaySchedule.available_slots.filter((slot) => {
+            const hour = parseInt(slot.split(":")[0]);
+            return hour >= 12 && !bookedSlots.includes(slot);
+          })
+        );
       }
     }
-
   }, [selectedDate, schedule, bookedSlots]);
-  
 
   useEffect(() => {
     console.log("Updated Morning Slots:", schedule);
@@ -153,11 +150,21 @@ const DoctorProfile = () => {
           </h2>
           <div className="doctor-details">
             <span className="doctor-title">Bác sĩ</span>
-            <span className="doctor-experience">10 năm kinh nghiệm</span>
+            <span className="doctor-experience">15 năm kinh nghiệm</span>
           </div>
           <div className="doctor-specialty">
             <span>Chuyên khoa: </span>
             <a href="#">{doctor.user.specialties}</a>
+          </div>
+          <div>
+            <h5>Thông tin bác sĩ</h5>
+            <p>
+              Khám và điều trị các bệnh lý về nội khoa, nhi khoa, tâm thần kinh.
+              Tư vấn về dinh dưỡng và phát triển thể chất cho trẻ em. Khám và tư
+              vấn về sức khỏe, phòng ngừa bệnh cho trẻ em và phụ nữ mang thai.
+              Tham gia các chương trình tình nguyện, hướng dẫn cách chăm sóc trẻ
+              sơ sinh, trẻ nhỏ.
+            </p>
           </div>
         </div>
       </div>
@@ -184,7 +191,7 @@ const DoctorProfile = () => {
             .sort((a, b) => new Date(a.date) - new Date(b.date))
             .map((day, index) => {
               const isBooked = bookedDates.includes(day.date);
-              const totalSlots = day.available_slots.length; 
+              const totalSlots = day.available_slots.length;
 
               return (
                 <div
@@ -252,20 +259,13 @@ const DoctorProfile = () => {
       </div>
 
       <div className="doctor-info-section">
-        <h3 className="doctor-info-title">Thông tin bác sĩ</h3>
+        <h3 className="doctor-info-title">Thông tin phòng khám</h3>
         <ul className="doctor-info-list">
-          <li>
-            Khám và điều trị các bệnh lý về nội khoa, nhi khoa, tâm thần kinh.
-          </li>
-          <li>Tư vấn về dinh dưỡng và phát triển thể chất cho trẻ em.</li>
-          <li>
-            Khám và tư vấn về sức khỏe, phòng ngừa bệnh cho trẻ em và phụ nữ
-            mang thai.
-          </li>
-          <li>
-            Tham gia các chương trình tình nguyện, hướng dẫn cách chăm sóc trẻ
-            sơ sinh, trẻ nhỏ.
-          </li>
+          Phòng khám Pandora là địa chỉ chăm sóc sức khỏe uy tín, chuyên nghiệp.
+          Với đội ngũ bác sĩ giàu kinh nghiệm và trang thiết bị hiện đại, chúng
+          tôi cam kết mang đến cho khách hàng những dịch vụ y tế chất lượng cao.
+          Phòng khám chuyên về các lĩnh vực điều trị ngoài da và viêm da cơ địa,
+          đảm bảo đáp ứng mọi nhu cầu khám chữa bệnh của bạn.
         </ul>
       </div>
       <div className="booking-footer">

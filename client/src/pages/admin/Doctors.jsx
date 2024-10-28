@@ -151,8 +151,7 @@ const Doctors = (props) => {
           address,
         });
 
-
-        if (response.EC==1) {
+        if (response.EC == 1) {
           toast.success(response.EM);
 
           // Gọi lại API để cập nhật danh sách bác sĩ
@@ -239,8 +238,8 @@ const Doctors = (props) => {
                   value={formData.gender}
                   onChange={handleInputChange}
                 >
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
+                  <option value="Male">Nam</option>
+                  <option value="Female">Nữ</option>
                 </select>
                 <label>Ngày sinh:</label>
                 <input
@@ -272,13 +271,21 @@ const Doctors = (props) => {
               </div>
               <div>
                 <label>Chuyên khoa:</label>
-                <input
-                  type="text"
+                <select
                   name="specialization"
                   value={formData.specialization}
                   onChange={handleInputChange}
                   required
-                />
+                >
+                  <option value="">Chọn chuyên khoa</option>
+                  <option value="noi_khoa">Nội khoa</option>
+                  <option value="nhi_khoa">Nhi khoa</option>
+                  <option value="da_lieu">Da liễu</option>
+                  <option value="tai_mui_hong">Tai Mũi Họng</option>
+                  <option value="mat">Mắt</option>
+                  <option value="san_phu_khoa">Sản Phụ Khoa</option>
+                  <option value="ngoai_khoa">Ngoại khoa</option>
+                </select>
               </div>
               <div>
                 <label htmlFor="">Password</label>

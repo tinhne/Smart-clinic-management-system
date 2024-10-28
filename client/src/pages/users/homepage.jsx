@@ -4,7 +4,7 @@ import "../../style/homepage.scss";
 import { CiSearch } from "react-icons/ci";
 import doctorImage from "../../assets/img/customer01.png";
 import image2 from "../../assets/img/coth1.png";
-import image from "../../assets/img/login.png";
+import image from "../../assets/img/chuan1.png";
 import { useNavigate } from "react-router-dom";
 import { getAllUserByRole } from "../../utils/AuthAPI/AdminService";
 import { useEffect, useState } from "react";
@@ -402,7 +402,7 @@ const HomePage = () => {
               </div>
             </div>
             <div className="news_card">
-              <img src="path-to-image" alt="News Image" />
+              <img src={image2} alt="News Image" />
               <div className="news_info">
                 <h3>
                   Klamentin là thuốc gì? Công dụng, cách dùng và lưu ý khi sử
@@ -414,9 +414,9 @@ const HomePage = () => {
           </div>
         </div>
         <div className="data-security-section">
-          <h1 className="title">Bảo mật dữ liệu</h1>
+          <h1 className="title">GIẤY PHÉP CHỨNG NHẬN ĐẠT CHUẨN GPP</h1>
           <p className="subtitle">
-            An toàn dữ liệu của bạn là ưu tiên hàng đầu của chúng tôi
+            Đội ngũ chuyên gia chứng nhận phòng khám đạt chuẩn GPP
           </p>
 
           <div className="icons-container">
@@ -425,7 +425,7 @@ const HomePage = () => {
               <p>
                 Hạ tầng đạt tiêu chuẩn
                 <br />
-                ISO 27001:2013
+                ISO 15189:2012
               </p>
             </div>
             <div className="icon-item">
@@ -433,7 +433,7 @@ const HomePage = () => {
               <p>
                 Thông tin sức khỏe được
                 <br />
-                bảo mật theo quy chuẩn
+                đảm bảo tốt nhất
                 <br />
                 <a href="#">HIPAA</a>
               </p>

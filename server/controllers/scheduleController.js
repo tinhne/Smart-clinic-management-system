@@ -66,20 +66,19 @@ exports.getScheduleByDoctor = async (req, res) => {
       date: appointment.appointment_date.toISOString().split('T')[0], // Chỉ lấy ngày
       timeSlot: appointment.time_slot,
     }));
+
     // Xây dựng lịch khả dụng
     const availableSchedules = schedules.map(schedule => {
       const scheduleDate = schedule.date.toISOString().split('T')[0]; // Định dạng ngày của lịch làm việc
-      const available_slots = schedule.available_slots.filter(slot => {
-        // Kiểm tra xem có cuộc hẹn nào trong bookedSlots cho cùng một ngày
-        const appointmentForDate = bookedSlots.find(booked => booked.date === scheduleDate);
-        console.log("apointmentForDate>>>>>>>>>>>>>",appointmentForDate)
-        // Nếu không có cuộc hẹn nào cho ngày đó, tất cả khung giờ sẽ khả dụng
-        if (!appointmentForDate) return true;
-        
-        // So sánh slot hiện tại với slot đã đặt
-        return slot !== appointmentForDate.timeSlot;
-      });
-    
+
+      // Lấy tất cả timeSlot đã đặt cho ngày hiện tại trong lịch làm việc
+      const bookedSlotsForDate = bookedSlots
+        .filter(booked => booked.date === scheduleDate)
+        .map(booked => booked.timeSlot);
+
+      // Lọc ra các slot khả dụng
+      const available_slots = schedule.available_slots.filter(slot => !bookedSlotsForDate.includes(slot));
+
       return {
         doctor_id: schedule.doctor_id,
         date: schedule.date,
@@ -88,8 +87,6 @@ exports.getScheduleByDoctor = async (req, res) => {
         available_slots, // Chỉ các khung giờ còn trống
       };
     });
-    console.log("appointments>>>>>>>>>>>>>>>>>>>>>>>>",appointments)
-    console.log("availableSchedules>>>>>>>>>>>>>>>>>>>", availableSchedules);
 
     res.status(200).json(availableSchedules);
   } catch (error) {

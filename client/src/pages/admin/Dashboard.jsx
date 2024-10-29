@@ -8,7 +8,7 @@ const Dashboard = () => {
     <>
     <div className="tabs-container">
     <Tabs
-        defaultActiveKey="profile"
+        defaultActiveKey="home"
         id="uncontrolled-tab-example"
         className=""
       >

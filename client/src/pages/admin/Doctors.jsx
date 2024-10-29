@@ -238,8 +238,8 @@ const Doctors = (props) => {
                   value={formData.gender}
                   onChange={handleInputChange}
                 >
-                  <option value="Male">Male</option>
-                  <option value="Female">Female</option>
+                  <option value="Nam">Nam</option>
+                  <option value="Nữ">Nữ</option>
                 </select>
                 <label>Ngày sinh:</label>
                 <input
@@ -271,14 +271,21 @@ const Doctors = (props) => {
               </div>
               <div>
                 <label>Chuyên khoa:</label>
-                <input
-                  type="text"
+                <select
                   name="specialization"
                   value={formData.specialization}
                   onChange={handleInputChange}
                   required
-                />
+                >
+                  <option value="">Chọn chuyên khoa</option>
+                  <option value="Da Liễu">Da Liễu</option>
+                  <option value="Tiêu Hóa">Tiêu Hóa</option>
+                  <option value="Chỉnh hình">Chỉnh hình</option>
+                  <option value="Tim Mạch">Tim Mạch</option>
+                  <option value="Nhi Khoa">Nhi Khoa</option>
+                </select>
               </div>
+
               <div>
                 <label htmlFor="">Password</label>
                 <input

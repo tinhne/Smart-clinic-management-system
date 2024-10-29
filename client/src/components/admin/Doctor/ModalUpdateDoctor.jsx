@@ -7,7 +7,7 @@ import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import { editUser } from "../../../utils/AuthAPI/AdminService";
-import "./ModalUpdateDoctor.scss"
+import "./ModalUpdateDoctor.scss";
 const ModalEditDoctor = (props) => {
   const { showEditModal, setShowEditModal, selectedUser, fetchDoctors } = props;
   const [formData, setFormData] = useState({
@@ -150,8 +150,8 @@ const ModalEditDoctor = (props) => {
                       value={formData.gender}
                       onChange={handleChange}
                     >
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
+                      <option value="Male">Nam</option>
+                      <option value="Female">Nữ</option>
                     </Form.Control>
                   </Form.Group>
 
@@ -173,12 +173,18 @@ const ModalEditDoctor = (props) => {
                   <Row className="mb-3">
                     <Form.Group as={Col} md="12" controlId="specialties">
                       <Form.Label>Specialties</Form.Label>
-                      <Form.Control
-                        type="text"
-                        placeholder="Specialties"
+                      <Form.Select
                         value={formData.specialties}
                         onChange={handleChange}
-                      />
+                        required
+                      >
+                        <option value="">Chọn chuyên khoa</option>
+                        <option value="Da Liễu">Da Liễu</option>
+                        <option value="Tiêu Hóa">Tiêu Hóa</option>
+                        <option value="Chỉnh hình">Chỉnh hình</option>
+                        <option value="Tim Mạch">Tim Mạch</option>
+                        <option value="Nhi Khoa">Nhi Khoa</option>
+                      </Form.Select>
                     </Form.Group>
                   </Row>
                 )}

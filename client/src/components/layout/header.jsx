@@ -41,7 +41,7 @@ const Header = () => {
     Cookies.remove("access_token");
     Cookies.remove("role");
     Cookies.remove("username");
-    navigate("/thong-tin/ho-so");
+    navigate("/");
   };
 
   const handleLogin = () => {

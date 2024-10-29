@@ -5,6 +5,8 @@ import doctorPlaceholder from "../../../assets/img/customer01.png"; // Hình ả
 import { getUserById } from "../../../utils/AuthAPI/AdminService";
 import { getAppointmentPatient, deleteAppointment } from "../../../utils/AppointmentAPI/AppointmentService";
 import Countdown from "./Countdown";
+import ConfirmationDialog from "../../layout/ConfirmationDialog"; // Import hộp thoại xác nhận
+
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -13,6 +15,8 @@ const Appointment = () => {
   const [patientInfo, setPatientInfo] = useState(null);
   const [countdownFinished, setCountdownFinished] = useState({});
   const [searchTerm, setSearchTerm] = useState(""); // State cho tìm kiếm
+  const [showConfirmation, setShowConfirmation] = useState(false); // Trạng thái hiển thị hộp thoại
+  const [appointmentToDelete, setAppointmentToDelete] = useState(null); // Lưu trữ lịch hẹn cần xóa
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -91,20 +95,31 @@ const Appointment = () => {
     return appointment.appointment_type === "online" && now >= oneHourBefore && !countdownFinished[appointment._id]; // Kiểm tra xem đã đủ 1 tiếng trước thời gian khám hay chưa
   };
 
-  const handleCancelAppointment = async (appointmentId) => {
-    if (!window.confirm("Bạn có chắc chắn muốn hủy lịch hẹn này không?")) return;
-  
+  const handleCancelAppointment = async () => {
     try {
-      await deleteAppointment(appointmentId); // Gọi API xoá lịch hẹn từ database
+      await deleteAppointment(appointmentToDelete); // Xóa lịch hẹn đã chọn
       setAppointments((prevAppointments) =>
-        prevAppointments.filter((appt) => appt._id !== appointmentId) // Xoá lịch đã hẹn khỏi state
+        prevAppointments.filter((appt) => appt._id !== appointmentToDelete)
       );
-      setSelectedAppointment(null); // Đặt lại lịch đã chọn nếu là lịch hẹn bị xoá
+      setSelectedAppointment(null); 
       alert("Lịch hẹn đã được hủy thành công.");
     } catch (error) {
       console.error("Error cancelling appointment:", error);
       alert("Có lỗi xảy ra khi hủy lịch hẹn.");
+    } finally {
+      setShowConfirmation(false); // Đóng hộp thoại
+      setAppointmentToDelete(null);
     }
+  };
+
+  const openConfirmationDialog = (appointmentId) => {
+    setAppointmentToDelete(appointmentId);
+    setShowConfirmation(true); // Mở hộp thoại xác nhận
+  };
+
+  const handleCloseConfirmation = () => {
+    setShowConfirmation(false);
+    setAppointmentToDelete(null);
   };
 
   const normalizeString = (str) => {
@@ -208,7 +223,7 @@ const Appointment = () => {
                         className="delete-button"
                         onClick={(e) => {
                           e.stopPropagation(); // Ngăn không cho sự kiện onClick của li kích hoạt
-                          handleCancelAppointment(appointment._id);
+                          openConfirmationDialog(appointment._id); // Mở hộp thoại xác nhận
                         }}
                       >
                         Xóa
@@ -221,6 +236,14 @@ const Appointment = () => {
             ) : (
               <p>Không có lịch hẹn nào</p>
             )}
+
+{showConfirmation && (
+        <ConfirmationDialog
+          message="Bạn có chắc chắn muốn hủy lịch hẹn này không?"
+          onConfirm={handleCancelAppointment}
+          onCancel={handleCloseConfirmation}
+        />
+      )}
           </ul>
         </div>
       </div>
@@ -312,7 +335,9 @@ const Appointment = () => {
             <div className="info-row">
               <p className="label">Năm sinh:</p>
               <p className="value">
-                {patientInfo?.birth_year || "Không xác định"}
+              {new Date(
+                  patientInfo?.birthdate
+                ).toLocaleDateString()}
               </p>
             </div>
             <div className="info-row">

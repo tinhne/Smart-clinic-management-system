@@ -22,7 +22,6 @@ function LoginRegister() {
   };
 
   // Xử lý đăng nhập
-  // Xử lý đăng nhập
   const handleLogin = async (e) => {
     e.preventDefault();
     if (!email || !password) {
@@ -44,6 +43,7 @@ function LoginRegister() {
           toast.error("Admin không được phép đăng nhập ở đây");
           return; // Ngăn không cho tiếp tục lưu thông tin
         } else if (res.role === "doctor") {
+          // Lưu token và role vào cookies
           Cookies.set("access_token", res.token, {
             secure: true,
             sameSite: "Strict",
@@ -59,8 +59,9 @@ function LoginRegister() {
             sameSite: "Strict",
           });
           localStorage.setItem("username", res.username);
+          navigate("/thong-tin/ho-so");
+          window.location.reload();
           toast.success(res.EM);
-          navigate("/");
         } else if (res.role === "patient") {
           // Lưu token và role vào cookies
           Cookies.set("access_token", res.token, {
@@ -78,7 +79,7 @@ function LoginRegister() {
             sameSite: "Strict",
           });
           localStorage.setItem("username", res.username);
-          toast.success(res.EM);
+          toast.success("Đăng nhập thành công");
           navigate("/"); // Điều hướng đến trang chính cho patient/doctor
         } else {
           toast.error("Role không xác định!");

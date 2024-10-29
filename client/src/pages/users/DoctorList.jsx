@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import "../../style/DoctorList/DoctorList.scss";
 import ReactPaginate from "react-paginate";
 import { getAllUserByRole, getAllDoctorsBySpecialty } from "../../utils/AuthAPI/AdminService";
+import Cookies from "js-cookie"
 
 const categories = [
   { name: "Tất cả" },
@@ -20,15 +21,15 @@ const categories = [
 function DoctorList() {
   const [doctorList, setDoctorList] = useState([]);
   const [currentCategory, setCurrentCategory] = useState("Tất cả"); 
+  const navigate = useNavigate(); // Khai báo useNavigate
+
   const fetchDoctors = async (specialty = null) => {
     let data;
     
     if (specialty === "Tất cả") {
       data = await getAllUserByRole("doctor", 1, 1000); // Lấy tất cả bác sĩ
-
     } else {
-      // Gọi API với cách gửi dữ liệu phù hợp
-      data = await getAllDoctorsBySpecialty({ specialty }); // Gửi một đối tượng có specialty
+      data = await getAllDoctorsBySpecialty({ specialty });
     }
   
     if (data) {
@@ -38,17 +39,24 @@ function DoctorList() {
     }
   };
   
-
   useEffect(() => {
-    fetchDoctors(currentCategory); // Gọi hàm lấy bác sĩ khi component mount hoặc khi currentCategory thay đổi
-  }, [currentCategory]); // Chỉ gọi lại khi currentCategory thay đổi
+    fetchDoctors(currentCategory);
+  }, [currentCategory]);
 
-  // Hàm xử lý khi người dùng chọn chuyên khoa
-const handleChange = (categoryName) => {
-  setCurrentCategory(categoryName); // Cập nhật chuyên khoa hiện tại
-  fetchDoctors(categoryName); // Gọi lại fetchDoctors khi thay đổi chuyên khoa
-};
+  const handleChange = (categoryName) => {
+    setCurrentCategory(categoryName);
+    fetchDoctors(categoryName);
+  };
 
+  // Hàm xử lý khi nhấn nút "Đặt khám"
+  const handleAppointmentClick = (doctorId) => {
+    const isLoggedIn = Cookies.get("access_token"); // Kiểm tra trạng thái đăng nhập (thay đổi theo cách của bạn)
+    if (!isLoggedIn) {
+      navigate("/login-register"); // Chuyển hướng đến trang đăng nhập nếu chưa đăng nhập
+    } else {
+      navigate(`/dat-kham/bac-si/${doctorId}`); // Nếu đã đăng nhập, chuyển đến trang đặt khám
+    }
+  };
 
   return (
     <div className="page-container">
@@ -70,7 +78,7 @@ const handleChange = (categoryName) => {
         {doctorList.length > 0 ? (
           doctorList.map((doctor) => (
             <div key={doctor._id} className="doctor-item">
-              <img  src={`data:image/jpeg;base64,${doctor.imageUrl}`} className="doctor-img" />
+              <img src={`data:image/jpeg;base64,${doctor.imageUrl}`} className="doctor-img" />
              
               <div className="doctor-info">
                 <h3>{doctor.first_name} {doctor.last_name}</h3>
@@ -83,8 +91,12 @@ const handleChange = (categoryName) => {
                 </p>
                 <p>{doctor.address}</p>
               </div>
-              <NavLink to={`/dat-kham/bac-si/${doctor._id}`}> <button className="appointment-btn">Đặt khám</button></NavLink>
-             
+              <button 
+                className="appointment-btn" 
+                onClick={() => handleAppointmentClick(doctor._id)} // Gọi hàm khi nhấn nút
+              >
+                Đặt khám
+              </button>
             </div>
           ))
         ) : (

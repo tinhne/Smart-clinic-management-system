@@ -41,7 +41,7 @@ const Header = () => {
     Cookies.remove("access_token");
     Cookies.remove("role");
     Cookies.remove("username");
-    navigate("/");
+    navigate("/thong-tin/ho-so");
   };
 
   const handleLogin = () => {
@@ -62,10 +62,7 @@ const Header = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="nav-links">
-            <Nav.Link href="/dat-kham/bac-si/tim-kiem">Đặt lịch khám</Nav.Link>
-            {role === "doctor" && (
-              <Nav.Link href="/bac-si/ho-so">Bác sĩ</Nav.Link>
-            )}
+            {role !== "doctor" && (<Nav.Link href="/dat-kham/bac-si/tim-kiem">Đặt lịch khám</Nav.Link>)}
             <Nav.Link href="/gioi-thieu">Giới thiệu</Nav.Link>
             <Nav.Link href="/tin-tuc/">Tin y tế</Nav.Link>
             <Nav.Link href="/dich-vu-kham">Dịch vụ khám</Nav.Link>

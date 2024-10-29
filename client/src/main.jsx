@@ -144,30 +144,30 @@ const router = createBrowserRouter([
     ],
   },
 
-  {
-    path: "",
-    // element: <PrivateRouteDoctor allowedRoles={["doctor"]} />,
-    children: [
-      {
-        element: <DoctorApp />,
-        children: [
-          {
-            index: true,
-            path: "bac-si/ho-so",
-            element: <DoctorInfor />,
-          },
-          {
-            path: "bac-si/ho-so-benh-nhan",
-            element: <ViewPatientRecord />,
-          },
-          {
-            path: "bac-si/lich-hen",
-            element: <ViewSchedule />,
-          },
-        ],
-      },
-    ],
-  },
+  // {
+  //   path: "",
+  //   // element: <PrivateRouteDoctor allowedRoles={["doctor"]} />,
+  //   children: [
+  //     {
+  //       element: <DoctorApp />,
+  //       children: [
+  //         {
+  //           index: true,
+  //           path: "bac-si/ho-so",
+  //           element: <DoctorInfor />,
+  //         },
+  //         {
+  //           path: "bac-si/ho-so-benh-nhan",
+  //           element: <ViewPatientRecord />,
+  //         },
+  //         {
+  //           path: "bac-si/lich-hen",
+  //           element: <ViewSchedule />,
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(

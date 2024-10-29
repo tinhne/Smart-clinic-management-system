@@ -76,6 +76,7 @@ const ContentProfile = () => {
     const { name, value } = e.target;
     setProfile({ ...profile, [name]: value });
   };
+  const role = Cookies.get("role"); // Lấy vai trò từ cookie
 
   return (
     <main className="content">
@@ -204,7 +205,19 @@ const ContentProfile = () => {
             <div className="profile-details">
               <div className="profile-header flex items-center mb-4">
                 <div className="profile-avatar w-12 h-12 bg-blue-500 text-white flex items-center justify-center rounded-full">
-                  TE
+                  <div className="profile-avatar w-12 h-12 bg-blue-500 text-white flex items-center justify-center rounded-full">
+                    {role === "doctor" ? (
+                      <img
+                        src={`data:image/png;base64,${profile.imageUrl}`}
+                        alt="Avatar"
+                        className="w-full h-full rounded-full"
+                      />
+                    ) : (
+                      `${profile.first_name.charAt(
+                        0
+                      )}${profile.last_name.charAt(0)}`.toUpperCase()
+                    )}
+                  </div>
                 </div>
                 <div className="profile-info ml-4">
                   <div className="profile-name font-bold">
@@ -244,13 +257,32 @@ const ContentProfile = () => {
                   <div>Email</div>
                   <div>{profile.email}</div>
                 </div>
+                {role === "doctor" && (
+                  <div className="section-content grid grid-cols-2 gap-4">
+                    <div>Kinh nghiệm</div>
+                    <div>{profile.experience}</div>
+                    <div>Chuyên khoa</div>
+                    <div>
+                      {Array.isArray(profile.specialties) ? (
+                        profile.specialties.map((specialty, index) => (
+                          <li key={index}>{specialty}</li>
+                        ))
+                      ) : (
+                        <p>Không có chuyên khoa</p>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
-              <button
-                onClick={handleEditClick}
-                className="edit-profile-btn py-2 px-4 bg-blue-500 text-white rounded"
-              >
-                Thay đổi thông tin
-              </button>
+
+              {role !== "doctor" && (
+                <button
+                  onClick={handleEditClick}
+                  className="edit-profile-btn py-2 px-4 bg-blue-500 text-white rounded"
+                >
+                  Thay đổi thông tin
+                </button>
+              )}
             </div>
           )}
         </div>

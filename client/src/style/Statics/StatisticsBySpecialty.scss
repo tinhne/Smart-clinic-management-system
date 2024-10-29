@@ -1,0 +1,26 @@
+.statics-container {
+    padding: 20px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+color: #3357FF;
+    h2 {
+      text-align: center;
+      color: #333;
+      font-size: 24px;
+      margin-bottom: 20px;
+      font-weight: bold;
+    }
+  
+    .recharts-wrapper {
+      margin: 0 auto;
+    }
+  
+    .recharts-bar-rectangle {
+      transition: all 0.3s ease;
+      &:hover {
+        opacity: 0.8;
+      }
+    }
+  }
+  

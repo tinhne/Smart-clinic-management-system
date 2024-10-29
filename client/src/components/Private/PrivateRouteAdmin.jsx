@@ -18,4 +18,6 @@ const PrivateRouteAdmin = ({ allowedRoles }) => {
   return <Outlet />;
 };
 
+
+
 export default PrivateRouteAdmin;

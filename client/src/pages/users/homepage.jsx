@@ -25,7 +25,22 @@ import tamthan from "../../assets/img/Specialties/tamthan.jpg";
 const HomePage = () => {
   const navigate = useNavigate();
   const [isExpanded, setIsExpanded] = useState(false);
-
+  const handleBookingBySpecialties = (specialty) => {
+    navigate(
+      {
+        pathname: "/dat-kham/bac-si/tim-kiem",
+      },
+      {
+        state: {
+          specialties: specialty,
+        },
+      }
+    );
+    console.log(specialty);
+  };
+  const handleBooking = (doctorID) => {
+    navigate(`/dat-kham/bac-si/${doctorID}`);
+  };
   const handleViewMoreClick = () => {
     setIsExpanded(!isExpanded);
   };
@@ -113,7 +128,9 @@ const HomePage = () => {
                     <p>{doctor.address}</p>
                   </div>
                   <div className="doctor-action">
-                    <button>Đặt lịch khám</button>
+                    <button onClick={() => handleBooking(doctor._id)}>
+                      Đặt lịch khám
+                    </button>
                   </div>
                 </div>
               ))
@@ -203,7 +220,13 @@ const HomePage = () => {
                 <span>Hô hấp</span>
               </div>
             </div>
-            <div className="specialty-card">
+            <div
+              className="specialty-card"
+              value="Nhi khoa"
+              onClick={(e) => {
+                handleBookingBySpecialties("Nhi Khoa");
+              }}
+            >
               <div className="specialty-image">
                 <img src={Nhikhoa} />
               </div>

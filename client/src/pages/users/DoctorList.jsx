@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import "../../style/DoctorList/DoctorList.scss";
 import ReactPaginate from "react-paginate";
 import { getAllUserByRole, getAllDoctorsBySpecialty } from "../../utils/AuthAPI/AdminService";
@@ -19,6 +19,9 @@ const categories = [
 ];
 
 function DoctorList() {
+  const location = useLocation();
+
+  const {specialties} = location.state || {};
   const [doctorList, setDoctorList] = useState([]);
   const [currentCategory, setCurrentCategory] = useState("Tất cả"); 
   const navigate = useNavigate(); // Khai báo useNavigate
@@ -40,8 +43,13 @@ function DoctorList() {
   };
   
   useEffect(() => {
-    fetchDoctors(currentCategory);
-  }, [currentCategory]);
+    if(specialties){
+      fetchDoctors(specialties);
+    }else{
+
+      fetchDoctors(currentCategory); // Gọi hàm lấy bác sĩ khi component mount hoặc khi currentCategory thay đổi
+    }
+  }, [currentCategory]); // Chỉ gọi lại khi currentCategory thay đổi
 
   const handleChange = (categoryName) => {
     setCurrentCategory(categoryName);

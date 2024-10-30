@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useLocation } from "react-router-dom";
 import "../../style/DoctorList/DoctorList.scss";
 import ReactPaginate from "react-paginate";
 import { getAllUserByRole, getAllDoctorsBySpecialty } from "../../utils/AuthAPI/AdminService";
@@ -18,6 +18,9 @@ const categories = [
 ];
 
 function DoctorList() {
+  const location = useLocation();
+
+  const {specialties} = location.state || {};
   const [doctorList, setDoctorList] = useState([]);
   const [currentCategory, setCurrentCategory] = useState("Tất cả"); 
   const fetchDoctors = async (specialty = null) => {
@@ -40,7 +43,12 @@ function DoctorList() {
   
 
   useEffect(() => {
-    fetchDoctors(currentCategory); // Gọi hàm lấy bác sĩ khi component mount hoặc khi currentCategory thay đổi
+    if(specialties){
+      fetchDoctors(specialties);
+    }else{
+
+      fetchDoctors(currentCategory); // Gọi hàm lấy bác sĩ khi component mount hoặc khi currentCategory thay đổi
+    }
   }, [currentCategory]); // Chỉ gọi lại khi currentCategory thay đổi
 
   // Hàm xử lý khi người dùng chọn chuyên khoa

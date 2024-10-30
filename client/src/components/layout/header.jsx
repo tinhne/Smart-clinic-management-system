@@ -62,7 +62,11 @@ const Header = () => {
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
           <Nav className="nav-links">
-            {role !== "doctor" && (<Nav.Link href="/dat-kham/bac-si/tim-kiem">Đặt lịch khám</Nav.Link>)}
+            {role !== "doctor" && (
+              <Nav.Link href="/dat-kham/bac-si/tim-kiem">
+                Đặt lịch khám
+              </Nav.Link>
+            )}
             <Nav.Link href="/gioi-thieu">Giới thiệu</Nav.Link>
             <Nav.Link href="/tin-tuc/">Tin y tế</Nav.Link>
             <Nav.Link href="/dich-vu-kham">Dịch vụ khám</Nav.Link>
@@ -71,22 +75,45 @@ const Header = () => {
             {username ? (
               <div className="user_info">
                 <NavDropdown title={username} id="basic-nav-dropdown">
-                  <NavDropdown.Item href="/thong-tin/ho-so">
-                    Hồ sơ
-                  </NavDropdown.Item>
-                  <NavDropdown.Item href="/thong-tin/lich-kham">
-                    Lịch khám
-                  </NavDropdown.Item>
-                  <NavDropdown.Item href="/thong-tin/thanh-toan">
-                    Thanh toán
-                  </NavDropdown.Item>
-                  <NavDropdown.Item href="/thong-tin/tai-khoan">
-                    Tài Khoản
-                  </NavDropdown.Item>
-                  <NavDropdown.Divider />
-                  <NavDropdown.Item onClick={handleLogout}>
-                    Đăng xuất
-                  </NavDropdown.Item>
+                  {role === "doctor" ? (
+                    <>
+                      <NavDropdown.Item href="/thong-tin/ho-so">
+                        Hồ sơ cá nhân
+                      </NavDropdown.Item>
+                      <NavDropdown.Item href="/bac-si/lich-hen">
+                        Xem Lịch hẹn khám
+                      </NavDropdown.Item>
+                      <NavDropdown.Item href="/thong-tin/ho-so-benh-nhan">
+                        Hồ sơ bệnh nhân
+                      </NavDropdown.Item>
+                      <NavDropdown.Item href="/thong-tin/tai-khoan">
+                        Tài Khoản
+                      </NavDropdown.Item>
+                      <NavDropdown.Divider />
+                      <NavDropdown.Item onClick={handleLogout}>
+                        Đăng xuất
+                      </NavDropdown.Item>
+                    </>
+                  ) : role === "patient" ? (
+                    <>
+                      <NavDropdown.Item href="/thong-tin/ho-so">
+                        Hồ sơ bệnh nhân
+                      </NavDropdown.Item>
+                      <NavDropdown.Item href="/thong-tin/lich-kham">
+                        Lịch khám
+                      </NavDropdown.Item>
+                      <NavDropdown.Item href="/thong-tin/thanh-toan">
+                        Thanh toán
+                      </NavDropdown.Item>
+                      <NavDropdown.Item href="/thong-tin/tai-khoan">
+                        Tài Khoản
+                      </NavDropdown.Item>
+                      <NavDropdown.Divider />
+                      <NavDropdown.Item onClick={handleLogout}>
+                        Đăng xuất
+                      </NavDropdown.Item>
+                    </>
+                  ) : null}
                 </NavDropdown>
               </div>
             ) : (

@@ -27,12 +27,8 @@
     "react-paginate": "^8.2.0",
     "react-router-dom": "^6.26.2",
     "react-simple-chatbot": "^0.6.1",
-<<<<<<< HEAD
-    "react-toastify": "^10.0.5",
-    "recharts": "^2.13.0",
-=======
     "react-toastify": "^10.0.6",
->>>>>>> 073ea52 (chưa đăng nhập mà đặt lịch là tới trang đang nhập, sửa doctor page)
+    "recharts": "^2.13.1",
     "sass": "^1.79.4",
     "toastify": "^2.0.1"
   },

@@ -210,7 +210,7 @@ const ContentProfile = () => {
                       <img
                         src={`data:image/png;base64,${profile.imageUrl}`}
                         alt="Avatar"
-                        className="w-full h-full rounded-full"
+                        className="image-profile-doctor  rounded-full "
                       />
                     ) : (
                       `${profile.first_name.charAt(
@@ -259,10 +259,12 @@ const ContentProfile = () => {
                 </div>
                 {role === "doctor" && (
                   <div className="section-content grid grid-cols-2 gap-4">
-                    <div>Kinh nghiệm</div>
-                    <div>{profile.experience}</div>
+                    <div className="experience">Kinh nghiệm</div>
+                    <div className="display-experience">
+                      {profile.experience}
+                    </div>
                     <div>Chuyên khoa</div>
-                    <div>
+                    <div className="list-chuyenkhoa">
                       {Array.isArray(profile.specialties) ? (
                         profile.specialties.map((specialty, index) => (
                           <li key={index}>{specialty}</li>

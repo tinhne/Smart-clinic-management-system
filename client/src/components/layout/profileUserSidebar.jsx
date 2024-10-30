@@ -11,12 +11,12 @@ const ProfileSidebar = () => {
   const handleLogout = () => {
     // Xóa tất cả thông tin liên quan đến người dùng
     localStorage.clear();
-    
+
     // Xóa cookies
-    Cookies.remove("access_token", { path: '/' });
-    Cookies.remove("role", { path: '/' });
-    Cookies.remove("username", { path: '/' });
-    Cookies.remove("id", { path: '/' });
+    Cookies.remove("access_token", { path: "/" });
+    Cookies.remove("role", { path: "/" });
+    Cookies.remove("username", { path: "/" });
+    Cookies.remove("id", { path: "/" });
   };
 
   return (
@@ -43,7 +43,7 @@ const ProfileSidebar = () => {
               </li>
               <li>
                 <NavLink
-                  to="/thong-tin/lich-hen-kham"
+                  to="bac-si/lich-hen"
                   className={({ isActive }) => (isActive ? "active" : "")}
                 >
                   Xem lịch hẹn khám

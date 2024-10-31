@@ -100,39 +100,86 @@ exports.getPatientAppointments = async (patientId) => {
 };
 
 
+// Trong appointmentService.js
+
+// Lấy lịch hẹn của bác sĩ
 exports.getDoctorAppointments = async (doctorId) => {
   try {
-    // Lấy tất cả các lịch hẹn đã đặt cho bác sĩ
-    const appointments = await Appointment.find({ doctor_id: doctorId })
-      .select('appointment_date time_slot') // Chỉ chọn các trường cần thiết
-      .lean();
+    // Lấy tất cả các lịch hẹn của bác sĩ, sắp xếp theo ngày gần nhất
+    const appointments = await Appointment.find({ 
+      doctor_id: doctorId,
+    })
+    .sort({ appointment_date: 1 }) // Sắp xếp theo ngày tăng dần
+    .populate('patient_id', 'first_name last_name phone email imageUrl') // Lấy thông tin bệnh nhân
+    .lean();
 
-    // Tạo một đối tượng để chứa các ngày và khung giờ
+    if (!appointments.length) {
+      throw new Error("Không có lịch hẹn nào cho bác sĩ này.");
+    }
+
+    // Trả về danh sách đầy đủ các cuộc hẹn
+    return appointments;
+  } catch (error) {
+    throw new Error("Lỗi khi lấy danh sách lịch hẹn: " + error.message);
+  }
+};
+
+// Thêm hàm mới để lấy danh sách chi tiết lịch hẹn của bác sĩ
+exports.getDoctorAppointmentDetails = async (doctorId) => {
+  try {
+    const appointments = await Appointment.find({ 
+      doctor_id: doctorId 
+    })
+    .populate('patient_id', 'first_name last_name phone email imageUrl') // Lấy thông tin bệnh nhân
+    .sort({ appointment_date: 1 }) // Sắp xếp theo ngày tăng dần
+    .lean();
+
+    if (!appointments.length) {
+      throw new Error("Không có lịch hẹn nào cho bác sĩ này.");
+    }
+
+    return appointments;
+  } catch (error) {
+    throw new Error("Lỗi khi lấy danh sách lịch hẹn: " + error.message);
+  }
+};
+
+// Thêm API mới để lấy lịch trống của bác sĩ
+exports.getDoctorAvailableSchedule = async (doctorId) => {
+  try {
+    // Lấy tất cả các lịch hẹn đã đặt cho bác sĩ
+    const appointments = await Appointment.find({ 
+      doctor_id: doctorId,
+      status: { $ne: 'cancelled' } // Không lấy các lịch hẹn đã hủy
+    })
+    .select('appointment_date time_slot')
+    .lean();
+
+    // Tạo một đối tượng để chứa các ngày và khung giờ đã đặt
     const schedule = {};  
 
     appointments.forEach((appointment) => {
-      const appointmentDate = appointment.appointment_date.toISOString().split('T')[0]; // Lấy ngày
+      const appointmentDate = appointment.appointment_date.toISOString().split('T')[0];
       const timeSlot = appointment.time_slot;
 
-      // Thêm ngày vào đối tượng nếu chưa có
       if (!schedule[appointmentDate]) {
         schedule[appointmentDate] = {
           timeSlots: [],
         };
       }
 
-      // Thêm khung giờ đã đặt vào mảng
       schedule[appointmentDate].timeSlots.push(timeSlot);
     });
 
     // Chuyển đổi đối tượng thành mảng
-    const availableSchedule = Object.keys(schedule).map((date) => ({
-      bookedDates: date,
+    const bookedSchedule = Object.keys(schedule).map((date) => ({
+      bookedDate: date,
       bookedSlots: schedule[date].timeSlots,
     }));
 
-    return availableSchedule;
+    return bookedSchedule;
   } catch (error) {
-    throw new Error("Error fetching appointments: " + error.message);
+    throw new Error("Lỗi khi lấy lịch trống: " + error.message);
   }
 };
+

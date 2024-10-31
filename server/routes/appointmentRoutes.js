@@ -21,4 +21,8 @@ router.get("/doctor/:doctorId", authenticate, authorize(["doctor"]), appointment
 router.get("/patient/:patientId", authenticate, appointmentController.getPatientAppointments);
 
 router.get('/appointments/:doctorId', appointmentController.checkDoctorSchedule);
+
+// Lấy lịch hẹn của bác sĩ 
+router.get("/doctor-appointments/:doctorId", authenticate, appointmentController.getDoctorAppointmentDetails);
+
 module.exports = router;

@@ -108,3 +108,21 @@ exports.getPatientAppointments = async (req, res) => {
       });
   }
 };
+
+// Thêm controller mới
+exports.getDoctorAppointmentDetails = async (req, res) => {
+  try {
+    const appointments = await appointmentService.getDoctorAppointmentDetails(
+      req.user._id
+    );
+    res.status(200).json(appointments);
+  } catch (error) {
+    res
+      .status(500)
+      .json({
+        msg: "Có lỗi xảy ra khi lấy lịch hẹn của bệnh nhân",
+        error: error.message,
+      });
+  }
+};
+

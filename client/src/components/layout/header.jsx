@@ -113,7 +113,7 @@ const Header = () => {
                         Đăng xuất
                       </NavDropdown.Item>
                     </>
-                  ) : null}
+                  ) : handleLogout()}
                 </NavDropdown>
               </div>
             ) : (

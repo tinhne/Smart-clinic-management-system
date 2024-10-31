@@ -114,7 +114,7 @@ const StatisticsByDoctor = () => {
       </div>
 
       <div className="table">
-        <h2>Thống kê số lượng bệnh nhân khám theo bác sĩ</h2>
+        <h2>Thống kê số lượng bệnh nhân khám theo bác sĩ theo tháng</h2>
         <Table
           columns={monthlyColumns}
           dataSource={monthlyAppointmentData}

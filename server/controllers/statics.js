@@ -1,6 +1,7 @@
 // controllers/appointmentController.js
 const appointmentService = require('../service/Statics');
 const Appointment = require('../models/Appointment');
+const User = require('../models/User');
 const getAppointmentCountBySpecialties = async (req, res) => {
     try {
       const result = await appointmentService.getAppointmentCountBySpecialties();
@@ -22,18 +23,30 @@ const getAppointmentCountBySpecialties = async (req, res) => {
   const getDailyAppointmentCountByDoctor = async (req, res) => {
     try {
       const today = new Date();
-      today.setHours(0, 0, 0, 0);
+      today.setHours(0, 0, 0, 0); // Bắt đầu của ngày hiện tại
+  
+      const endOfDay = new Date(today);
+      endOfDay.setHours(23, 59, 59, 999); // Kết thúc của ngày hiện tại
   
       const appointments = await Appointment.aggregate([
-        { $match: { appointment_date: { $gte: today } } },
-        { $group: { _id: "$doctor_id", count: { $sum: 1 } } },
+        {
+          $match: {
+            appointment_date: { $gte: today, $lte: endOfDay } // Lọc trong phạm vi của ngày hôm nay
+          }
+        },
+        {
+          $group: {
+            _id: "$doctor_id",
+            count: { $sum: 1 }
+          }
+        },
         {
           $lookup: {
             from: "users",
             localField: "_id",
             foreignField: "_id",
-            as: "doctor",
-          },
+            as: "doctor"
+          }
         },
         { $unwind: "$doctor" },
         {
@@ -41,18 +54,19 @@ const getAppointmentCountBySpecialties = async (req, res) => {
             _id: 0,
             doctor_id: "$doctor._id",
             doctor_name: { $concat: ["$doctor.first_name", " ", "$doctor.last_name"] },
-            count: 1,
-          },
-        },
+            count: 1
+          }
+        }
       ]);
   
       res.json({ success: true, data: appointments });
     } catch (error) {
       console.error("Error calculating daily appointments:", error);
-
+  
       res.status(500).json({ success: false, message: "Error calculating daily appointments.", error });
     }
   };
+  
   
   // API 2: Số lượng bệnh nhân mỗi bác sĩ khám trong tháng
   const getMonthlyAppointmentCountByDoctor = async (req, res) => {

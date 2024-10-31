@@ -48,55 +48,52 @@ exports.createSchedule = async (req, res) => {
 };
 
 // Lấy lịch làm việc của bác sĩ
-// Lấy lịch làm việc của bác sĩ
+
 exports.getScheduleByDoctor = async (req, res) => {
   try {
     const { doctorId } = req.params;
 
-    // Tìm lịch làm việc của bác sĩ
-    const schedules = await Schedule.find({ doctor_id: doctorId });
+    // Xác định ngày hôm nay (không bao gồm thời gian)
+    const now = new Date();
+    const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+
+    // Tìm lịch làm việc của bác sĩ với điều kiện ngày >= hôm nay
+    const schedules = await Schedule.find({ 
+      doctor_id: doctorId, 
+      date: { $gte: today } 
+    });
 
     if (schedules.length === 0) {
       return res.status(404).json({ msg: "Không tìm thấy lịch cho bác sĩ" });
     }
 
-    // Lấy tất cả lịch hẹn của bác sĩ để kiểm tra khung giờ đã đặt
+    // Lấy các lịch hẹn để kiểm tra khung giờ đã đặt
     const appointments = await Appointment.find({ doctor_id: doctorId });
     const bookedSlots = appointments.map(appointment => ({
-      date: appointment.appointment_date.toISOString().split('T')[0], // Chỉ lấy ngày
+      date: appointment.appointment_date.toISOString().split('T')[0],
       timeSlot: appointment.time_slot,
     }));
 
-    // Lấy thời gian hiện tại
-    const now = new Date();
-    const nowDateStr = now.toISOString().split('T')[0];
     const currentTimeInMinutes = now.getHours() * 60 + now.getMinutes();
-    const fourHoursLater = currentTimeInMinutes + 240; // Tính 4 giờ sau
+    const fourHoursLater = currentTimeInMinutes + 240;
 
     // Xây dựng lịch khả dụng
     const availableSchedules = schedules.map(schedule => {
-      const scheduleDate = schedule.date.toISOString().split('T')[0]; // Định dạng ngày của lịch làm việc
+      const scheduleDate = new Date(schedule.date.getFullYear(), schedule.date.getMonth(), schedule.date.getDate());
 
-      // Bỏ qua lịch làm việc trước ngày hôm nay
-      if (scheduleDate < nowDateStr) {
-        return null; // Không đưa lịch này vào
-      }
-
-      // Lấy tất cả timeSlot đã đặt cho ngày hiện tại trong lịch làm việc
+      const scheduleDateStr = schedule.date.toISOString().split('T')[0];
       const bookedSlotsForDate = bookedSlots
-        .filter(booked => booked.date === scheduleDate)
+        .filter(booked => booked.date === scheduleDateStr)
         .map(booked => booked.timeSlot);
 
-      // Lọc ra các slot khả dụng
+      // Lọc các khung giờ khả dụng
       const available_slots = schedule.available_slots.filter(slot => {
         const slotTimeInMinutes = parseInt(slot.split(':')[0]) * 60 + parseInt(slot.split(':')[1]);
 
-        // Đối với ngày hôm nay, kiểm tra xem khung giờ có cách hiện tại ít nhất 4 giờ không
-        if (scheduleDate === nowDateStr) {
+        if (scheduleDate.getTime() === today.getTime()) {
           return slotTimeInMinutes >= fourHoursLater && !bookedSlotsForDate.includes(slot);
         }
 
-        // Đối với các ngày tương lai, chỉ cần kiểm tra xem slot có bị đặt hay không
         return !bookedSlotsForDate.includes(slot);
       });
 
@@ -105,12 +102,13 @@ exports.getScheduleByDoctor = async (req, res) => {
         date: schedule.date,
         working_hours: schedule.working_hours,
         slot_duration: schedule.slot_duration,
-        available_slots, // Chỉ các khung giờ còn trống
+        available_slots,
       };
-    }).filter(schedule => schedule !== null); // Loại bỏ các lịch null
+    });
 
-    res.status(200).json(availableSchedules);
+    res.status(200).json(availableSchedules.filter(schedule => schedule.available_slots.length > 0));
   } catch (error) {
     res.status(500).json({ msg: "Có lỗi xảy ra khi lấy lịch", error: error.message });
   }
 };
+

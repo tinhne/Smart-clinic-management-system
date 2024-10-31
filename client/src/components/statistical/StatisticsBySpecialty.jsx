@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getAppointmentCountBySpecialties, getTodayAppointmentCount } from "../../utils/StaticsAPI/StaticsService";
+import { getAppointmentCountBySpecialties, getTodayAppointmentCount,getDailyAppointmentCountByDoctor } from "../../utils/StaticsAPI/StaticsService";
 import {
   BarChart,
   Tooltip,

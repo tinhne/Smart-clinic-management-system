@@ -2,16 +2,20 @@ const Appointment = require('../models/Appointment');
 const User = require('../models/User');
 
 const getAppointmentCountBySpecialties = async () => {
-  // Tính toán thời gian bắt đầu và kết thúc của tháng hiện tại
   const now = new Date();
-  const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1); // Ngày đầu tiên của tháng
-  const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0); // Ngày cuối cùng của tháng
+  const currentMonth = now.getMonth() + 1; // Lấy tháng hiện tại (1 - 12)
+  const currentYear = now.getFullYear(); // Lấy năm hiện tại
 
   // Bước 1: Đếm số lượng cuộc hẹn theo doctor_id trong tháng hiện tại
   const appointmentsCount = await Appointment.aggregate([
     {
       $match: {
-        appointment_date: { $gte: startOfMonth, $lte: endOfMonth } // Lọc các cuộc hẹn trong tháng hiện tại
+        $expr: {
+          $and: [
+            { $eq: [{ $month: "$appointment_date" }, currentMonth] },
+            { $eq: [{ $year: "$appointment_date" }, currentYear] }
+          ]
+        }
       }
     },
     {
@@ -33,10 +37,10 @@ const getAppointmentCountBySpecialties = async () => {
     }
   }
 
-  // Thêm tháng hiện tại vào kết quả
-  const currentMonth = now.getMonth() + 1; // Lấy tháng hiện tại (1 - 12)
   return { month: currentMonth, data: result };
 };
+
+
 
 const getTodayAppointmentCount = async () => {
   const today = new Date();

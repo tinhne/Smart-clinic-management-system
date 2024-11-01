@@ -103,7 +103,7 @@ const Appointment = () => {
         prevAppointments.filter((appt) => appt._id !== appointmentToDelete)
       );
       setSelectedAppointment(null); 
-      toast.succes("Lịch hẹn đã được hủy thành công.");
+      toast.success("Lịch hẹn đã được hủy thành công.");
     } catch (error) {
       console.error("Error cancelling appointment:", error);
       toast.error("Có lỗi xảy ra khi hủy lịch hẹn.");

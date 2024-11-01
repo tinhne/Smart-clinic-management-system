@@ -9,6 +9,8 @@ import {
 } from "../../utils/AppointmentAPI/AppointmentService";
 import Countdown from "../../components/user/Appointment/Countdown";
 import ConfirmationDialog from "../../components/layout/ConfirmationDialog"; // Import hộp thoại xác nhận
+import {toast} from "react-toastify"
+
 
 const ViewSchedule = () => {
   const [appointments, setAppointments] = useState([]);
@@ -109,10 +111,10 @@ const ViewSchedule = () => {
         prevAppointments.filter((appt) => appt._id !== appointmentToDelete)
       );
       setSelectedAppointment(null);
-      alert("Lịch hẹn đã được hủy thành công.");
+      toast.success("Lịch hẹn đã được hủy thành công.");
     } catch (error) {
       console.error("Error cancelling appointment:", error);
-      alert("Có lỗi xảy ra khi hủy lịch hẹn.");
+      toast.error("Có lỗi xảy ra khi hủy lịch hẹn.");
     } finally {
       setShowConfirmation(false); // Đóng hộp thoại
       setAppointmentToDelete(null);

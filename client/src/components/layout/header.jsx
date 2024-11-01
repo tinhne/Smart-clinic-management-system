@@ -54,7 +54,7 @@ const Header = () => {
   return (
     <Navbar expand="lg" className="navbar-custom bg-body-tertiary">
       <Container>
-        <Navbar.Brand href="/">
+        <Navbar.Brand href={role === "doctor" ? null : "/"}>
           <h1 className="logoMain">
             Caps<span>tone1</span>
           </h1>
@@ -113,7 +113,9 @@ const Header = () => {
                         Đăng xuất
                       </NavDropdown.Item>
                     </>
-                  ) : handleLogout()}
+                  ) : (
+                    handleLogout()
+                  )}
                 </NavDropdown>
               </div>
             ) : (

@@ -30,6 +30,7 @@ import ViewPatientRecord from "./pages/Doctor/ViewPatientRecord.jsx";
 import ViewSchedule from "./pages/Doctor/ViewSchedule.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ScheduleManage from "./pages/admin/ScheduleManage.jsx";
 const router = createBrowserRouter([
   {
     path: "/login-register",
@@ -114,6 +115,10 @@ const router = createBrowserRouter([
           {
             path: "thuoc",
             element: <Medication />,
+          },
+          {
+            path: "lich-lam-viec",
+            element: <ScheduleManage />,
           },
           {
             path: "dich-vu-kham",

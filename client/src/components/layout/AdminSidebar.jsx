@@ -9,19 +9,33 @@ const AdminSidebar = () => {
 
   const handleLogout = () => {
     localStorage.clear();
-    
+
     // Cần chắc chắn rằng domain và path giống với lúc set cookie
-    Cookies.remove("access_token", { path: '/', domain: 'localhost', sameSite: 'Strict', secure: true });
-    Cookies.remove("role", { path: '/', domain: 'localhost', sameSite: 'Strict', secure: true });
-    Cookies.remove("username", { path: '/', domain: 'localhost', sameSite: 'Strict', secure: true });
-    
+    Cookies.remove("access_token", {
+      path: "/",
+      domain: "localhost",
+      sameSite: "Strict",
+      secure: true,
+    });
+    Cookies.remove("role", {
+      path: "/",
+      domain: "localhost",
+      sameSite: "Strict",
+      secure: true,
+    });
+    Cookies.remove("username", {
+      path: "/",
+      domain: "localhost",
+      sameSite: "Strict",
+      secure: true,
+    });
+
     // Kiểm tra xem cookie có bị xóa không trước khi điều hướng
     if (!Cookies.get("access_token")) {
       navigate("/admin/login");
     }
   };
-  
-  
+
   return (
     <div className="admin-sidebar">
       <ul>
@@ -63,6 +77,22 @@ const AdminSidebar = () => {
             className={({ isActive }) => (isActive ? "active" : "")}
           >
             <i className="fa fa-hospital"></i> Quản lý dịch vụ khám
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/admin/lich-lam-viec"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            <i className="fa fa-calendar"></i> Quản lý lịch làm việc
+          </NavLink>
+        </li>
+        <li>
+          <NavLink
+            to="/admin/blog"
+            className={({ isActive }) => (isActive ? "active" : "")}
+          >
+            <i className="fa fa-book"></i> Quản lý blog
           </NavLink>
         </li>
         <li>

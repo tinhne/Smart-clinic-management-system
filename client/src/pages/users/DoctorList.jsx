@@ -2,8 +2,11 @@ import React, { useState, useEffect } from "react";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import "../../style/DoctorList/DoctorList.scss";
 import ReactPaginate from "react-paginate";
-import { getAllUserByRole, getAllDoctorsBySpecialty } from "../../utils/AuthAPI/AdminService";
-import Cookies from "js-cookie"
+import {
+  getAllUserByRole,
+  getAllDoctorsBySpecialty,
+} from "../../utils/AuthAPI/AdminService";
+import Cookies from "js-cookie";
 
 const categories = [
   { name: "Tất cả" },
@@ -21,32 +24,31 @@ const categories = [
 function DoctorList() {
   const location = useLocation();
 
-  const {specialties} = location.state || {};
+  const { specialties } = location.state || {};
   const [doctorList, setDoctorList] = useState([]);
-  const [currentCategory, setCurrentCategory] = useState("Tất cả"); 
+  const [currentCategory, setCurrentCategory] = useState("Tất cả");
   const navigate = useNavigate(); // Khai báo useNavigate
 
   const fetchDoctors = async (specialty = null) => {
     let data;
-    
+
     if (specialty === "Tất cả") {
       data = await getAllUserByRole("doctor", 1, 1000); // Lấy tất cả bác sĩ
     } else {
       data = await getAllDoctorsBySpecialty({ specialty });
     }
-  
+
     if (data) {
       setDoctorList(data.doctors || data.users);
     } else {
       setDoctorList([]);
     }
   };
-  
-  useEffect(() => {
-    if(specialties){
-      fetchDoctors(specialties);
-    }else{
 
+  useEffect(() => {
+    if (specialties) {
+      fetchDoctors(specialties);
+    } else {
       fetchDoctors(currentCategory); // Gọi hàm lấy bác sĩ khi component mount hoặc khi currentCategory thay đổi
     }
   }, [currentCategory]); // Chỉ gọi lại khi currentCategory thay đổi
@@ -68,12 +70,15 @@ function DoctorList() {
 
   return (
     <div className="page-container">
-      <aside className="sidebar">
+      <aside className="sidebar-list">
         <nav>
           <ul>
             {categories.map((category, index) => (
               <li key={index} onClick={() => handleChange(category.name)}>
-                <NavLink to="" className={({ isActive }) => (isActive ? "active" : "")}>
+                <NavLink
+                  to=""
+                  className={({ isActive }) => (isActive ? "active" : "")}
+                >
                   {category.name}
                 </NavLink>
               </li>
@@ -86,10 +91,15 @@ function DoctorList() {
         {doctorList.length > 0 ? (
           doctorList.map((doctor) => (
             <div key={doctor._id} className="doctor-item">
-              <img src={`data:image/jpeg;base64,${doctor.imageUrl}`} className="doctor-img" />
-             
+              <img
+                src={`data:image/jpeg;base64,${doctor.imageUrl}`}
+                className="doctor-img"
+              />
+
               <div className="doctor-info">
-                <h3>{doctor.first_name} {doctor.last_name}</h3>
+                <h3>
+                  {doctor.first_name} {doctor.last_name}
+                </h3>
                 <p>
                   {doctor.specialties.map((spec, index) => (
                     <span key={index} className="specialty">
@@ -99,8 +109,8 @@ function DoctorList() {
                 </p>
                 <p>{doctor.address}</p>
               </div>
-              <button 
-                className="appointment-btn" 
+              <button
+                className="appointment-btn"
                 onClick={() => handleAppointmentClick(doctor._id)} // Gọi hàm khi nhấn nút
               >
                 Đặt khám

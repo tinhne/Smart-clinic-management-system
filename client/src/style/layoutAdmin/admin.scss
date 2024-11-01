@@ -1,4 +1,3 @@
-
 .admin-layout {
   display: flex;
   flex-direction: row;
@@ -6,10 +5,10 @@
   overflow: hidden;
 }
 .admin-content {
-  margin-left: 15%; 
-  width: 85%; 
+  margin-left: 15%;
+  width: 85%;
   padding: 0;
-  overflow: auto; 
+  overflow: auto;
   height: 100vh;
 }
 .admin-header {
@@ -19,12 +18,12 @@
   justify-content: space-between;
   align-items: center;
   padding: 5px 10px 5px 10px;
-  width: 85%; 
-  margin-left: 15%; 
-  position: fixed; 
+  width: 85%;
+  margin-left: 15%;
+  position: fixed;
   top: 0;
   left: 0;
-  z-index: 1000; 
+  z-index: 1000;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
@@ -50,9 +49,9 @@
   padding: 5px;
   margin-right: 10px;
 }
-.search-icon{
+.search-icon {
   font-size: 30px;
-  color: #1975DC;
+  color: #1975dc;
   border-radius: 5px;
   margin-left: -50px;
 }
@@ -61,7 +60,7 @@
   top: 0;
   left: 0;
   height: 100vh;
-  width: 15%; 
+  width: 15%;
   background: #478ad6;
   color: white;
   padding-top: 20px;
@@ -84,8 +83,8 @@
   font-size: 16px;
   display: flex;
   align-items: center;
+  font-weight: 700;
   height: 50px;
-  
 }
 
 .admin-sidebar ul li a i {
@@ -95,14 +94,13 @@
 
 .admin-sidebar ul li a:hover {
   background-color: #ffffff;
-  color: #1975DC;
+  color: #1975dc;
   border-radius: 10px;
 }
 .admin-sidebar ul li a.active {
   background-color: #ffffff;
-  color: #1975DC;
+  color: #1975dc;
   border-radius: 5px;
-  
+
   border-radius: 10px;
 }
-

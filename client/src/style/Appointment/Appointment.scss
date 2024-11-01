@@ -79,6 +79,10 @@ ul {
   display: flex;
   align-items: center;
   gap: 5px;
+
+  &.completed {
+    color: #ff0000; // Màu đỏ cho trạng thái đã kết thúc
+  }
 }
 
 .status.cancelled {

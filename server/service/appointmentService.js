@@ -92,7 +92,7 @@ exports.cancelAppointment = async (appointmentId) => {
 
 // Lấy lịch hẹn của bệnh nhân
 exports.getPatientAppointments = async (patientId) => {
-  const appointments = await Appointment.find({ patient_id: patientId }).sort({appointment_date: 1});
+  const appointments = await Appointment.find({ patient_id: patientId }).sort({appointment_date: -1});
   if (!appointments.length) {
     throw new Error("Không có lịch hẹn nào cho bệnh nhân này.");
   }
@@ -131,7 +131,7 @@ exports.getDoctorAppointmentDetails = async (doctorId) => {
       doctor_id: doctorId 
     })
     .populate('patient_id', 'first_name last_name phone email imageUrl') // Lấy thông tin bệnh nhân
-    .sort({ appointment_date: 1 }) // Sắp xếp theo ngày tăng dần
+    .sort({ appointment_date: -1 }) // Sắp xếp theo ngày tăng dần
     .lean();
 
     if (!appointments.length) {

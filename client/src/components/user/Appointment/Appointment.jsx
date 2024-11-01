@@ -6,7 +6,7 @@ import { getUserById } from "../../../utils/AuthAPI/AdminService";
 import { getAppointmentPatient, deleteAppointment } from "../../../utils/AppointmentAPI/AppointmentService";
 import Countdown from "./Countdown";
 import ConfirmationDialog from "../../layout/ConfirmationDialog"; // Import hộp thoại xác nhận
-import { toast } from "react-toastify";
+import {toast} from "react-toastify"
 
 
 const Appointment = () => {
@@ -103,7 +103,7 @@ const Appointment = () => {
         prevAppointments.filter((appt) => appt._id !== appointmentToDelete)
       );
       setSelectedAppointment(null); 
-      toast.success("Lịch hẹn đã được hủy thành công.");
+      toast.succes("Lịch hẹn đã được hủy thành công.");
     } catch (error) {
       console.error("Error cancelling appointment:", error);
       toast.error("Có lỗi xảy ra khi hủy lịch hẹn.");
@@ -143,6 +143,17 @@ const Appointment = () => {
     );
   });
 
+  // Thêm hàm kiểm tra trạng thái lịch hẹn
+  const getAppointmentStatus = (appointment) => {
+    if (appointment.status === "cancelled") return "cancelled";
+    
+    const appointmentTime = parseAppointmentTime(appointment);
+    const twoHoursAfter = new Date(appointmentTime.getTime() + 2 * 60 * 60 * 1000);
+    const now = new Date();
+    
+    if (now > twoHoursAfter) return "completed";
+    return "confirmed";
+  };
 
   return (
     <div className="appointment-container">
@@ -188,17 +199,23 @@ const Appointment = () => {
                     </h4>
                     <span
                       className={`status ${
-                        appointment.status === "cancelled" ? "cancelled" : ""
+                        getAppointmentStatus(appointment) === "cancelled" 
+                          ? "cancelled" 
+                          : getAppointmentStatus(appointment) === "completed" 
+                            ? "completed" 
+                            : ""
                       }`}
                     >
-                      {appointment.status === "cancelled" ? (
+                      {getAppointmentStatus(appointment) === "cancelled" ? (
                         <FaTimesCircle />
                       ) : (
                         <FaCalendarAlt />
                       )}
-                      {appointment.status === "cancelled"
+                      {getAppointmentStatus(appointment) === "cancelled"
                         ? "Đã hủy"
-                        : "Đã đặt lịch"}
+                        : getAppointmentStatus(appointment) === "completed"
+                          ? "Đã kết thúc"
+                          : "Đã đặt lịch"}
                     </span>
                     <div className="countdown-container">
                       <Countdown

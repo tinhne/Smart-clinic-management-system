@@ -28,8 +28,7 @@ import ServiceClinic from "./pages/users/ServiceClinic.jsx";
 import ClinicInfo from "./pages/users/ClinicInfor.jsx";
 import ViewPatientRecord from "./pages/Doctor/ViewPatientRecord.jsx";
 import ViewSchedule from "./pages/Doctor/ViewSchedule.jsx";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+
 const router = createBrowserRouter([
   {
     path: "/login-register",
@@ -148,19 +147,7 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-    <ToastContainer
-      position="top-right"
-      autoClose={5000}
-      hideProgressBar={false}
-      newestOnTop={false}
-      closeOnClick
-      rtl={false}
-      pauseOnFocusLoss
-      draggable
-      pauseOnHover
-      theme="light"
-    />
-  </React.StrictMode>
+  // <React.StrictMode>
+  <RouterProvider router={router} />
+  // </React.StrictMode>
 );

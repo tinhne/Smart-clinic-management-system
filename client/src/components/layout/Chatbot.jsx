@@ -15,11 +15,12 @@ const theme = {
   userFontColor: "#4CAF50",
 };
 
-// Hàm phân tích đầu vào của người dùng
+// Function to analyze user input
 function analyzeInput(input) {
   const inputLower = input ? input.toLowerCase() : "";
-
-  // Sử dụng một số từ khóa để cải thiện khả năng hiểu
+  if (/^\s*\d+\s*[\+\-\*\/]\s*\d+\s*$/.test(inputLower)) {
+    return calculate(inputLower);
+  }
   const responses = {
     "đau đầu":
       "Đau đầu có thể do stress, thiếu ngủ, hoặc các bệnh lý khác. Bạn nên nghỉ ngơi và theo dõi tình trạng. Nếu đau đầu kéo dài, hãy đi khám bác sĩ.",
@@ -41,7 +42,7 @@ function analyzeInput(input) {
       "Đau cổ có thể do tư thế ngủ hoặc ngồi không đúng. Nghỉ ngơi và thực hiện các bài tập nhẹ nhàng có thể giúp giảm đau.",
     "dị ứng":
       "Dị ứng có thể do thức ăn, thuốc, hoặc yếu tố môi trường. Bạn nên tránh yếu tố gây dị ứng và tham khảo ý kiến bác sĩ nếu cần.",
-    "bác sĩ": "Mời bạn chọn đặt khám",
+    "bác sĩ": "Mời bạn chọn bác sĩ hoặc hỗ trợ trực tiếp từ bác sĩ",
     "đau lưng":
       "Đau lưng có thể do tư thế không đúng hoặc căng cơ. Nghỉ ngơi và thực hiện các bài tập giãn cơ nhẹ nhàng có thể giúp cải thiện.",
     "đau ngực":
@@ -177,43 +178,93 @@ function analyzeInput(input) {
     "Táo bón":
       "Táo bón có thể do thiếu chất xơ hoặc ít vận động. Bổ sung rau quả và uống đủ nước.",
     "đặt lịch khám":
-      "Dạ, để đặt lịch đăng ký khám bệnh tại phòng khám Đà Nẵng - Đa Khoa Chất Lượng Cao, bạn có thể thực hiện theo các bước sau:\n" +
-      "1. Điền thông tin cá nhân**: Bạn cần cung cấp các thông tin như Họ tên, Năm Sinh, Số điện thoại, Địa chỉ, Ngày tới khám, và bất kỳ yêu cầu đặc biệt nào khác (nếu có).\n" +
-      "2. Truy cập vào link đăng ký: Bạn có thể đăng ký khám chữa bệnh qua đường link sau: \n\n" +
-      "[Đăng ký khám bệnh](https://forms.gle/MZtdJ7ToHZriTJvN9).\n\n" +
-      "Nếu bạn cần hỗ trợ thêm, vui lòng cho tôi biết!",
+      "Dạ, để đặt lịch đăng ký khám bệnh tại phòng khám Đà Nẵng - Đa Khoa Chất Lượng Cao, bạn có thể thực hiện theo các bước sau:\n\n " +
+      "1. Điền thông tin cá nhân: Bạn cần cung cấp các thông tin như Họ tên, Năm Sinh, Số điện thoại, Địa chỉ, Ngày tới khám, và bất kỳ yêu cầu đặc biệt nào khác (nếu có).\n" +
+      "2. Mời Bạn chọn đăng kí lịch khám nhanh bấm vào link đăng ký bên dưới: Bạn có thể đăng ký khám chữa bệnh qua đường link đã chọn.\n\nNếu bạn cần hỗ trợ thêm, vui lòng cho tôi biết!",
+    "đặt lịch":
+      "Dạ, để đặt lịch đăng ký khám bệnh tại phòng khám Đà Nẵng - Đa Khoa Chất Lượng Cao, bạn có thể thực hiện theo các bước sau:\n\n " +
+      "1. Điền thông tin cá nhân: Bạn cần cung cấp các thông tin như Họ tên, Năm Sinh, Số điện thoại, Địa chỉ, Ngày tới khám, và bất kỳ yêu cầu đặc biệt nào khác (nếu có).\n" +
+      "2. Mời Bạn chọn đăng kí lịch khám nhanh bấm vào link đăng ký bên dưới: Bạn có thể đăng ký khám chữa bệnh qua đường link đã chọn.\n\nNếu bạn cần hỗ trợ thêm, vui lòng cho tôi biết!",
+    "đặt khám ngay":
+      "Dạ, để đặt lịch đăng ký khám bệnh tại phòng khám Đà Nẵng - Đa Khoa Chất Lượng Cao, bạn có thể thực hiện theo các bước sau:\n\n " +
+      "1. Điền thông tin cá nhân: Bạn cần cung cấp các thông tin như Họ tên, Năm Sinh, Số điện thoại, Địa chỉ, Ngày tới khám, và bất kỳ yêu cầu đặc biệt nào khác (nếu có).\n" +
+      "2. Mời Bạn chọn đăng kí lịch khám nhanh bấm vào link đăng ký bên dưới: Bạn có thể đăng ký khám chữa bệnh qua đường link đã chọn.\n\nNếu bạn cần hỗ trợ thêm, vui lòng cho tôi biết!",
+    "đặt khám nhanh":
+      "Dạ, để đặt lịch đăng ký khám bệnh tại phòng khám Đà Nẵng - Đa Khoa Chất Lượng Cao, bạn có thể thực hiện theo các bước sau:\n\n " +
+      "1. Điền thông tin cá nhân: Bạn cần cung cấp các thông tin như Họ tên, Năm Sinh, Số điện thoại, Địa chỉ, Ngày tới khám, và bất kỳ yêu cầu đặc biệt nào khác (nếu có).\n" +
+      "2. Mời Bạn chọn đăng kí lịch khám nhanh bấm vào link đăng ký bên dưới: Bạn có thể đăng ký khám chữa bệnh qua đường link đã chọn.\n\nNếu bạn cần hỗ trợ thêm, vui lòng cho tôi biết!",
+    "đặt khám":
+      "Dạ, để đặt lịch đăng ký khám bệnh tại phòng khám Đà Nẵng - Đa Khoa Chất Lượng Cao, bạn có thể thực hiện theo các bước sau:\n\n " +
+      "1. Điền thông tin cá nhân: Bạn cần cung cấp các thông tin như Họ tên, Năm Sinh, Số điện thoại, Địa chỉ, Ngày tới khám, và bất kỳ yêu cầu đặc biệt nào khác (nếu có).\n" +
+      "2. Mời Bạn chọn đăng kí lịch khám nhanh bấm vào link đăng ký bên dưới: Bạn có thể đăng ký khám chữa bệnh qua đường link đã chọn.\n\nNếu bạn cần hỗ trợ thêm, vui lòng cho tôi biết!",
+    "thời gian làm việc của phòng khám":
+      "Dạ, thời gian làm việc của Bệnh viện Đà Nẵng - Đa Khoa Chất Lượng Cao như sau:" +
+      "1. Thời gian làm việc mùa hè (từ 16 tháng 4 đến hết ngày 15 tháng 10):" +
+      "Buổi sáng: từ 6h30 đến 11h00" +
+      "Buổi chiều: từ 13h30 đến 17h00" +
+      "2. Thời gian làm việc mùa đông (từ 16 tháng 10 đến hết ngày 15 tháng 4 năm tiếp theo):" +
+      "Buổi sáng: từ 7h00 đến 11h30" +
+      "Buổi chiều: từ 13h30 đến 17h00" +
+      "Ngoài giờ hành chính, Bệnh viện vẫn tiếp đón bệnh nhân cấp cứu theo quy định của Bộ Y tế. Nếu bạn cần thêm thông tin, vui lòng cho tôi biết!",
+    "thời gian làm việc":
+      "Dạ, thời gian làm việc của Bệnh viện Đà Nẵng - Đa Khoa Chất Lượng Cao như sau:" +
+      "1. Thời gian làm việc mùa hè (từ 16 tháng 4 đến hết ngày 15 tháng 10):" +
+      "Buổi sáng: từ 6h30 đến 11h00" +
+      "Buổi chiều: từ 13h30 đến 17h00" +
+      "2. Thời gian làm việc mùa đông (từ 16 tháng 10 đến hết ngày 15 tháng 4 năm tiếp theo):" +
+      "Buổi sáng: từ 7h00 đến 11h30" +
+      "Buổi chiều: từ 13h30 đến 17h00" +
+      "Ngoài giờ hành chính, Bệnh viện vẫn tiếp đón bệnh nhân cấp cứu theo quy định của Bộ Y tế. Nếu bạn cần thêm thông tin, vui lòng cho tôi biết!",
+    "giờ làm việc":
+      "Dạ, thời gian làm việc của Bệnh viện Đà Nẵng - Đa Khoa Chất Lượng Cao như sau:" +
+      "1. Thời gian làm việc mùa hè (từ 16 tháng 4 đến hết ngày 15 tháng 10):" +
+      "Buổi sáng: từ 6h30 đến 11h00" +
+      "Buổi chiều: từ 13h30 đến 17h00" +
+      "2. Thời gian làm việc mùa đông (từ 16 tháng 10 đến hết ngày 15 tháng 4 năm tiếp theo):" +
+      "Buổi sáng: từ 7h00 đến 11h30" +
+      "Buổi chiều: từ 13h30 đến 17h00" +
+      "Ngoài giờ hành chính, Bệnh viện vẫn tiếp đón bệnh nhân cấp cứu theo quy định của Bộ Y tế. Nếu bạn cần thêm thông tin, vui lòng cho tôi biết!",
   };
 
-  // Kiểm tra từng từ khóa trong phản hồi của người dùng
   for (const key in responses) {
     if (inputLower.includes(key)) {
       return responses[key];
     }
   }
 
-  return "Tôi chưa nhận diện được triệu chứng này. Bạn có thể mô tả rõ hơn hoặc liên hệ tới số điện thoại 0356241423.";
+  return "Tôi chưa nhận diện được triệu chứng này. Bạn có thể mô tả rõ hơn hoặc liên hệ tới số điện thoại 0356241423. Để được hỗ trợ nhanh nhất";
+}
+function calculate(input) {
+  try {
+    // Sử dụng eval để tính toán, nhưng hãy cẩn thận với việc sử dụng eval trong thực tế.
+    const result = eval(input);
+    return `Kết quả của phép toán ${input} là: ${result}`;
+  } catch (error) {
+    return "Đã xảy ra lỗi trong quá trình tính toán. Vui lòng kiểm tra lại phép toán của bạn.";
+  }
 }
 
 function OpenLink() {
-  window.open("https://www.facebook.com/hieu.sky.9345", "_blank");
+  React.useEffect(() => {
+    window.open("https://forms.gle/MZtdJ7ToHZriTJvN9", "_blank");
+  }, []);
+
   return <span>Đang chuyển hướng tới trang đặt lịch khám online...</span>;
 }
 
 function ChooseDoctor() {
   const navigate = useNavigate();
 
-  // Chuyển hướng đến trang chọn bác sĩ
   React.useEffect(() => {
-    navigate("/dat-kham/bac-si/tim-kiem");
+    navigate("/dich-vu-kham");
   }, [navigate]);
 
-  return <span>Đang chuyển hướng tới trang chọn bác sĩ...</span>;
+  return <span>Đang chuyển hướng tới trang bảng giá dịch vụ</span>;
 }
 
 function BookDirectAppointment() {
   const navigate = useNavigate();
 
-  // Chuyển hướng đến trang đặt lịch khám trực tiếp
   React.useEffect(() => {
     navigate("/dat-kham/bac-si/tim-kiem");
   }, [navigate]);
@@ -224,7 +275,6 @@ function BookDirectAppointment() {
 function RedirectToIntroduction() {
   const navigate = useNavigate();
 
-  // Chuyển hướng đến trang giới thiệu của phòng khám
   React.useEffect(() => {
     navigate("/gioi-thieu");
   }, [navigate]);
@@ -237,31 +287,21 @@ function NewChatBot() {
     <ThemeProvider theme={theme}>
       <ChatBot
         steps={[
-          {
-            id: "1",
-            message: "Chào bạn! Bạn tên là gì?",
-            trigger: "2",
-          },
-          {
-            id: "2",
-            user: true,
-            trigger: "3",
-          },
+          { id: "1", message: "Chào bạn! Bạn tên là gì?", trigger: "2" },
+          { id: "2", user: true, trigger: "3" },
           {
             id: "3",
             message: "Chào bạn {previousValue}, bạn muốn hỏi về vấn đề gì?",
             trigger: "4",
           },
-          {
-            id: "4",
-            user: true,
-            trigger: "5",
-          },
+          { id: "4", user: true, trigger: "5" },
           {
             id: "5",
             message: ({ previousValue }) => analyzeInput(previousValue),
             trigger: ({ previousValue }) =>
-              analyzeInput(previousValue) === "Mời chọn đặt lịch" ? "10" : "6",
+              analyzeInput(previousValue) === "Mời bạn chọn đặt lịch"
+                ? "10"
+                : "6",
           },
           {
             id: "6",
@@ -272,14 +312,19 @@ function NewChatBot() {
                 trigger: "7",
               },
               {
-                value: "Đặt lịch khám online",
-                label: "Đặt lịch khám online",
+                value: "Đặt lịch khám nhanh",
+                label: "Đặt lịch khám nhanh",
                 trigger: "8",
               },
               {
                 value: "Hỗ trợ trực tiếp",
-                label: "Hỗ trợ trực tiếp",
+                label: "Giới thiệu về phòng khám",
                 trigger: "11",
+              },
+              {
+                value: "Dịch vụ khám",
+                label: "Dịch vụ khám",
+                trigger: "10",
               },
             ],
           },
@@ -289,12 +334,7 @@ function NewChatBot() {
             asMessage: true,
             trigger: "4",
           },
-          {
-            id: "8",
-            component: <OpenLink />,
-            asMessage: true,
-            trigger: "9",
-          },
+          { id: "8", component: <OpenLink />, asMessage: true, trigger: "9" },
           {
             id: "9",
             message: "Cảm ơn bạn đã chọn đặt lịch khám online.",

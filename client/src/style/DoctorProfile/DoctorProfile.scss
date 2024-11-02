@@ -31,9 +31,12 @@
 
     .doctor-info {
       .doctor-name {
+        margin-top: 10px;
         font-size: 30px;
         font-weight: bold;
         margin-bottom: 5px;
+        .doctor-name__title {
+        }
       }
 
       .doctor-details {
@@ -54,6 +57,9 @@
       .doctor-specialty a {
         color: #007bff;
         text-decoration: none;
+      }
+      .information-doctor {
+        padding-top: 10px;
       }
     }
   }
@@ -266,7 +272,7 @@
       }
     }
   }
-  .doctor-info-section{
+  .doctor-info-section {
     padding: 20px;
   }
 }

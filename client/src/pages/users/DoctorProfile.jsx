@@ -146,6 +146,7 @@ const DoctorProfile = () => {
         </div>
         <div className="doctor-info">
           <h2 className="doctor-name">
+            <span className="doctor-name__title">Bác sĩ </span>
             {doctor.user.first_name} {doctor.user.last_name}
           </h2>
           <div className="doctor-details">
@@ -157,7 +158,7 @@ const DoctorProfile = () => {
             <a href="#">{doctor.user.specialties}</a>
           </div>
           <div>
-            <h5>Thông tin bác sĩ</h5>
+            <h5 className="information-doctor">Thông tin bác sĩ</h5>
             <p>
               Khám và điều trị các bệnh lý về nội khoa, nhi khoa, tâm thần kinh.
               Tư vấn về dinh dưỡng và phát triển thể chất cho trẻ em. Khám và tư
@@ -175,7 +176,13 @@ const DoctorProfile = () => {
         </div>
         <p className="note-content">
           * Nếu bệnh nhân bận việc không đến khám được, vui lòng hủy lịch khám
-          đã đặt và đặt lại ngày khác. Xin cảm ơn!
+          đã đặt và đặt lại ngày khác. 
+        </p>
+        <p className="note-content">
+          * Vui lòng đặt lịch khám trước 4h. 
+        </p>
+        <p className="note-content">
+          * Xin cảm ơn! 
         </p>
       </div>
       <div className="quick-booking">

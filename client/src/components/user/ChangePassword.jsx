@@ -21,32 +21,6 @@ const ChangePassword = () => {
     setNewPasswordVisible(!newPasswordVisible);
   };
 
-  // const handleChangePassword = async (e) => {
-  //   e.preventDefault(); // Prevent the default form submission behavior
-  //   const token = Cookies.get("access_token");
-  //   console.log(token)
-  //   console.log("Current Password:", currentPassword); // Kiểm tra giá trị mật khẩu hiện tại
-  //   console.log("New Password:", newPassword); // Kiểm tra giá trị mật khẩu mới
-
-  //   // Check if both fields are filled
-  //   if (!newPassword || !currentPassword) {
-  //     toast.error("Vui lòng nhập đầy đủ thông tin!");
-  //     return;
-  //   }
-
-  //   try {
-  //     // Call the API to change password
-  //     const res = await changePassword(currentPassword, newPassword, token);
-  //       toast.success("Mật khẩu đã được thay đổi thành công!");
-  //       setCurrentPassword(""); // Reset input fields after success
-  //       setNewPassword("");
- 
-  //   } catch (error) {
-  //     console.error("Error response:", error.response);
-  //     toast.error("Đã có lỗi xảy ra khi thay đổi mật khẩu");
-  //   }
-  // };
-  // ChangePassword.jsx
 const handleChangePassword = async (e) => {
   e.preventDefault();
 

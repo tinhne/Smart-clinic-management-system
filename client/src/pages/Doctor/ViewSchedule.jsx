@@ -26,7 +26,7 @@ const ViewSchedule = () => {
       try {
         const response = await getAppointmentDoctor();
         const appointmentData = response;
-        console.log(appointmentData);
+        // console.log(appointmentData);
 
         if (Array.isArray(appointmentData) && appointmentData.length > 0) {
           setAppointments(appointmentData);
@@ -37,7 +37,7 @@ const ViewSchedule = () => {
               appointment.patient_id._id,
               "patient"
             );
-            console.log(patientResponse);
+            // console.log(patientResponse);
             return {
               id: appointment.patient_id._id,
               info: patientResponse.user,
@@ -72,7 +72,7 @@ const ViewSchedule = () => {
   };
 
   const handleCountdownEnd = (appointmentId) => {
-    console.log("Countdown finished for appointment:", appointmentId);
+    // console.log("Countdown finished for appointment:", appointmentId);
     setCountdownFinished((prev) => ({
       ...prev,
       [appointmentId]: true, // Đánh dấu countdown đã kết thúc

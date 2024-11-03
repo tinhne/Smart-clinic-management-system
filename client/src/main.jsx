@@ -31,6 +31,7 @@ import ViewSchedule from "./pages/Doctor/ViewSchedule.jsx";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ScheduleManage from "./pages/admin/ScheduleManage.jsx";
+import BlogAdmin from "./pages/admin/BlogAdmin.jsx";
 const router = createBrowserRouter([
   {
     path: "/login-register",
@@ -119,6 +120,10 @@ const router = createBrowserRouter([
           {
             path: "lich-lam-viec",
             element: <ScheduleManage />,
+          },
+          {
+            path: "blog",
+            element: <BlogAdmin />,
           },
           {
             path: "dich-vu-kham",

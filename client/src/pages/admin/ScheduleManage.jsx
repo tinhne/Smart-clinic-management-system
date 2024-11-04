@@ -1,175 +1,183 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Table } from "react-bootstrap";
-import ModalCreateSchedule from "../../components/admin/Schedule/ModalCreateSchedule";
-import ModalDeleteSchedule from "../../components/admin/Schedule/ModalDeleteSchedule";
-import ModalViewSchedule from "../../components/admin/Schedule/ModalViewSchedule";
-import ModalUpdateSchedule from "../../components/admin/Schedule/ModalUpdateSchedule";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import "../../style/adminStyle/ScheduleManage.scss";
 import ReactPaginate from "react-paginate";
-
+import {
+  getScheduleDoctorByDate,
+  deleteDoctorSchedules,
+  editDoctorSchedules,
+  createDoctorSchedule,
+} from "../../utils/SchedualAPI/SchedualService";
+import ModalDeleteSchedule from "../../components/admin/Schedule/ModalDeleteSchedule";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import ModalUpdateSchedule from "../../components/admin/Schedule/ModalUpdateSchedule";
+import ModalCreateSchedule from "../../components/admin/Schedule/ModalCreateSchedule";
 const ScheduleManage = () => {
-  const [showCreateModal, setShowCreateModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showViewModal, setShowViewModal] = useState(false);
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
-  const [selectedUser, setSelectedUser] = useState(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
-  const [formData, setFormData] = useState({
-    doctor_id: "",
-    date: "",
-    start_time: "",
-    end_time: "",
-    slot_duration: "",
-    available_slots: [],
-    booked_slots: [],
-  });
+  const [schedules, setSchedules] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [loading, setLoading] = useState(false);
+  const [noSchedulesMessage, setNoSchedulesMessage] = useState(false);
 
-  const doctors = [
-    { id: "1", name: "Bác sĩ A" },
-    { id: "2", name: "Bác sĩ B" },
-    { id: "3", name: "Bác sĩ C" },
-  ];
+  const fetchSchedules = async (date) => {
+    setLoading(true);
+    setNoSchedulesMessage(false); // Reset the message before fetching
 
-  const schedules = [
-    {
-      doctor_id: {
-        first_name: "Bác sĩ A",
-        last_name: "Nguyễn",
-        email: "bacsi.a.nguyen@example.com",
-        phone: "0123456789",
-        specialties: ["Ngoại khoa"],
-        experience: "5 năm kinh nghiệm",
-      },
-      date: "2024-11-01",
-      working_hours: {
-        start_time: "08:00",
-        end_time: "12:00",
-      },
-      slot_duration: 30,
-      available_slots: ["08:00", "08:30", "09:00"],
-      booked_slots: [],
-    },
-    {
-      doctor_id: {
-        first_name: "Bác sĩ A",
-        last_name: "Nguyễn",
-        email: "bacsi.a.nguyen@example.com",
-        phone: "0123456789",
-        specialties: ["Nội khoa"],
-        experience: "5 năm kinh nghiệm",
-      },
-      date: "2024-11-01",
-      working_hours: {
-        start_time: "08:00",
-        end_time: "12:00",
-      },
-      slot_duration: 30,
-      available_slots: ["08:00", "08:30", "09:00"],
-      booked_slots: [],
-    },
-  ];
+    try {
+      const response = await getScheduleDoctorByDate(date);
+      if (response.success) {
+        setSchedules(response.data);
 
-  const handleOpenCreateModal = () => {
-    setShowCreateModal(true);
+        // Set noSchedulesMessage only if there are no schedules returned
+        if (response.data.length === 0) {
+          setNoSchedulesMessage(true);
+        } else {
+          setNoSchedulesMessage(false); // Reset in case there are schedules
+        }
+      } else {
+        setSchedules([]);
+        setNoSchedulesMessage(true); // Handle the case where the API indicates an error
+      }
+    } catch (error) {
+      console.error("Error fetching schedules:", error);
+      setNoSchedulesMessage(true); // Display the message if an error occurs
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleCloseCreateModal = () => setShowCreateModal(false);
-  const handleCloseDeleteModal = () => setShowDeleteModal(false);
-  const handleCloseViewModal = () => {
-    setShowViewModal(false);
-    setSelectedSchedule(null); // Reset thông tin khi đóng modal
-  };
-  const handleCloseUpdateModal = () => {
-    setShowUpdateModal(false);
-    setSelectedSchedule(null); // Reset thông tin khi đóng modal
+  const handleDateChange = (date) => {
+    // Create a new date object to avoid mutating the original date
+    const newDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+    setSelectedDate(newDate); // Set the selected date mà không bị lệch múi giờ
+    const formattedDate = newDate.toISOString().split("T")[0];
+    console.log("Selected date", formattedDate);
+    fetchSchedules(formattedDate);
   };
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  const handleFetchDataClick = () => {
+    const formattedDate = selectedDate.toISOString().split("T")[0];
+    fetchSchedules(formattedDate);
   };
 
-  const handleSave = () => {
-    console.log("Saving schedule:", formData);
-    handleCloseCreateModal(); // Đóng modal sau khi lưu
-  };
-
-  const handleUpdate = () => {
-    console.log("Updating schedule:", formData);
-    handleCloseUpdateModal(); // Đóng modal sau khi cập nhật
-  };
-
-  const handleDeleteUser = () => {
-    console.log("Deleting user with id:", selectedUser?.id);
-    handleCloseDeleteModal(); // Đóng modal sau khi xóa
-  };
-
-  const handleOpenDeleteModal = (user) => {
-    setSelectedUser(user);
+  const handleOpenDeleteModal = (schedule) => {
+    setSelectedSchedule(schedule);
     setShowDeleteModal(true);
   };
 
-  const handleOpenViewModal = (schedule) => {
-    setSelectedSchedule(schedule);
-    setShowViewModal(true);
+  const handleCloseDeleteModal = () => {
+    setShowDeleteModal(false);
+    setSelectedSchedule(null);
   };
-  const handleOpenUpdateModal = (schedule) => {
-    setFormData({
-      doctor_id:
-        schedule.doctor_id.first_name + " " + schedule.doctor_id.last_name, // Lấy tên bác sĩ
-      date: schedule.date,
-      start_time: schedule.working_hours.start_time,
-      end_time: schedule.working_hours.end_time,
-      slot_duration: schedule.slot_duration,
-    });
-    setSelectedSchedule(schedule);
-    setShowUpdateModal(true);
+  const handleCloseCreateModal = () => {
+    setShowCreateModal(false);
+    setSelectedSchedule(null);
   };
+
+  const handleOpenEditModal = (schedule) => {
+    setSelectedSchedule(schedule);
+    setShowEditModal(true);
+  };
+  const handleOpenCreateModal = (schedule) => {
+    setSelectedSchedule(schedule);
+    setShowCreateModal(true);
+  };
+  const handleCloseEditModal = () => {
+    setShowEditModal(false);
+    setSelectedSchedule(null);
+  };
+
+  const handleDeleteSchedule = async () => {
+    if (selectedSchedule) {
+      try {
+        const response = await deleteDoctorSchedules(
+          selectedSchedule.schedule_id
+        );
+        if (response.success) {
+          toast.success("Xóa lịch khám thành công!");
+          setSchedules((prevSchedules) =>
+            prevSchedules.filter(
+              (schedule) =>
+                schedule.schedule_id !== selectedSchedule.schedule_id
+            )
+          );
+
+          // Fetch schedules again after deletion
+          const formattedDate = selectedDate.toISOString().split("T")[0];
+          fetchSchedules(formattedDate);
+
+          handleCloseDeleteModal();
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {
+        console.error("Error deleting schedule:", error);
+        toast.error("Có lỗi xảy ra khi xóa lịch.");
+      }
+    }
+  };
+
+  const handleUpdateSchedule = async (updatedSchedule) => {
+    try {
+      const response = await editDoctorSchedules(
+        updatedSchedule._id,
+        updatedSchedule
+      );
+      if (response.success) {
+        toast.success("Cập nhật lịch khám thành công!");
+
+        // Fetch schedules again after updating
+        const formattedDate = selectedDate.toISOString().split("T")[0];
+        fetchSchedules(formattedDate);
+
+        // Close the edit modal and reset selected schedule
+        setShowEditModal(false);
+        setSelectedSchedule(null);
+      } else {
+        toast.error(response.message || "Cập nhật thất bại.");
+      }
+    } catch (error) {
+      console.error("Error updating schedule:", error);
+      toast.error("Có lỗi xảy ra khi cập nhật lịch.");
+    }
+  };
+
+  useEffect(() => {
+    const formattedDate = selectedDate.toISOString().split("T")[0];
+    console.log(">>>>>>>>", formattedDate);
+    fetchSchedules(formattedDate);
+  }, [selectedDate]);
 
   return (
     <div>
-      <ModalCreateSchedule
-        show={showCreateModal}
-        handleClose={handleCloseCreateModal}
-        handleSave={handleSave}
-        formData={formData}
-        handleChange={handleChange}
-        doctors={doctors} // Truyền danh sách bác sĩ vào modal
-      />
-
-      <ModalDeleteSchedule
-        show={showDeleteModal}
-        handleClose={handleCloseDeleteModal}
-        handleDelete={handleDeleteUser}
-        selectedUser={selectedUser} // Truyền thông tin người dùng đã chọn
-      />
-
-      <ModalViewSchedule
-        show={showViewModal}
-        handleClose={handleCloseViewModal}
-        schedule={selectedSchedule}
-      />
-
-      <ModalUpdateSchedule
-        show={showUpdateModal}
-        handleClose={handleCloseUpdateModal}
-        handleUpdate={handleUpdate}
-        formData={formData}
-        handleChange={handleChange}
-        doctors={doctors}
-      />
-
-      <Table
-        striped
-        bordered
-        hover
-        style={{
-          width: "95%",
-          margin: "20px",
-          marginTop: "80px",
-          textAlign: "center",
-        }}
+      <div
+        className="date-picker-container"
+        style={{ display: "flex", alignItems: "center" }}
       >
+        <label style={{ marginRight: "10px" }}>Chọn Ngày:</label>
+        <DatePicker
+          selected={selectedDate}
+          onChange={handleDateChange}
+          dateFormat="dd-MM-yyyy" // This will format the date shown in the input
+          className="form-control"
+          style={{ marginRight: "10px" }}
+        />
+
+        <Button variant="primary" onClick={handleFetchDataClick}>
+          Lấy Dữ Liệu
+        </Button>
+        <Button variant="primary" onClick={handleOpenCreateModal}>
+          Thêm lịch
+        </Button>
+      </div>
+
+      <Table striped bordered hover style={{ marginTop: "20px" }}>
         <thead>
           <tr>
             <th>Bác sĩ</th>
@@ -182,67 +190,85 @@ const ScheduleManage = () => {
           </tr>
         </thead>
         <tbody>
-          {schedules.map((schedule, index) => (
-            <tr key={index}>
-              <td>
-                {schedule.doctor_id.first_name} {schedule.doctor_id.last_name}
-              </td>
-              <td>{schedule.doctor_id.specialties}</td>
-              <td>{schedule.date}</td>
-              <td>{schedule.working_hours.start_time}</td>
-              <td>{schedule.working_hours.end_time}</td>
-              <td>{schedule.slot_duration} phút</td>
-              <td>
-                <Button
-                  onClick={handleOpenCreateModal}
-                  style={{ marginRight: "10px" }}
-                >
-                  Tạo Lịch
-                </Button>
-                <Button
-                  onClick={() => handleOpenViewModal(schedule)}
-                  variant="info"
-                  style={{ marginRight: "10px" }}
-                >
-                  Xem
-                </Button>
-                <Button
-                  variant="warning"
-                  onClick={() => handleOpenUpdateModal(schedule)}
-                  style={{ marginRight: "10px" }}
-                >
-                  Cập Nhật
-                </Button>
-                <Button
-                  variant="danger"
-                  onClick={() => handleOpenDeleteModal(schedule)}
-                >
-                  Xóa
-                </Button>
-              </td>
+          {loading ? (
+            <tr>
+              <td colSpan="7">Đang tải dữ liệu...</td>
             </tr>
-          ))}
+          ) : schedules.length > 0 ? (
+            schedules.map((schedule, index) => (
+              <tr key={index}>
+                <td>{schedule.doctor_name}</td>
+                <td>{schedule.specialties.join(", ")}</td>
+                <td>
+                  {new Date(schedule.date)
+                    .getDate()
+                    .toString()
+                    .padStart(2, "0") +
+                    "-" +
+                    (new Date(schedule.date).getMonth() + 1)
+                      .toString()
+                      .padStart(2, "0") +
+                    "-" +
+                    new Date(schedule.date).getFullYear()}
+                </td>
+                <td>{schedule.start_time}</td>
+                <td>{schedule.end_time}</td>
+                <td>{schedule.slot_duration} phút</td>
+                <td>
+                  <Button
+                    variant="warning"
+                    onClick={() => handleOpenEditModal(schedule)}
+                    style={{ marginRight: "10px" }}
+                  >
+                    Cập Nhật
+                  </Button>
+                  <Button
+                    variant="danger"
+                    onClick={() => handleOpenDeleteModal(schedule)}
+                  >
+                    Xóa
+                  </Button>
+                </td>
+              </tr>
+            ))
+          ) : noSchedulesMessage ? (
+            <tr>
+              <td colSpan="7">Không có lịch khám nào cho ngày đã chọn.</td>
+            </tr>
+          ) : null}
         </tbody>
       </Table>
+
       <ReactPaginate
         previousLabel={"Previous"}
         nextLabel={"Next"}
         breakLabel={"..."}
-        pageCount={5} // Dynamic page count
+        pageCount={5} // Replace with the actual number of pages
         marginPagesDisplayed={2}
         pageRangeDisplayed={3}
-        onPageChange={() => {}}
-        forcePage={1} // Sync ReactPaginate with currentPage
         containerClassName={"pagination justify-content-center"}
-        pageClassName={"page-item"}
-        pageLinkClassName={"page-link"}
-        previousClassName={"page-item"}
-        previousLinkClassName={"page-link"}
-        nextClassName={"page-item"}
-        nextLinkClassName={"page-link"}
-        breakClassName={"page-item"}
-        breakLinkClassName={"page-link"}
         activeClassName={"active"}
+      />
+
+      {/* Modal Xóa Lịch */}
+      <ModalDeleteSchedule
+        show={showDeleteModal}
+        handleClose={handleCloseDeleteModal}
+        handleDelete={handleDeleteSchedule}
+        selectedSchedule={selectedSchedule}
+      />
+
+      {/* Modal Cập Nhật Lịch */}
+      <ModalUpdateSchedule
+        show={showEditModal}
+        handleClose={handleCloseEditModal}
+        handleUpdate={handleUpdateSchedule}
+        selectedSchedule={selectedSchedule}
+      />
+      <ModalCreateSchedule
+        show={showCreateModal}
+        handleClose={handleCloseCreateModal}
+        onScheduleCreated={handleFetchDataClick}
       />
     </div>
   );

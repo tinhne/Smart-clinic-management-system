@@ -1,15 +1,40 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Modal, Button, Form } from "react-bootstrap";
 
-export const ModalUpdateSchedule = ({
+const ModalUpdateSchedule = ({
   show,
   handleClose,
   handleUpdate,
-  formData,
-  handleChange,
-  doctors,
+  selectedSchedule,
 }) => {
+  // Local state for each editable field
+  const [startTime, setStartTime] = useState("");
+  const [endTime, setEndTime] = useState("");
+  const [slotDuration, setSlotDuration] = useState("");
+
+  useEffect(() => {
+    if (selectedSchedule) {
+      setStartTime(selectedSchedule.start_time);
+      setEndTime(selectedSchedule.end_time);
+      setSlotDuration(selectedSchedule.slot_duration);
+    }
+  }, [selectedSchedule]);
+
+  // Function to handle form submission
+  const handleSubmit = () => {
+   const updatedSchedule = {
+    _id: selectedSchedule.schedule_id, // Ensure this is correct
+    date: selectedSchedule.date,
+    working_hours: {
+        start_time: startTime,
+        end_time: endTime,
+    },
+    slot_duration: parseInt(slotDuration, 10), // Ensure this is a number
+};
+    handleUpdate(updatedSchedule);
+  };
+
   return (
     <Modal show={show} onHide={handleClose}>
       <Modal.Header closeButton>
@@ -18,59 +43,48 @@ export const ModalUpdateSchedule = ({
       <Modal.Body>
         <Form>
           <Form.Group controlId="doctor_id">
-            <Form.Label>Bác sĩ</Form.Label>
+            <Form.Label>Tên Bác sĩ</Form.Label>
             <Form.Control
-              as="select"
-              name="doctor_id"
-              value={formData.doctor_id}
-              onChange={handleChange}
-            >
-              <option value="">Chọn bác sĩ</option>
-              {doctors.map((doctor) => (
-                <option key={doctor.id} value={doctor.id}>
-                  {doctor.first_name} {doctor.last_name}
-                </option>
-              ))}
-            </Form.Control>
+              type="text"
+              value={selectedSchedule?.doctor_name || ""}
+              disabled
+            />
           </Form.Group>
-
           <Form.Group controlId="date">
-            <Form.Label>Ngày</Form.Label>
+            <Form.Label>Ngày làm việc</Form.Label>
             <Form.Control
-              type="date"
-              name="date"
-              value={formData.date}
-              onChange={handleChange}
+              type="text"
+              value={
+                selectedSchedule?.date
+                  ? new Date(selectedSchedule.date).toISOString().split("T")[0]
+                  : ""
+              }
+              disabled
             />
           </Form.Group>
 
           <Form.Group controlId="start_time">
             <Form.Label>Giờ Bắt Đầu</Form.Label>
             <Form.Control
-              type="time"
-              name="start_time"
-              value={formData.start_time}
-              onChange={handleChange}
+              type="text"
+              value={startTime}
+              onChange={(e) => setStartTime(e.target.value)}
             />
           </Form.Group>
-
           <Form.Group controlId="end_time">
             <Form.Label>Giờ Kết Thúc</Form.Label>
             <Form.Control
-              type="time"
-              name="end_time"
-              value={formData.end_time}
-              onChange={handleChange}
+              type="text"
+              value={endTime}
+              onChange={(e) => setEndTime(e.target.value)}
             />
           </Form.Group>
-
           <Form.Group controlId="slot_duration">
             <Form.Label>Thời gian mỗi slot (phút)</Form.Label>
             <Form.Control
-              type="number"
-              name="slot_duration"
-              value={formData.slot_duration}
-              onChange={handleChange}
+              type="text"
+              value={slotDuration}
+              onChange={(e) => setSlotDuration(e.target.value)}
             />
           </Form.Group>
         </Form>
@@ -79,7 +93,7 @@ export const ModalUpdateSchedule = ({
         <Button variant="secondary" onClick={handleClose}>
           Đóng
         </Button>
-        <Button variant="primary" onClick={handleUpdate}>
+        <Button variant="primary" onClick={handleSubmit}>
           Cập Nhật
         </Button>
       </Modal.Footer>
@@ -87,26 +101,11 @@ export const ModalUpdateSchedule = ({
   );
 };
 
-// Thêm PropTypes để kiểm tra kiểu dữ liệu
 ModalUpdateSchedule.propTypes = {
   show: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
-  handleUpdate: PropTypes.func.isRequired,
-  formData: PropTypes.shape({
-    doctor_id: PropTypes.string.isRequired,
-    date: PropTypes.string.isRequired,
-    start_time: PropTypes.string.isRequired,
-    end_time: PropTypes.string.isRequired,
-    slot_duration: PropTypes.number.isRequired,
-  }).isRequired,
-  handleChange: PropTypes.func.isRequired,
-  doctors: PropTypes.arrayOf(
-    PropTypes.shape({
-      id: PropTypes.string.isRequired,
-      first_name: PropTypes.string.isRequired,
-      last_name: PropTypes.string.isRequired,
-    })
-  ).isRequired,
+  handleUpdate: PropTypes.func,
+  selectedSchedule: PropTypes.object,
 };
 
 export default ModalUpdateSchedule;

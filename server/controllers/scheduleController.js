@@ -29,6 +29,16 @@ exports.createSchedule = async (req, res) => {
       return res.status(400).json({ msg: "Thiếu thông tin cần thiết" });
     }
 
+    // Kiểm tra xem bác sĩ đã có lịch trong ngày này chưa
+    const existingSchedule = await Schedule.findOne({
+      doctor_id,
+      date: new Date(date) // Chuyển đổi ngày vào dạng Date
+    });
+
+    if (existingSchedule) {
+      return res.status(400).json({ msg: "Bác sĩ đã có lịch làm việc cho ngày này" });
+    }
+
     // Tạo khung giờ có sẵn
     const available_slots = generateAvailableSlots(working_hours.start_time, working_hours.end_time, slot_duration);
 
@@ -41,11 +51,12 @@ exports.createSchedule = async (req, res) => {
     });
 
     await newSchedule.save();
-    res.status(201).json({ msg: "Lịch làm việc đã được tạo thành công", schedule: newSchedule });
+    res.status(201).json({ success: true, msg: "Lịch làm việc đã được tạo thành công", schedule: newSchedule });
   } catch (error) {
     res.status(500).json({ msg: "Có lỗi xảy ra khi tạo lịch", error: error.message });
   }
 };
+
 
 // Lấy lịch làm việc của bác sĩ
 

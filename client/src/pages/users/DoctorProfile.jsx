@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "../../style/DoctorProfile/DoctorProfile.scss";
 import { getUserById } from "../../utils/AuthAPI/AdminService";
 import { NavLink, useParams } from "react-router-dom";
-import getScheduleDoctorById from "../../utils/SchedualAPI/SchedualService";
+import {getScheduleDoctorById} from "../../utils/SchedualAPI/SchedualService";
 import { checkDoctorSchedule } from "../../utils/AppointmentAPI/AppointmentService";
 import Cookies from "js-cookie";
 

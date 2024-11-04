@@ -42,7 +42,8 @@ function analyzeInput(input) {
       "Đau cổ có thể do tư thế ngủ hoặc ngồi không đúng. Nghỉ ngơi và thực hiện các bài tập nhẹ nhàng có thể giúp giảm đau.",
     "dị ứng":
       "Dị ứng có thể do thức ăn, thuốc, hoặc yếu tố môi trường. Bạn nên tránh yếu tố gây dị ứng và tham khảo ý kiến bác sĩ nếu cần.",
-    "bác sĩ": "Mời bạn chọn bác sĩ hoặc hỗ trợ trực tiếp từ bác sĩ",
+    "bác sĩ":
+      "Mời bạn chọn bác sĩ hoặc đặt lịch khám nhanh để được hỗ trợ trực tiếp từ bác sĩ",
     "đau lưng":
       "Đau lưng có thể do tư thế không đúng hoặc căng cơ. Nghỉ ngơi và thực hiện các bài tập giãn cơ nhẹ nhàng có thể giúp cải thiện.",
     "đau ngực":
@@ -249,7 +250,7 @@ function OpenLink() {
     window.open("https://forms.gle/MZtdJ7ToHZriTJvN9", "_blank");
   }, []);
 
-  return <span>Đang chuyển hướng tới trang đặt lịch khám online...</span>;
+  return <span>Đang chuyển hướng tới trang đặt lịch khám nhanh...</span>;
 }
 
 function ChooseDoctor() {
@@ -337,7 +338,7 @@ function NewChatBot() {
           { id: "8", component: <OpenLink />, asMessage: true, trigger: "9" },
           {
             id: "9",
-            message: "Cảm ơn bạn đã chọn đặt lịch khám online.",
+            message: "Cảm ơn bạn đã chọn đặt lịch khám nhanh.",
             trigger: 4,
           },
           {

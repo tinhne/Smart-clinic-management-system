@@ -89,6 +89,10 @@ const router = createBrowserRouter([
             path: "/bac-si/lich-hen",
             element: <ViewSchedule />,
           },
+          {
+            path: "/thong-tin/ho-so-benh-nhan",
+            element: <ViewPatientRecord/>
+          }
         ],
       },
     ],

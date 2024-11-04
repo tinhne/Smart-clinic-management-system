@@ -56,6 +56,12 @@ function ViewPatientRecord() {
   return (
     <div className="patient-record">
       <h1>Danh sách hồ sơ bệnh nhân</h1>
+      <input
+          type="text"
+          placeholder="Mã giao dịch, tên dịch vụ, tên bệnh nhân..."
+          className="search-bar"
+          value="" // Cập nhật giá trị tìm kiếm
+        />
       <table className="record-table">
         <thead>
           <tr>

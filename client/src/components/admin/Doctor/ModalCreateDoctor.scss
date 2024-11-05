@@ -1,0 +1,12 @@
+.certificate-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 10px;
+}
+
+.certificate-item {
+  overflow: hidden;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 5px;
+}

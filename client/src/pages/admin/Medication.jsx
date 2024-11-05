@@ -6,6 +6,9 @@ import {
   deleteMedicine,
   updateMedicine,
 } from "../../services/medicineAPI";
+import ModalCreateMedicine from "../../components/admin/Medication/ModalCreateMedicine";
+import ModalEditMedicine from "../../components/admin/Medication/ModalEditMedicine";
+import ModalDeleteMedicine from "../../components/admin/Medication/ModalDeleteMedicine";
 
 function Medication() {
   const [medicines, setMedicines] = useState([]);
@@ -13,22 +16,18 @@ function Medication() {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [editingMedicineId, setEditingMedicineId] = useState(null);
+  const [editingMedicine, setEditingMedicine] = useState(null);
+  const [deletingMedicine, setDeletingMedicine] = useState(null);
 
-  const [addMedicine, setAddMedicine] = useState({
-    medicineName: "",
-    medicineDes: "",
-    unit: "vien",
-    medicinePrice: "",
-    medicineQuantity: "",
-    medicalImage: null,
-  });
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
-  // Hàm lấy danh sách thuốc
   const fetchMedicines = async (page) => {
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
-      const data = await getMedicines(page, 5);
+      const data = await getMedicines(page, 10);
       if (data) {
         setMedicines(data.medicines);
         setCurrentPage(data.currentPage);
@@ -48,234 +47,33 @@ function Medication() {
     fetchMedicines(currentPage);
   }, [currentPage]);
 
-  // Xử lý input thay đổi
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setAddMedicine((prev) => ({ ...prev, [name]: value }));
-  };
-
-  // Xử lý thay đổi ảnh
-  const handleImageChange = async (e) => {
-    const file = e.target.files[0];
-    if (file) {
-        const base64Image = await convertToBase64(file);
-        setAddMedicine((prev) => ({ ...prev, medicalImage: base64Image }));
-    }
-};
-
-  const convertToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => {
-        resolve(reader.result);
-      };
-      reader.onerror = (error) => {
-        reject(error);
-      };
-    });
-  };
-
-  // Xử lý thêm mới thuốc
-  const handleAddMedicine = async () => {
-    const newMedicine = {
-      name: addMedicine.medicineName,
-      description: addMedicine.medicineDes,
-      unit_of_caculation: addMedicine.unit,
-      price: parseFloat(addMedicine.medicinePrice),
-      quantity_available: parseInt(addMedicine.medicineQuantity, 10),
-      medicalImage: null,
-    };
-
-    if (addMedicine.medicalImage) {
-      newMedicine.medicalImage = await convertToBase64(addMedicine.medicalImage);
-    }
-
-    console.log("Thêm thuốc:", newMedicine);
-
-    try {
-      const res = await addNewMedicine(newMedicine);
-      if (res.success) {
-        alert("Thêm thuốc thành công.");
-        fetchMedicines(1);
-        resetForm();
-      } else {
-        alert(res.message);
-      }
-    } catch (error) {
-      console.error("Error adding medicine:", error);
-      alert("Lỗi khi thêm thuốc. Vui lòng thử lại.");
-    }
-  };
-
-  // Xử lý cập nhật thuốc
-  const handleUpdateMedicine = async () => {
-    const updatedMedicine = {
-      name: addMedicine.medicineName,
-      description: addMedicine.medicineDes,
-      unit_of_caculation: addMedicine.unit,
-      price: parseFloat(addMedicine.medicinePrice),
-      quantity_available: parseInt(addMedicine.medicineQuantity, 10),
-      medicalImage: addMedicine.medicalImage,
-    };
-
-    console.log("Cập nhật thuốc:", updatedMedicine);
-
-    try {
-      const res = await updateMedicine(editingMedicineId, updatedMedicine);
-      if (res.success) {
-        alert("Cập nhật thuốc thành công.");
-        fetchMedicines(currentPage);
-        setEditingMedicineId(null);
-        resetForm();
-      } else {
-        alert(res.message);
-      }
-    } catch (error) {
-      console.error("Error updating medicine:", error);
-      alert("Lỗi khi cập nhật thuốc. Vui lòng thử lại.");
-    }
-  };
-
-  // Hàm submit form
-  const handleFormSubmit = (e) => {
-    e.preventDefault();
-    if (editingMedicineId) {
-      handleUpdateMedicine();
-    } else {
-      handleAddMedicine();
-    }
-  };
-
-  // Hàm xử lý chỉnh sửa
-  const handleEdit = (medicine) => {
-    setEditingMedicineId(medicine._id);
-    setAddMedicine({
-      medicineName: medicine.name,
-      medicineDes: medicine.description,
-      unit: medicine.unit_of_caculation,
-      medicinePrice: medicine.price.toString(),
-      medicineQuantity: medicine.quantity_available.toString(),
-      medicalImage: medicine.medicalImage || null,
-    });
-  };
-
-  const handleDelete = async (id) => {
-    const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa thuốc này?");
-    if (confirmDelete) {
-      try {
-        const res = await deleteMedicine(id);
-        if (res.success) {
-          alert("Xóa thuốc thành công.");
-          fetchMedicines(currentPage);
-        } else {
-          alert(res.message);
-        }
-      } catch (error) {
-        console.error("Error deleting medicine:", error);
-        alert("Lỗi khi xóa thuốc. Vui lòng thử lại.");
-      }
-    }
-  };
-
-  const resetForm = () => {
-    setAddMedicine({
-      medicineName: "",
-      medicineDes: "",
-      unit: "vien",
-      medicinePrice: "",
-      medicineQuantity: "",
-      medicalImage: null,
-    });
-  };
-
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
     }
   };
 
+  const handleCreateModalShow = () => setShowCreateModal(true);
+  const handleCreateModalClose = () => setShowCreateModal(false);
+
+  const handleEditModalShow = (medicine) => {
+    setEditingMedicine(medicine);
+    setShowEditModal(true);
+  };
+  const handleEditModalClose = () => setShowEditModal(false);
+
+  const handleDeleteModalShow = (medicine) => {
+    setDeletingMedicine(medicine);
+    setShowDeleteModal(true);
+  };
+  const handleDeleteModalClose = () => setShowDeleteModal(false);
+
   return (
     <div className="medicine-page">
-      <div className="add-medicine-form">
-        <h3>{editingMedicineId ? "Cập nhật thuốc" : "Thêm thuốc"}</h3>
-          <div className="left-form">
-        <form onSubmit={handleFormSubmit}>
-            <div>
-              <label>Tên thuốc:</label>
-              <input
-                type="text"
-                name="medicineName"
-                value={addMedicine.medicineName}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div>
-              <label>Mô tả:</label>
-              <input
-                type="text"
-                name="medicineDes"
-                value={addMedicine.medicineDes}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div>
-              <label>Đơn vị tính:</label>
-              <select
-                name="unit"
-                value={addMedicine.unit}
-                onChange={handleInputChange}
-              >
-                <option value="vien">Viên</option>
-                <option value="hop">Hộp</option>
-                <option value="chai">Chai</option>
-                <option value="ong">Ống</option>
-                <option value="goi">Gói</option>
-              </select>
-            </div>
-            <div>
-              <label>Đơn Giá:</label>
-              <input
-                type="text"
-                name="medicinePrice"
-                value={addMedicine.medicinePrice}
-                onChange={handleInputChange}
-              />
-            </div>
-            <div>
-              <label>Số lượng:</label>
-              <input
-                type="text"
-                name="medicineQuantity"
-                value={addMedicine.medicineQuantity}
-                onChange={handleInputChange}
-              />
-            </div>
-         
-          <button type="submit" className="btn">
-            {editingMedicineId ? "Cập nhật" : "Thêm"}
-          </button>
-        </form>
-          </div>
-        <div className="right-form">
-            <div>
-              <label>Ảnh thuốc:</label>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleImageChange}
-              />
-            </div>
-            <div className="image-preview">
-              {addMedicine.medicalImage && (
-                <img
-                  src={addMedicine.medicalImage}
-                  alt="Medicine Preview"
-                  className="medicine-image"
-                />
-              )}
-            </div>
-          </div>
+      <div className="add-medicine-button">
+        <button className="btn btn-primary" onClick={handleCreateModalShow}>
+          Thêm thuốc mới
+        </button>
       </div>
 
       <div className="table-container">
@@ -296,29 +94,35 @@ function Medication() {
               </tr>
             </thead>
             <tbody>
-              {medicines.map((medicine) => (
-                <tr key={medicine._id}>
-                  <td>{medicine.name}</td>
-                  <td>{medicine.description}</td>
-                  <td>{medicine.unit_of_caculation}</td>
-                  <td>{medicine.price.toLocaleString()} VND</td>
-                  <td>{medicine.quantity_available}</td>
-                  <td>
-                    <button
-                      className="btn btn-edit"
-                      onClick={() => handleEdit(medicine)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="btn btn-delete"
-                      onClick={() => handleDelete(medicine._id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
+              {medicines.length > 0 ? (
+                medicines.map((medicine) => (
+                  <tr key={medicine._id}>
+                    <td>{medicine.name}</td>
+                    <td>{medicine.description}</td>
+                    <td>{medicine.unit_of_caculation}</td>
+                    <td>{medicine.price.toLocaleString()} VND</td>
+                    <td>{medicine.quantity_available}</td>
+                    <td>
+                      <button
+                        className="btn btn-edit"
+                        onClick={() => handleEditModalShow(medicine)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="btn btn-delete"
+                        onClick={() => handleDeleteModalShow(medicine)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="6">Không có thuốc nào.</td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         )}
@@ -341,6 +145,36 @@ function Medication() {
           Next
         </button>
       </div>
+
+      {/* Modal thêm thuốc */}
+      <ModalCreateMedicine
+        show={showCreateModal}
+        handleClose={handleCreateModalClose}
+        fetchMedicines={fetchMedicines}
+        addNewMedicine={addNewMedicine}
+      />
+
+      {/* Modal chỉnh sửa thuốc */}
+      {editingMedicine && (
+        <ModalEditMedicine
+          show={showEditModal}
+          handleClose={handleEditModalClose}
+          fetchMedicines={fetchMedicines}
+          editingMedicine={editingMedicine}
+          updateMedicine={updateMedicine}
+        />
+      )}
+
+      {/* Modal xóa thuốc */}
+      {deletingMedicine && (
+        <ModalDeleteMedicine
+          show={showDeleteModal}
+          handleClose={handleDeleteModalClose}
+          fetchMedicines={fetchMedicines}
+          deletingMedicine={deletingMedicine}
+          deleteMedicine={deleteMedicine}
+        />
+      )}
     </div>
   );
 }

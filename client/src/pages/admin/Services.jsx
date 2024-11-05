@@ -6,6 +6,9 @@ import {
   deleteService,
   updateService,
 } from "../../services/serviceAPI";
+import ModalCreateService from "../../components/admin/ServiceManage/ModalCreateService";
+import ModalEditService from "../../components/admin/ServiceManage/ModalEditService";
+import ModalDeleteService from "../../components/admin/ServiceManage/ModalDeleteService";
 
 function Services() {
   const [services, setServices] = useState([]);
@@ -13,17 +16,19 @@ function Services() {
   const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [editingServiceId, setEditingServiceId] = useState(null);
 
-  const [addService, setAddService] = useState({
-    serviceName: "",
-    servicePrice: "",
-  });
+  // Modal state
+  const [showCreateModal, setShowCreateModal] = useState(false);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [editingService, setEditingService] = useState(null);
+  const [deletingService, setDeletingService] = useState(null);
 
-  // Hàm lấy danh sách dịch vụ
+  // Fetch services
   const fetchServices = async (page) => {
+    setLoading(true);
+    setError(null);
     try {
-      setLoading(true);
       const data = await getAllServices(page, 5);
       if (data) {
         setServices(data.services);
@@ -44,104 +49,23 @@ function Services() {
     fetchServices(currentPage);
   }, [currentPage]);
 
-  // Xử lý input thay đổi
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setAddService((prev) => ({ ...prev, [name]: value }));
+  // Modal handlers
+  const handleCreateModalShow = () => setShowCreateModal(true);
+  const handleCreateModalClose = () => setShowCreateModal(false);
+
+  const handleEditModalShow = (service) => {
+    setEditingService(service);
+    setShowEditModal(true);
   };
+  const handleEditModalClose = () => setShowEditModal(false);
 
-  // Hàm thêm dịch vụ
-  const handleAddService = async () => {
-    const newService = {
-      name: addService.serviceName,
-      price: parseFloat(addService.servicePrice),
-    };
-
-    try {
-      const res = await addNewService(newService);
-      if (res) {
-        alert("Thêm dịch vụ thành công.");
-        fetchServices(currentPage);
-        resetForm();
-      } else {
-        setError("Không thể thêm dịch vụ.");
-      }
-    } catch (error) {
-      console.error("Error adding service:", error);
-      setError("Lỗi khi thêm dịch vụ.");
-    }
+  const handleDeleteModalShow = (service) => {
+    setDeletingService(service);
+    setShowDeleteModal(true);
   };
+  const handleDeleteModalClose = () => setShowDeleteModal(false);
 
-  // Hàm cập nhật dịch vụ
-  const handleUpdateService = async () => {
-    const updatedService = {
-      name: addService.serviceName,
-      price: parseFloat(addService.servicePrice),
-    };
-
-    try {
-      const res = await updateService(editingServiceId, updatedService);
-      if (res) {
-        alert("Cập nhật dịch vụ thành công.");
-        fetchServices(currentPage);
-        setEditingServiceId(null);
-        resetForm();
-      } else {
-        setError("Không thể cập nhật dịch vụ.");
-      }
-    } catch (error) {
-      console.error("Error updating service:", error);
-      setError("Lỗi khi cập nhật dịch vụ.");
-    }
-  };
-
-  // Hàm submit form
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (editingServiceId) {
-      handleUpdateService();
-    } else {
-      handleAddService();
-    }
-  };
-
-  // Hàm chỉnh sửa dịch vụ
-  const handleEditService = (service) => {
-    setEditingServiceId(service._id);
-    setAddService({
-      serviceName: service.name,
-      servicePrice: service.price.toString(),
-    });
-  };
-
-  // Hàm xóa dịch vụ
-  const handleDeleteService = async (serviceId) => {
-    const confirmDelete = window.confirm("Bạn có chắc chắn muốn xóa dịch vụ?");
-    if (confirmDelete) {
-      try {
-        const res = await deleteService(serviceId);
-        if (res) {
-          alert("Xóa dịch vụ thành công.");
-          fetchServices(currentPage);
-        } else {
-          setError("Không thể xóa dịch vụ.");
-        }
-      } catch (error) {
-        console.error("Error deleting service:", error);
-        setError("Lỗi khi xóa dịch vụ.");
-      }
-    }
-  };
-
-  // Hàm reset form
-  const resetForm = () => {
-    setAddService({
-      serviceName: "",
-      servicePrice: "",
-    });
-  };
-
-  // Hàm chuyển trang
+  // Pagination handler
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
       setCurrentPage(newPage);
@@ -150,33 +74,10 @@ function Services() {
 
   return (
     <div className="service-page">
-      <div className="add-service-form">
-        <h3>{editingServiceId ? "Cập nhật dịch vụ" : "Thêm dịch vụ"}</h3>
-        <form onSubmit={handleSubmit}>
-          <div>
-            <label>Tên dịch vụ:</label>
-            <input
-              type="text"
-              name="serviceName"
-              value={addService.serviceName}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <div>
-            <label>Đơn Giá:</label>
-            <input
-              type="text"
-              name="servicePrice"
-              value={addService.servicePrice}
-              onChange={handleInputChange}
-            />
-          </div>
-
-          <button type="submit" className="btn">
-            {editingServiceId ? "Cập nhật" : "Thêm"}
-          </button>
-        </form>
+      <div className="add-service-button">
+        <button className="btn btn-primary" onClick={handleCreateModalShow}>
+          Thêm dịch vụ mới
+        </button>
       </div>
 
       <div className="table-container">
@@ -194,26 +95,32 @@ function Services() {
               </tr>
             </thead>
             <tbody>
-              {services.map((service) => (
-                <tr key={service._id}>
-                  <td>{service.name}</td>
-                  <td>{service.price.toLocaleString()} VND</td>
-                  <td>
-                    <button
-                      className="btn btn-edit"
-                      onClick={() => handleEditService(service)}
-                    >
-                      Edit
-                    </button>
-                    <button
-                      className="btn btn-delete"
-                      onClick={() => handleDeleteService(service._id)}
-                    >
-                      Delete
-                    </button>
-                  </td>
+              {services.length > 0 ? (
+                services.map((service) => (
+                  <tr key={service._id}>
+                    <td>{service.name}</td>
+                    <td>{service.price.toLocaleString()} VND</td>
+                    <td>
+                      <button
+                        className="btn btn-edit"
+                        onClick={() => handleEditModalShow(service)}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        className="btn btn-delete"
+                        onClick={() => handleDeleteModalShow(service)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="3">Không có dịch vụ nào.</td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         )}
@@ -227,7 +134,7 @@ function Services() {
           Previous
         </button>
         <span>
-          Page {currentPage} to {totalPages}
+          Page {currentPage} of {totalPages}
         </span>
         <button
           onClick={() => handlePageChange(currentPage + 1)}
@@ -236,6 +143,36 @@ function Services() {
           Next
         </button>
       </div>
+
+      {/* Modal Thêm dịch vụ */}
+      <ModalCreateService
+        show={showCreateModal}
+        handleClose={handleCreateModalClose}
+        fetchServices={fetchServices}
+        addNewService={addNewService}
+      />
+
+      {/* Modal Chỉnh sửa dịch vụ */}
+      {editingService && (
+        <ModalEditService
+          show={showEditModal}
+          handleClose={handleEditModalClose}
+          fetchServices={fetchServices}
+          editingService={editingService}
+          updateService={updateService}
+        />
+      )}
+
+      {/* Modal Xóa dịch vụ */}
+      {deletingService && (
+        <ModalDeleteService
+          show={showDeleteModal}
+          handleClose={handleDeleteModalClose}
+          fetchServices={fetchServices}
+          deletingService={deletingService}
+          deleteService={deleteService}
+        />
+      )}
     </div>
   );
 }

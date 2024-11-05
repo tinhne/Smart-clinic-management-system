@@ -131,11 +131,11 @@ const ModalCreateScheduleByDoctor = ({ show, handleClose, doctor, onScheduleCrea
             <div className="mb-3">
               <label htmlFor="slotDuration" className="form-label">Thời Gian Mỗi Slot (phút)</label>
               <input
-                type="number"
+                type="text"
                 className="form-control"
                 id="slotDuration"
                 value={slotDuration}
-                onChange={(e) => setSlotDuration(Number(e.target.value))}
+                onChange={(e) => setSlotDuration(e.target.value)}
                 min="10" // Set minimum to 10
                 required
               />

@@ -4,6 +4,7 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import "../../style/adminStyle/ScheduleManage.scss";
 import ReactPaginate from "react-paginate";
+
 import {
   getScheduleDoctorByDate,
   deleteDoctorSchedules,
@@ -15,6 +16,8 @@ import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ModalUpdateSchedule from "../../components/admin/Schedule/ModalUpdateSchedule";
 import ModalCreateSchedule from "../../components/admin/Schedule/ModalCreateSchedule";
+import { CiCirclePlus } from "react-icons/ci";
+
 const ScheduleManage = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -156,27 +159,31 @@ const ScheduleManage = () => {
 
   return (
     <div>
-      <div
-        className="date-picker-container"
-        style={{ display: "flex", alignItems: "center" }}
-      >
-        <label style={{ marginRight: "10px" }}>Chọn Ngày:</label>
-        <DatePicker
-          selected={selectedDate}
-          onChange={handleDateChange}
-          dateFormat="dd-MM-yyyy" // This will format the date shown in the input
-          className="form-control"
-          style={{ marginRight: "10px" }}
-        />
+      <div className="datepiker-addbtn">
+        <div
+          className="date-picker-container"
+          style={{ display: "flex", alignItems: "center" }}
+        >
+          <label style={{ marginRight: "10px" }}>Chọn Ngày:</label>
+          <DatePicker
+            selected={selectedDate}
+            onChange={handleDateChange}
+            dateFormat="dd-MM-yyyy" // This will format the date shown in the input
+            className="form-control"
+            style={{ marginRight: "10px" }}
+          />
 
-        <Button variant="primary" onClick={handleFetchDataClick}>
-          Lấy Dữ Liệu
-        </Button>
-        <Button variant="primary" onClick={handleOpenCreateModal}>
-          Thêm lịch
-        </Button>
+          <Button variant="primary" onClick={handleFetchDataClick}>
+            Lấy Dữ Liệu
+          </Button>
+        </div>
+        <div className="add-schedual">
+          <Button variant="primary" onClick={handleOpenCreateModal}>
+            <CiCirclePlus className="ic" />
+            Thêm lịch
+          </Button>
+        </div>
       </div>
-
       <Table striped bordered hover style={{ marginTop: "20px" }}>
         <thead>
           <tr>
@@ -243,10 +250,18 @@ const ScheduleManage = () => {
         previousLabel={"Previous"}
         nextLabel={"Next"}
         breakLabel={"..."}
-        pageCount={5} // Replace with the actual number of pages
+        pageCount={5}
         marginPagesDisplayed={2}
         pageRangeDisplayed={3}
-        containerClassName={"pagination justify-content-center"}
+        containerClassName={"pagination-container"}
+        pageClassName={"page-item"}
+        pageLinkClassName={"page-link"}
+        previousClassName={"page-item"}
+        previousLinkClassName={"page-link"}
+        nextClassName={"page-item"}
+        nextLinkClassName={"page-link"}
+        breakClassName={"page-item"}
+        breakLinkClassName={"page-link"}
         activeClassName={"active"}
       />
 

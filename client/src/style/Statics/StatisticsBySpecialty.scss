@@ -8,9 +8,10 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
-    height: 200px;
+    margin-bottom: 40px;
+    height: 230px;
     gap: 0 10px;
+    
    
     .total_child{
       height: 100%; 
@@ -31,7 +32,8 @@
           font-size: 50px;
           font-weight: bold;
           color: rgba(37, 35, 31, 0.589);
-
+          align-items: center;
+          justify-content: center;
         }
       }
     }

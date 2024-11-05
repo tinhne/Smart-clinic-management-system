@@ -10,6 +10,8 @@
   padding: 0;
   overflow: auto;
   height: 100vh;
+  padding:20px;
+  background: #478ad642;
 }
 .admin-header {
   background: #478ad6;
@@ -23,8 +25,8 @@
   position: fixed;
   top: 0;
   left: 0;
-  z-index: 1000;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 3;
+ 
 }
 
 .header-left img {
@@ -65,6 +67,11 @@
   color: white;
   padding-top: 20px;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+//   background-size: cover;
+//   background-repeat: no-repeat;
+//   background-position: bottom;
+//   background-image: url("../../assets/img/BackGroundSideBarAdmin.png");
+// }
 }
 
 .admin-sidebar ul {

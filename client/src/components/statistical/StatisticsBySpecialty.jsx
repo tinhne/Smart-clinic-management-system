@@ -1,5 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { getAppointmentCountBySpecialties, getTodayAppointmentCount,getDailyAppointmentCountByDoctor } from "../../utils/StaticsAPI/StaticsService";
+import {
+  getAppointmentCountBySpecialties,
+  getTodayAppointmentCount,
+  getDailyAppointmentCountByDoctor,
+} from "../../utils/StaticsAPI/StaticsService";
 import {
   BarChart,
   Tooltip,
@@ -37,11 +41,16 @@ const StaticsBySpecialty = () => {
       );
 
       // Calculate the total appointments for the current month
-      const monthlyTotal = formattedData.reduce((sum, specialty) => sum + specialty.count, 0);
+      const monthlyTotal = formattedData.reduce(
+        (sum, specialty) => sum + specialty.count,
+        0
+      );
       setMonthlyAppointmentCount(monthlyTotal);
 
       // Find the highest appointment count
-      const maxCount = Math.max(...formattedData.map((specialty) => specialty.count));
+      const maxCount = Math.max(
+        ...formattedData.map((specialty) => specialty.count)
+      );
 
       // Get all specialties with the highest appointment count
       const topSpecialtiesArray = formattedData
@@ -79,11 +88,16 @@ const StaticsBySpecialty = () => {
             <span>{monthlyAppointmentCount}</span>
           </div>
         </div>
-        <div className="total_child">
+        <div
+          className="total_child"
+          style={{
+            flex: "1.2",
+          }}
+        >
           <h2>Khoa được khám nhiều nhất trong tháng này</h2>
           <div className="icons_number">
             <img src={png1} alt="" className="icons" />
-            <span>{topSpecialties}</span>
+            <span style={{ fontSize: "27px" }}>{topSpecialties}</span>
           </div>
         </div>
       </div>
@@ -96,6 +110,18 @@ const StaticsBySpecialty = () => {
           <Bar name="Số lượng" dataKey="count" barSize={40} fill="#3357FF" />
         </BarChart>
       </ResponsiveContainer>
+      <span style={{
+        fontSize:"21px",
+        fontWeight:"bold",
+        marginLeft:"30px",
+        marginTop:"20px",
+        marginBottom:"30px",
+        display:"block",
+
+      }}>
+        Biểu đồ thống kê số lượng bệnh nhân khám theo từng khoa trong tháng{" "}
+        {currentMonth}
+      </span>
     </div>
   );
 };

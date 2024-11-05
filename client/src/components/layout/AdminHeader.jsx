@@ -8,7 +8,6 @@ function AdminHeader() {
   return (
     <header className="admin-header">
       <div className="header-left">
-        <img src={menu} alt="menu-header" />
       </div>
       <div className="header-search">
         <input type="text" className="searchh-input" placeholder="Seach here" />

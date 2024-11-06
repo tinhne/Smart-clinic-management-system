@@ -32,7 +32,7 @@ const userSchema = new Schema(
     role: {
       type: String,
       required: true,
-      enum: ["patient", "doctor", "admin"], // Phân biệt vai trò người dùng
+      enum: ["patient", "doctor", "admin"],
       default: "patient",
     },
     password: {
@@ -44,10 +44,29 @@ const userSchema = new Schema(
       required: true,
     },
     specialties: {
-      type: [String], // Chỉ sử dụng cho doctor, không bắt buộc với các vai trò khác
+      type: [String],
     },
-    experience: {type: String},
-    imageUrl: { type: String }, // New field for user image
+    experience: { type: String },
+    imageUrl: { type: String },
+    title: { 
+      type: String,
+      required: function () {
+        return this.role === "doctor";
+      },
+    },
+    description: {
+      type: String,
+      maxlength: 500, // Optional, with a character limit
+    }, // Description for doctors
+    certifications: {
+      type: [String],
+      validate: {
+        validator: function (v) {
+          return v.length <= 3; // Limit to 3 images
+        },
+        message: "A maximum of 3 certification images is allowed.",
+      },
+    },
   },
   {
     timestamps: true,

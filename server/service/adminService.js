@@ -5,8 +5,9 @@ const bcrypt = require("bcryptjs");
 // src/service/adminService.js
 // Tạo tài khoản bác sĩ
 exports.createDoctor = async (doctorData) => {
-  const { email, password, imageUrl, ...restData } = doctorData;
+  const { email, password, imageUrl, title, description, certifications, ...restData } = doctorData;
 
+  // Check for required fields
   if (!password) {
     return { success: false, message: "Mật khẩu không được để trống" };
   }
@@ -19,27 +20,34 @@ exports.createDoctor = async (doctorData) => {
     ...restData,
     email,
     imageUrl,
+    title,
+    description,
+    certifications,
   });
 
   try {
+    // Check if the email is already registered
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return { success: false, message: "Tài khoản đã tồn tại" };
     }
 
+    // Hash the password
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Lưu ảnh như một Buffer
-    //const imageBuffer = Buffer.from(imageUrl, "base64");
-
+    // Create new doctor user with all required fields
     const newDoctor = new User({
       ...restData,
       password: hashedPassword,
       role: "doctor",
       imageUrl,
       email,
+      title,
+      description,
+      certifications,
     });
 
+    // Save the new doctor to the database
     await newDoctor.save();
 
     return { success: true, user: newDoctor };
@@ -48,7 +56,6 @@ exports.createDoctor = async (doctorData) => {
     return { success: false, message: "Lỗi khi tạo bác sĩ" };
   }
 };
-
 exports.createPatient = async (patientData) => {
   const { email, password, imageUrl, ...restData } = patientData;
 

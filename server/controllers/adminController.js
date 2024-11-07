@@ -32,45 +32,42 @@ exports.createDoctor = async (req, res) => {
       .json({ message: "Không có ảnh bác sĩ được tải lên." });
   }
 
-  // Ensure doctor image is a valid Base64 string
-  const imageUrl = doctorImage.replace(/^data:image\/\w+;base64,/, "");
-  if (!isBase64(imageUrl)) {
-    return res
-      .status(400)
-      .json({ message: "Dữ liệu ảnh bác sĩ không hợp lệ." });
-  }
-
-  // Validate certifications (if provided)
-  let formattedCertifications = [];
-  if (certifications && Array.isArray(certifications)) {
-    if (certifications.length > 3) {
+  // Initialize imageUrl if doctorImage is valid and base64 formatted
+  let imageUrl;
+  if (typeof doctorImage === "string" && doctorImage.startsWith("data:image")) {
+    imageUrl = doctorImage.replace(/^data:image\/\w+;base64,/, "");
+    if (!isBase64(imageUrl)) {
       return res
         .status(400)
-        .json({ message: "Chỉ có thể tải lên tối đa 3 ảnh giấy chứng nhận." });
-    }
-
-    for (const [index, cert] of certifications.entries()) {
-      const certImage = cert.replace(/^data:image\/\w+;base64,/, "");
-      console.log(`Checking certification image ${index + 1}:`, certImage);
-
-      if (!isBase64(certImage)) {
-        return res
-          .status(400)
-          .json({ message: "Một trong các ảnh giấy chứng nhận không hợp lệ." });
-      }
-      formattedCertifications.push(certImage);
+        .json({ message: "Dữ liệu ảnh bác sĩ không hợp lệ." });
     }
   }
 
+  // Process certifications in base64
+  let formattedCertifications = [];
+  if (certifications && Array.isArray(certifications)) {
+    formattedCertifications = certifications.reduce((acc, cert) => {
+      if (typeof cert === "string" && cert.startsWith("data:image")) {
+        const certImage = cert.replace(/^data:image\/\w+;base64,/, "");
+        if (isBase64(certImage)) {
+          acc.push(certImage);
+        }
+      }
+      return acc;
+    }, []);
+  }
+
+  // Pass `imageUrl` and other data to the createDoctor function
   const response = await createDoctor({
     ...otherData,
     email,
-    imageUrl,
+    imageUrl, // Ensure imageUrl is passed correctly here
     title,
     description,
     certifications: formattedCertifications,
   });
-
+  console.log("Dữ liệu đầu vào của createDoctor:", response);
+  // Handle response success
   if (response.success) {
     const doctorImageBase64 = `data:image/png;base64,${response.user.imageUrl}`;
     const certificationsBase64 = response.user.certifications.map(
@@ -88,7 +85,7 @@ exports.createDoctor = async (req, res) => {
       },
     });
   } else {
-    return res.status(400).json({ message: response.message });
+    return res.status(400).json({ EM: response.message });
   }
 };
 

@@ -1,13 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import PropTypes from "prop-types";
-import { useEffect } from "react";
 import Col from "react-bootstrap/Col";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
 import { editUser } from "../../../utils/AuthAPI/AdminService";
+import { toast } from "react-toastify";
 import "./ModalUpdateDoctor.scss";
+
 const ModalEditDoctor = (props) => {
   const { showEditModal, setShowEditModal, selectedUser, fetchDoctors } = props;
   const [formData, setFormData] = useState({
@@ -20,6 +21,9 @@ const ModalEditDoctor = (props) => {
     gender: selectedUser?.gender || "",
     role: selectedUser?.role || "doctor",
     specialties: selectedUser?.specialties?.join(", ") || "",
+    title: selectedUser?.title || "",
+    description: selectedUser?.description || "",
+    experience: selectedUser?.experience || "",
   });
 
   useEffect(() => {
@@ -32,8 +36,11 @@ const ModalEditDoctor = (props) => {
         address: selectedUser.address || "",
         birthdate: selectedUser.birthdate || "",
         gender: selectedUser.gender || "",
-        role: selectedUser.role || "patient",
-        specialties: selectedUser?.specialties?.join(", ") || "",
+        role: selectedUser.role || "doctor",
+        specialties: selectedUser.specialties?.join(", ") || "",
+        title: selectedUser.title || "",
+        description: selectedUser.description || "",
+        experience: selectedUser.experience || "",
       });
     }
   }, [selectedUser]);
@@ -49,17 +56,38 @@ const ModalEditDoctor = (props) => {
     try {
       const response = await editUser(selectedUser._id, formData);
       if (response.success) {
-        alert("Cập nhật thành công");
-        fetchDoctors(1); // Refresh lại danh sách bác sĩ
-        handleClose(); // Đóng modal
+        toast.success("Cập nhật thành công");
+        fetchDoctors(1);
+        handleClose();
       } else {
-        alert(response.data.message || "Có lỗi xảy ra");
+        toast.error(response.data.message || "Có lỗi xảy ra");
       }
     } catch (error) {
       console.error("Error updating user:", error);
-      alert("Lỗi khi cập nhật thông tin");
+      toast.error(error.response?.data?.message || "Có lỗi khi cập nhật");
     }
   };
+
+  // Function to check for missing fields
+  const getMissingFields = () => {
+    const requiredFields = [
+      "first_name",
+      "last_name",
+      "email",
+      "phone",
+      "address",
+      "birthdate",
+      "gender",
+      "specialties",
+      "title",
+      "description",
+      "experience",
+    ];
+    return requiredFields.filter((field) => !formData[field]);
+  };
+
+  // Missing fields for rendering
+  const missingFields = getMissingFields();
 
   return (
     <>
@@ -72,6 +100,11 @@ const ModalEditDoctor = (props) => {
           <Row>
             <Col md={8}>
               <Form noValidate>
+                {missingFields.length > 0 && (
+                  <p style={{ color: "red" }}>
+                    Missing fields: {missingFields.join(", ")}
+                  </p>
+                )}
                 <Row className="mb-3">
                   <Form.Group as={Col} md="6" controlId="first_name">
                     <Form.Label>First Name</Form.Label>
@@ -81,6 +114,7 @@ const ModalEditDoctor = (props) => {
                       placeholder="First Name"
                       value={formData.first_name}
                       onChange={handleChange}
+                      isInvalid={!formData.first_name}
                     />
                   </Form.Group>
 
@@ -92,6 +126,7 @@ const ModalEditDoctor = (props) => {
                       placeholder="Last Name"
                       value={formData.last_name}
                       onChange={handleChange}
+                      isInvalid={!formData.last_name}
                     />
                   </Form.Group>
                 </Row>
@@ -105,6 +140,7 @@ const ModalEditDoctor = (props) => {
                       placeholder="Email"
                       value={formData.email}
                       onChange={handleChange}
+                      isInvalid={!formData.email}
                     />
                   </Form.Group>
 
@@ -116,6 +152,7 @@ const ModalEditDoctor = (props) => {
                       placeholder="Phone"
                       value={formData.phone}
                       onChange={handleChange}
+                      isInvalid={!formData.phone}
                     />
                   </Form.Group>
                 </Row>
@@ -128,6 +165,7 @@ const ModalEditDoctor = (props) => {
                       placeholder="Address"
                       value={formData.address}
                       onChange={handleChange}
+                      isInvalid={!formData.address}
                     />
                   </Form.Group>
 
@@ -138,6 +176,7 @@ const ModalEditDoctor = (props) => {
                       type="date"
                       value={formData.birthdate}
                       onChange={handleChange}
+                      isInvalid={!formData.birthdate}
                     />
                   </Form.Group>
                 </Row>
@@ -149,6 +188,7 @@ const ModalEditDoctor = (props) => {
                       as="select"
                       value={formData.gender}
                       onChange={handleChange}
+                      isInvalid={!formData.gender}
                     >
                       <option value="Male">Nam</option>
                       <option value="Female">Nữ</option>
@@ -161,38 +201,71 @@ const ModalEditDoctor = (props) => {
                       as="select"
                       value={formData.role}
                       onChange={handleChange}
+                      disabled
                     >
-                      <option value="patient">Patient</option>
                       <option value="doctor">Doctor</option>
-                      <option value="admin">Admin</option>
                     </Form.Control>
                   </Form.Group>
                 </Row>
 
                 {formData.role === "doctor" && (
-                  <Row className="mb-3">
-                    <Form.Group as={Col} md="12" controlId="specialties">
-                      <Form.Label>Specialties</Form.Label>
-                      <Form.Select
-                        value={formData.specialties}
-                        onChange={handleChange}
-                        required
-                      >
-                        <option value="">Chọn chuyên khoa</option>
-                        <option value="Da Liễu">Da Liễu</option>
-                        <option value="Tiêu Hóa">Tiêu Hóa</option>
-                        <option value="Chỉnh hình">Chỉnh hình</option>
-                        <option value="Tim Mạch">Tim Mạch</option>
-                        <option value="Nhi Khoa">Nhi Khoa</option>
-                      </Form.Select>
-                    </Form.Group>
-                  </Row>
+                  <>
+                    <Row className="mb-3">
+                      <Form.Group as={Col} md="12" controlId="specialties">
+                        <Form.Label>Specialties</Form.Label>
+                        <Form.Control
+                          value={formData.specialties}
+                          onChange={handleChange}
+                          placeholder="Enter specialties separated by commas"
+                          required
+                          isInvalid={!formData.specialties}
+                        />
+                      </Form.Group>
+                    </Row>
+
+                    <Row className="mb-3">
+                      <Form.Group as={Col} md="6" controlId="title">
+                        <Form.Label>Title</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="Doctor Title"
+                          value={formData.title}
+                          onChange={handleChange}
+                          isInvalid={!formData.title}
+                        />
+                      </Form.Group>
+
+                      <Form.Group as={Col} md="6" controlId="experience">
+                        <Form.Label>Experience</Form.Label>
+                        <Form.Control
+                          type="text"
+                          placeholder="Years of Experience"
+                          value={formData.experience}
+                          onChange={handleChange}
+                          isInvalid={!formData.experience}
+                        />
+                      </Form.Group>
+                    </Row>
+
+                    <Row className="mb-3">
+                      <Form.Group as={Col} md="12" controlId="description">
+                        <Form.Label>Description</Form.Label>
+                        <Form.Control
+                          as="textarea"
+                          rows={3}
+                          placeholder="Description"
+                          value={formData.description}
+                          onChange={handleChange}
+                          isInvalid={!formData.description}
+                        />
+                      </Form.Group>
+                    </Row>
+                  </>
                 )}
               </Form>
             </Col>
 
             <Col md={4} className="d-flex flex-column align-items-center">
-              {/* Hiển thị ảnh */}
               <div className="image-preview mb-3">
                 {selectedUser?.imageUrl ? (
                   <img
@@ -206,7 +279,7 @@ const ModalEditDoctor = (props) => {
                   />
                 ) : (
                   <img
-                    src="placeholder-image-url" // Thay thế bằng đường dẫn đến ảnh mặc định
+                    src="placeholder-image-url"
                     alt="Doctor preview"
                     style={{
                       width: "150px",
@@ -216,6 +289,26 @@ const ModalEditDoctor = (props) => {
                   />
                 )}
               </div>
+
+              <div className="certifications">
+                <h5>Certifications</h5>
+                <div className="certification-images">
+                  {selectedUser?.certifications?.map((cert, index) => (
+                    <img
+                      key={index}
+                      src={`data:image/jpeg;base64,${cert}`}
+                      alt={`Certification ${index + 1}`}
+                      style={{
+                        width: "100px",
+                        height: "100px",
+                        margin: "5px",
+                        objectFit: "cover",
+                      }}
+                    />
+                  ))}
+                </div>
+              </div>
+
               <Button variant="primary" onClick={handleSave}>
                 Lưu
               </Button>

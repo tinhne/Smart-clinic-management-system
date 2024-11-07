@@ -14,21 +14,20 @@ exports.createBlog = async (req, res) => {
     );
 
     res.status(201).json({
-      message: "Tạo blog thành công",
+      message: "Blog created successfully",
       blog: newBlog,
     });
   } catch (error) {
-    throw res.status(400).json({ message: error.message });
+    res.status(400).json({ message: error.message });
   }
 };
 
 exports.getAllBlogs = async (req, res) => {
   try {
     const blogs = await blogService.getAllBlogs();
-
     res.status(200).json(blogs);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ message: error.message });
   }
 };
 
@@ -37,10 +36,9 @@ exports.getBlogById = async (req, res) => {
 
   try {
     const blog = await blogService.getBlogById(id);
-
     res.status(200).json(blog);
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(404).json({ message: error.message });
   }
 };
 
@@ -49,7 +47,7 @@ exports.updateBlogById = async (req, res) => {
   const { title, image, content, tags, category } = req.body;
 
   try {
-    await blogService.updateBlogById(id, {
+    const updatedBlog = await blogService.updateBlogById(id, {
       title,
       image,
       content,
@@ -57,7 +55,9 @@ exports.updateBlogById = async (req, res) => {
       category,
     });
 
-    res.status(200).json({ message: "Cập nhật blog thành công" });
+    res
+      .status(200)
+      .json({ message: "Blog updated successfully", blog: updatedBlog });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
@@ -68,9 +68,8 @@ exports.deleteBlogById = async (req, res) => {
 
   try {
     await blogService.deleteBlogById(id);
-
-    res.status(200).json({ message: "Xóa blog thành công" });
+    res.status(200).json({ message: "Blog deleted successfully" });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(404).json({ message: error.message });
   }
 };

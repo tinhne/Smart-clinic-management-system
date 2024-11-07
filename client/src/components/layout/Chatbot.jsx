@@ -110,19 +110,19 @@ function NewChatBot() {
           {
             id: "9",
             message: "Cảm ơn bạn đã chọn đặt lịch khám nhanh.",
-            trigger: 4,
+            trigger: "4",
           },
           {
             id: "10",
             component: <ChooseDoctor />,
             asMessage: true,
-            trigger: 4,
+            trigger: "4",
           },
           {
             id: "11",
             component: <RedirectToIntroduction />,
             asMessage: true,
-            trigger: 4,
+            trigger: "4",
           },
         ]}
         floating={true}

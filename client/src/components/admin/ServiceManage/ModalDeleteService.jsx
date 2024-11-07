@@ -21,7 +21,9 @@ const ModalDeleteService = ({
       console.log("Deleting service:", deletingService);
       const response = await deleteService(deletingService._id);
 
-      if (response && response.success) {
+      if (response) {
+        console.log(response);
+
         toast.success("Dịch vụ đã được xóa thành công!");
         handleClose(); // Đóng modal trước khi làm mới danh sách
         await fetchServices(1); // Cập nhật danh sách dịch vụ

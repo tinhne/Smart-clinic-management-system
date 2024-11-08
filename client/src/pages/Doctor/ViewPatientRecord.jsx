@@ -1,112 +1,132 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../../style/DoctorFunction/ViewPatientRecord.scss";
 import ReactPaginate from "react-paginate";
+import {
+  getAllMedicalRecords,
+  getMedicalRecordByPatientId,
+  addVisitHistory,
+} from "../../utils/MedicalRecord/MedicalRecordService";
 
 function ViewPatientRecord() {
+  const [medicalRecords, setMedicalRecords] = useState([]);
   const [selectedRecord, setSelectedRecord] = useState(null);
+  const [newVisit, setNewVisit] = useState({
+    symptoms: "",
+    diagnosis: "",
+    treatment_plan: "",
+    notes: "",
+  });
 
-  const medicalRecords = [
-    {
-      patient_id: "123456",
-      doctor_id: "654321",
-      medicalrecord_date: "2024-10-26",
-      symptoms: ["Headache", "Fever", "Cough"],
-      diagnosis: "Flu",
-      treatment_plan: "Rest, Hydration, and Medication",
-      notes: ["Follow up in 2 weeks", "Avoid strenuous activity"],
-      patient_info: {
-        name: "John Doe",
-        dob: "1993-05-21",
-        gender: "Male",
-        contact: "123-456-789",
-        address: "123 Patient St, City",
-      },
-      doctor_info: {
-        name: "Dr. Jane Smith",
-        specialization: "Cardiology",
-        experience: "15 years",
-        contact: "987-654-321",
-        clinic: "Central Health Clinic",
-      },
-      prescriptions: [
-        {
-          medication: "Paracetamol",
-          dosage: "500mg",
-          frequency: "3 times a day",
-          instructions: "Take after meals, do not exceed recommended dose.",
-        },
-        {
-          medication: "Ibuprofen",
-          dosage: "200mg",
-          frequency: "2 times a day",
-          instructions: "Take with water, avoid if experiencing stomach upset.",
-        },
-      ],
-    },
-  ];
+  // Fetch medical records
+  useEffect(() => {
+    const fetchMedicalRecords = async (page = 1) => {
+      try {
+        const response = await getAllMedicalRecords(page, 5);
+        setMedicalRecords(response.medicalRecords || []);
+      } catch (error) {
+        console.error("Lỗi khi lấy hồ sơ y tế:", error.response ? error.response.data : error.message);
+      }
+    };
 
-  const handleViewDetails = (record) => {
-    setSelectedRecord(record);
+    fetchMedicalRecords();
+  }, []);
+
+  // Handle viewing details
+// Function to handle viewing details with added console.log for debugging
+const handleViewDetails = async (patient_id) => {
+  console.log("View details clicked for patient_id:", patient_id); // kiểm tra xem hàm có chạy khi nhấn nút không
+  if (!patient_id) {
+    console.error("No patient_id provided");
+    return; // Thoát nếu không có patient_id
+  }
+  try {
+    const response = await getMedicalRecordByPatientId(patient_id);
+    console.log("Fetched medical record details:", response); // kiểm tra dữ liệu trả về
+    setSelectedRecord(response.data); // Đặt chi tiết hồ sơ vào selectedRecord
+  } catch (error) {
+    console.error("Lỗi khi lấy chi tiết hồ sơ y tế:", error);
+  }
+};
+
+
+  // Mở giao diện tạo bệnh án mới
+  const handleAddVisit = (patient_id) => {
+    setSelectedRecord({ patient_id }); // Thiết lập bệnh nhân hiện tại để thêm lần khám
   };
 
+  // Đóng giao diện chi tiết
   const handleCloseDetails = () => {
     setSelectedRecord(null);
+    setNewVisit({
+      symptoms: "",
+      diagnosis: "",
+      treatment_plan: "",
+      notes: "",
+    });
+  };
+
+  // Lưu lần khám mới vào API
+  const handleSaveVisit = async () => {
+    try {
+      const response = await addVisitHistory(selectedRecord.patient_id, newVisit);
+      if (response.status === 200) {
+        // Thêm lần khám mới vào record
+        setMedicalRecords((prevRecords) =>
+          prevRecords.map((record) =>
+            record.patient_id === selectedRecord.patient_id
+              ? { ...record, medical_history: [...record.medical_history, response.data] }
+              : record
+          )
+        );
+        handleCloseDetails();
+      } else {
+        console.error("Lỗi khi lưu lần khám:", response.statusText);
+      }
+    } catch (error) {
+      console.error("Lỗi khi lưu lần khám:", error);
+    }
   };
 
   return (
     <div className="patient-record">
       <h1>Danh sách hồ sơ bệnh nhân</h1>
-      <input
-          type="text"
-          placeholder="Mã giao dịch, tên dịch vụ, tên bệnh nhân..."
-          className="search-bar"
-          value="" // Cập nhật giá trị tìm kiếm
-        />
       <table className="record-table">
         <thead>
           <tr>
             <th>ID Bệnh nhân</th>
-            <th>ID Bác sĩ</th>
-            <th>Ngày khám</th>
-            <th>Triệu chứng</th>
-            <th>Chuẩn đoán</th>
-            <th>Kế hoạch điều trị</th>
-            <th>Ghi chú</th>
+            <th>Tên</th>
+            <th>Số điện thoại</th>
             <th>Hành động</th>
           </tr>
         </thead>
         <tbody>
-          {medicalRecords.map((record, index) => (
-            <tr key={index}>
-              <td>{record.patient_id}</td>
-              <td>{record.doctor_id}</td>
-              <td>{record.medicalrecord_date}</td>
-              <td>
-                <ul>
-                  {record.symptoms.map((symptom, i) => (
-                    <li key={i}>{symptom}</li>
-                  ))}
-                </ul>
-              </td>
-              <td>{record.diagnosis}</td>
-              <td>{record.treatment_plan}</td>
-              <td>
-                <ul>
-                  {record.notes.map((note, i) => (
-                    <li key={i}>{note}</li>
-                  ))}
-                </ul>
-              </td>
-              <td>
-                <button
-                  className="btn btn-primary"
-                  onClick={() => handleViewDetails(record)}
-                >
-                  Xem chi tiết
-                </button>
-              </td>
+          {medicalRecords && Array.isArray(medicalRecords) && medicalRecords.length > 0 ? (
+            medicalRecords.map((record, index) => (
+              <tr key={index}>
+                <td>{record.patient_id}</td>
+                <td>{record.patient_info?.name || "N/A"}</td>
+                <td>{record.patient_info?.phone || "N/A"}</td>
+                <td>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => handleViewDetails(record.patient_id)}
+                  >
+                    Xem chi tiết
+                  </button>
+                  <button
+                    className="btn btn-primary"
+                    onClick={() => handleAddVisit(record.patient_id)}
+                  >
+                    Tạo bệnh án
+                  </button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="4">Không có hồ sơ bệnh nhân nào.</td>
             </tr>
-          ))}
+          )}
         </tbody>
       </table>
 
@@ -119,95 +139,57 @@ function ViewPatientRecord() {
         pageRangeDisplayed={3}
         onPageChange={() => {}}
         containerClassName={"pagination"}
-        pageClassName={"page-item"}
-        pageLinkClassName={"page-link"}
-        previousClassName={"page-item"}
-        previousLinkClassName={"page-link"}
-        nextClassName={"page-item"}
-        nextLinkClassName={"page-link"}
-        breakClassName={"page-item"}
-        breakLinkClassName={"page-link"}
         activeClassName={"active"}
       />
 
       {selectedRecord && (
         <div className="modal-overlay">
           <div className="modal-content">
-            <h2>Chi tiết hồ sơ bệnh án</h2>
-            <div className="modal-scrollable">
-              <h3>Thông tin Bệnh nhân</h3>
-              <p>
-                <strong>Họ và tên:</strong> {selectedRecord.patient_info.name}
-              </p>
-              <p>
-                <strong>Ngày sinh:</strong> {selectedRecord.patient_info.dob}
-              </p>
-              <p>
-                <strong>Giới tính:</strong> {selectedRecord.patient_info.gender}
-              </p>
-              <p>
-                <strong>Liên hệ:</strong> {selectedRecord.patient_info.contact}
-              </p>
-              <p>
-                <strong>Địa chỉ:</strong> {selectedRecord.patient_info.address}
-              </p>
-
-              <h3>Thông tin Bác sĩ</h3>
-              <p>
-                <strong>Họ và tên:</strong> {selectedRecord.doctor_info.name}
-              </p>
-              <p>
-                <strong>Chuyên khoa:</strong>{" "}
-                {selectedRecord.doctor_info.specialization}
-              </p>
-              <p>
-                <strong>Kinh nghiệm:</strong>{" "}
-                {selectedRecord.doctor_info.experience}
-              </p>
-              <p>
-                <strong>Liên hệ:</strong> {selectedRecord.doctor_info.contact}
-              </p>
-              <p>
-                <strong>Phòng khám:</strong> {selectedRecord.doctor_info.clinic}
-              </p>
-
-              <h3>Thông tin Khám</h3>
-              <p>
-                <strong>Triệu chứng:</strong>{" "}
-                {selectedRecord.symptoms.join(", ")}
-              </p>
-              <p>
-                <strong>Chuẩn đoán:</strong> {selectedRecord.diagnosis}
-              </p>
-              <p>
-                <strong>Kế hoạch điều trị:</strong>{" "}
-                {selectedRecord.treatment_plan}
-              </p>
-              <p>
-                <strong>Ghi chú:</strong> {selectedRecord.notes.join(", ")}
-              </p>
-
-              <h3>Thông tin Thuốc</h3>
-              <div>
-                {selectedRecord.prescriptions.map((prescription, index) => (
-                  <div key={index} className="prescription-item">
-                    <p>
-                      <strong>Thuốc:</strong> {prescription.medication}
-                    </p>
-                    <p>
-                      <strong>Liều lượng:</strong> {prescription.dosage}
-                    </p>
-                    <p>
-                      <strong>Tần suất:</strong> {prescription.frequency}
-                    </p>
-                    <p>
-                      <strong>Hướng dẫn:</strong> {prescription.instructions}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <button className="btn-close" onClick={handleCloseDetails}></button>
+            {selectedRecord.patient_id && !selectedRecord.medical_history ? (
+              <>
+                <h2>Thêm Lần Khám Mới</h2>
+                <div className="visit-form">
+                  <label>Triệu chứng:</label>
+                  <input
+                    type="text"
+                    value={newVisit.symptoms}
+                    onChange={(e) => setNewVisit({ ...newVisit, symptoms: e.target.value })}
+                  />
+                  <label>Chuẩn đoán:</label>
+                  <input
+                    type="text"
+                    value={newVisit.diagnosis}
+                    onChange={(e) => setNewVisit({ ...newVisit, diagnosis: e.target.value })}
+                  />
+                  <label>Kế hoạch điều trị:</label>
+                  <input
+                    type="text"
+                    value={newVisit.treatment_plan}
+                    onChange={(e) => setNewVisit({ ...newVisit, treatment_plan: e.target.value })}
+                  />
+                  <label>Ghi chú:</label>
+                  <input
+                    type="text"
+                    value={newVisit.notes}
+                    onChange={(e) => setNewVisit({ ...newVisit, notes: e.target.value })}
+                  />
+                </div>
+                <button className="btn btn-primary" onClick={handleSaveVisit}>
+                  Lưu
+                </button>
+                <button className="btn-close" onClick={handleCloseDetails}>
+                  Đóng
+                </button>
+              </>
+            ) : (
+              <>
+                <h2>Chi tiết hồ sơ bệnh án</h2>
+                <p><strong>Họ và tên:</strong> {selectedRecord.patient_info?.name || "N/A"}</p>
+                <p><strong>Liên hệ:</strong> {selectedRecord.patient_info?.phone || "N/A"}</p>
+                {/* Chi tiết lịch sử khám */}
+                <button className="btn-close" onClick={handleCloseDetails}>Đóng</button>
+              </>
+            )}
           </div>
         </div>
       )}

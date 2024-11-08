@@ -3,11 +3,13 @@ import { FaCalendarAlt, FaTimesCircle } from "react-icons/fa";
 import "../../../style/Appointment/Appointment.scss";
 import doctorPlaceholder from "../../../assets/img/customer01.png"; // Hình ảnh mặc định
 import { getUserById } from "../../../utils/AuthAPI/AdminService";
-import { getAppointmentPatient, deleteAppointment } from "../../../utils/AppointmentAPI/AppointmentService";
+import {
+  getAppointmentPatient,
+  deleteAppointment,
+} from "../../../utils/AppointmentAPI/AppointmentService";
 import Countdown from "./Countdown";
 import ConfirmationDialog from "../../layout/ConfirmationDialog"; // Import hộp thoại xác nhận
-import {toast} from "react-toastify"
-
+import { toast } from "react-toastify";
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -93,7 +95,11 @@ const Appointment = () => {
     const now = new Date();
     const appointmentTime = parseAppointmentTime(appointment);
     const oneHourBefore = new Date(appointmentTime.getTime() - 60 * 60 * 1000);
-    return appointment.appointment_type === "online" && now >= oneHourBefore && !countdownFinished[appointment._id]; // Kiểm tra xem đã đủ 1 tiếng trước thời gian khám hay chưa
+    return (
+      appointment.appointment_type === "online" &&
+      now >= oneHourBefore &&
+      !countdownFinished[appointment._id]
+    ); // Kiểm tra xem đã đủ 1 tiếng trước thời gian khám hay chưa
   };
 
   const handleCancelAppointment = async () => {
@@ -102,7 +108,7 @@ const Appointment = () => {
       setAppointments((prevAppointments) =>
         prevAppointments.filter((appt) => appt._id !== appointmentToDelete)
       );
-      setSelectedAppointment(null); 
+      setSelectedAppointment(null);
       toast.success("Lịch hẹn đã được hủy thành công.");
     } catch (error) {
       console.error("Error cancelling appointment:", error);
@@ -131,14 +137,19 @@ const Appointment = () => {
   };
   // Hàm lọc lịch hẹn dựa trên từ khóa tìm kiếm
   const filteredAppointments = appointments.filter((appointment) => {
-    const doctorName = `${doctorsInfo[appointment.doctor_id]?.first_name || ""} ${doctorsInfo[appointment.doctor_id]?.last_name || ""}`;
+    const doctorName = `${doctorsInfo[appointment.doctor_id]?.first_name ||
+      ""} ${doctorsInfo[appointment.doctor_id]?.last_name || ""}`;
     const normalizedSearchTerm = normalizeString(searchTerm);
 
     return (
       normalizeString(doctorName).includes(normalizedSearchTerm) ||
-      normalizeString(appointment.appointment_type).includes(normalizedSearchTerm) ||
+      normalizeString(appointment.appointment_type).includes(
+        normalizedSearchTerm
+      ) ||
       normalizeString(appointment.time_slot).includes(normalizedSearchTerm) ||
-      normalizeString(new Date(appointment.appointment_date).toLocaleDateString()).includes(normalizedSearchTerm) ||
+      normalizeString(
+        new Date(appointment.appointment_date).toLocaleDateString()
+      ).includes(normalizedSearchTerm) ||
       normalizeString(appointment._id).includes(normalizedSearchTerm) // Tìm kiếm theo ID
     );
   });
@@ -146,11 +157,13 @@ const Appointment = () => {
   // Thêm hàm kiểm tra trạng thái lịch hẹn
   const getAppointmentStatus = (appointment) => {
     if (appointment.status === "cancelled") return "cancelled";
-    
+
     const appointmentTime = parseAppointmentTime(appointment);
-    const twoHoursAfter = new Date(appointmentTime.getTime() + 2 * 60 * 60 * 1000);
+    const twoHoursAfter = new Date(
+      appointmentTime.getTime() + 2 * 60 * 60 * 1000
+    );
     const now = new Date();
-    
+
     if (now > twoHoursAfter) return "completed";
     return "confirmed";
   };
@@ -199,11 +212,11 @@ const Appointment = () => {
                     </h4>
                     <span
                       className={`status ${
-                        getAppointmentStatus(appointment) === "cancelled" 
-                          ? "cancelled" 
-                          : getAppointmentStatus(appointment) === "completed" 
-                            ? "completed" 
-                            : ""
+                        getAppointmentStatus(appointment) === "cancelled"
+                          ? "cancelled"
+                          : getAppointmentStatus(appointment) === "completed"
+                          ? "completed"
+                          : ""
                       }`}
                     >
                       {getAppointmentStatus(appointment) === "cancelled" ? (
@@ -214,8 +227,8 @@ const Appointment = () => {
                       {getAppointmentStatus(appointment) === "cancelled"
                         ? "Đã hủy"
                         : getAppointmentStatus(appointment) === "completed"
-                          ? "Đã kết thúc"
-                          : "Đã đặt lịch"}
+                        ? "Đã kết thúc"
+                        : "Đã đặt lịch"}
                     </span>
                     <div className="countdown-container">
                       <Countdown
@@ -255,13 +268,13 @@ const Appointment = () => {
               <p>Không có lịch hẹn nào</p>
             )}
 
-{showConfirmation && (
-        <ConfirmationDialog
-          message="Bạn có chắc chắn muốn hủy lịch hẹn này không?"
-          onConfirm={handleCancelAppointment}
-          onCancel={handleCloseConfirmation}
-        />
-      )}
+            {showConfirmation && (
+              <ConfirmationDialog
+                message="Bạn có chắc chắn muốn hủy lịch hẹn này không?"
+                onConfirm={handleCancelAppointment}
+                onCancel={handleCloseConfirmation}
+              />
+            )}
           </ul>
         </div>
       </div>
@@ -285,7 +298,7 @@ const Appointment = () => {
                 doctorsInfo[selectedAppointment.doctor_id]?.imageUrl
                   ? `data:image/jpeg;base64,${
                       doctorsInfo[selectedAppointment.doctor_id].imageUrl
-                    }`         
+                    }`
                   : doctorPlaceholder
               }
               alt="Doctor"
@@ -353,9 +366,7 @@ const Appointment = () => {
             <div className="info-row">
               <p className="label">Năm sinh:</p>
               <p className="value">
-              {new Date(
-                  patientInfo?.birthdate
-                ).toLocaleDateString()}
+                {new Date(patientInfo?.birthdate).toLocaleDateString()}
               </p>
             </div>
             <div className="info-row">

@@ -2,6 +2,8 @@ const Appointment = require('../models/Appointment');
 const Schedule = require('../models/Schedule');
 const User = require('../models/User');
 const { sendSMS } = require('./smsService'); // Adjust the path if needed
+const medicalRecordService = require('./medicalRecordService'); // Thêm dòng này
+
 
 // Bệnh nhân đặt lịch hẹn
 exports.BookingAppointment = async (appointmentData) => {
@@ -35,6 +37,12 @@ exports.BookingAppointment = async (appointmentData) => {
     status:"confirmed",
     video_call_link: appointment_type === "online" ? video_call_link : "", // Chỉ lưu link nếu là khám online
   });
+  // Kiểm tra nếu bệnh nhân đã có hồ sơ bệnh án chưa
+  let medicalRecord = await medicalRecordService.getMedicalRecordByPatientId(patient_id);
+  if (!medicalRecord) {
+    // Nếu chưa có, tạo hồ sơ bệnh án mới cho bệnh nhân
+    medicalRecord = await medicalRecordService.createMedicalRecord(patient_id);
+  }
 
   // Lưu vào database
   await newAppointment.save();

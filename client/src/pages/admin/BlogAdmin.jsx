@@ -73,7 +73,6 @@ const BlogAdmin = () => {
 
   return (
     <div className="container mt-4">
-      <h1 className="mb-4">Quản lý Tin tức Y tế</h1>
       <Button className="mb-3" variant="primary" onClick={handleShowModal}>
         Thêm Bài viết
       </Button>
@@ -85,6 +84,7 @@ const BlogAdmin = () => {
             <th>Nội dung</th>
             <th>Tác giả</th>
             <th>Ngày tạo</th>
+            <th>Hình ảnh</th>
             <th>Hành động</th>
           </tr>
         </thead>
@@ -111,8 +111,25 @@ const BlogAdmin = () => {
                 <td>{blog.author_name || "Unknown"}</td>
                 <td>
                   {blog.createdAt
-                    ? new Date(blog.createdAt).toLocaleDateString()
+                    ? new Date(blog.createdAt).toLocaleDateString("en-CA") // Canadian locale provides "YYYY-MM-DD"
                     : "N/A"}
+                </td>
+
+                <td>
+                  {/* Check if there are images and render the first one or map over all */}
+                  {blog.image && blog.image.length > 0 ? (
+                    <img
+                      src={blog.image[0]} // Display the first image or change to map for multiple
+                      alt="Blog"
+                      style={{
+                        width: "100px",
+                        height: "100px",
+                        objectFit: "cover",
+                      }}
+                    />
+                  ) : (
+                    "No image"
+                  )}
                 </td>
                 <td>
                   <Button

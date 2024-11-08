@@ -39,17 +39,21 @@ exports.getBlogById = async (id) => {
 
 exports.updateBlogById = async (id, blogData) => {
   try {
-    if (blogData.image) {
-      blogData.image = Buffer.from(blogData.image, "base64"); // Convert base64 to Buffer
+    // Ensure `image` is treated as an array, even if only one image is passed
+    if (blogData.image && !Array.isArray(blogData.image)) {
+      blogData.image = [blogData.image];
     }
 
-    const updatedBlog = await Blog.findByIdAndUpdate(id, blogData, {
-      new: true,
-      runValidators: true,
-    });
+    const updatedBlog = await Blog.findByIdAndUpdate(
+      id,
+      { $set: blogData }, // Use `$set` to fully replace the image field
+      { new: true, runValidators: true }
+    );
+
     if (!updatedBlog) throw new Error("Blog not found");
     return updatedBlog;
   } catch (error) {
+    console.error("Error updating blog:", error);
     throw new Error(`Error updating blog: ${error.message}`);
   }
 };

@@ -9,7 +9,7 @@ const createBlog = (data) => {
 };
 
 const updateBlog = (id, data) => {
-  return axios.put(`/api/blog/get-blog-by-id/${id}`, data);
+  return axios.put(`/api/blog/update-blog-by-id/${id}`, data);
 };
 
 const deleteBlog = (id) => {

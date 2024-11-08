@@ -26,7 +26,7 @@ const AddBlogModal = ({ show, onClose, onSave }) => {
     content: "",
     author: "",
     date: new Date().toISOString().split("T")[0],
-    images: [],
+    image: [], // Changed from 'images' to 'image'
   });
 
   const handleChange = (e) => {
@@ -44,7 +44,7 @@ const AddBlogModal = ({ show, onClose, onSave }) => {
 
     console.log("Converted Base64 Images:", base64Images); // Log to confirm conversion
 
-    setNewBlog((prev) => ({ ...prev, images: base64Images }));
+    setNewBlog((prev) => ({ ...prev, image: base64Images })); // Set to 'image'
   };
 
   const handleSave = async () => {
@@ -64,7 +64,7 @@ const AddBlogModal = ({ show, onClose, onSave }) => {
           content: "",
           author: "",
           date: new Date().toISOString().split("T")[0],
-          images: [],
+          image: [], // Reset to 'image'
         });
       } else {
         throw new Error("Invalid blog data received");
@@ -132,7 +132,7 @@ const AddBlogModal = ({ show, onClose, onSave }) => {
               <Form.Label>Hình ảnh</Form.Label>
               <Form.Control type="file" multiple onChange={handleImageChange} />
               <div className="mt-2">
-                {newBlog.images.map((imgSrc, index) => (
+                {newBlog.image.map((imgSrc, index) => (
                   <img
                     key={index}
                     src={imgSrc}

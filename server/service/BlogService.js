@@ -1,10 +1,17 @@
 const Blog = require("../models/Blog");
-
-// Create a new blog
 exports.createBlog = async (blogData, author_id, author_name) => {
   try {
+    console.log("Received Blog Data:", blogData); // Log data before saving
     const newBlog = new Blog({ ...blogData, author_id, author_name });
-    return await newBlog.save();
+
+    // Check and convert image data
+    if (Array.isArray(blogData.images) && blogData.images.length > 0) {
+      newBlog.images = blogData.images; // Directly assign if already in Base64
+    }
+
+    const savedBlog = await newBlog.save();
+    console.log("Saved Blog Entry:", savedBlog); // Log saved data for verification
+    return savedBlog;
   } catch (error) {
     throw new Error(`Error creating blog: ${error.message}`);
   }
@@ -30,9 +37,12 @@ exports.getBlogById = async (id) => {
   }
 };
 
-// Update blog by ID
 exports.updateBlogById = async (id, blogData) => {
   try {
+    if (blogData.image) {
+      blogData.image = Buffer.from(blogData.image, "base64"); // Convert base64 to Buffer
+    }
+
     const updatedBlog = await Blog.findByIdAndUpdate(id, blogData, {
       new: true,
       runValidators: true,

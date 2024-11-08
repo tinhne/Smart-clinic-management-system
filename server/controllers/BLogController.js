@@ -25,7 +25,7 @@ exports.createBlog = async (req, res) => {
 exports.getAllBlogs = async (req, res) => {
   try {
     const blogs = await blogService.getAllBlogs();
-    res.status(200).json(blogs);
+    res.status(200).json({ blogs }); // Bọc `blogs` trong một đối tượng
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

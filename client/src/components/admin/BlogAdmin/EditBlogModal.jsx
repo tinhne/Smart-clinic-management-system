@@ -71,7 +71,7 @@ const EditBlogModal = ({ show, onClose, onSave, blog }) => {
               type="text"
               placeholder="Nhập tên tác giả"
               name="author"
-              value={editedBlog.author || ""}
+              value={editedBlog.author_name || ""}
               onChange={handleChange}
             />
           </Form.Group>

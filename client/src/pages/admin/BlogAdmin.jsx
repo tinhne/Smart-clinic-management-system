@@ -1,15 +1,32 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button, Table } from "react-bootstrap";
 import ReactPaginate from "react-paginate";
 import AddBlogModal from "../../components/admin/BlogAdmin/AddBlogModal";
 import EditBlogModal from "../../components/admin/BlogAdmin/EditBlogModal";
 import DeleteBlogModal from "../../components/admin/BlogAdmin/DeleteBlogModal";
+import { getBlog, deleteBlog } from "../../utils/BlogManagement/BlogManagement";
+import { toast } from "react-toastify";
 
 const BlogAdmin = () => {
+  const [blogs, setBlogs] = useState([]);
+  const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState(null);
+
+  const fetchBlogs = async () => {
+    try {
+      const data = await getBlog();
+      setBlogs(data.blogs);
+    } catch (error) {
+      setError("Error fetching blogs");
+    }
+  };
+
+  useEffect(() => {
+    fetchBlogs();
+  }, []);
 
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
@@ -27,20 +44,31 @@ const BlogAdmin = () => {
   const handleCloseDeleteModal = () => setShowDeleteModal(false);
 
   const handleSave = (newBlog) => {
-    console.log("New blog saved:", newBlog);
-    // Logic để lưu bài viết mới (API call) sẽ được thêm tại đây
+    setBlogs((prevBlogs) => [newBlog, ...prevBlogs]); // Add new blog at the start of the array
+    handleCloseModal();
   };
 
   const handleSaveEdit = (updatedBlog) => {
-    console.log("Updated blog saved:", updatedBlog);
-    // Logic để cập nhật bài viết (API call) sẽ được thêm tại đây
+    setBlogs((prevBlogs) =>
+      prevBlogs.map((blog) =>
+        blog._id === updatedBlog._id ? updatedBlog : blog
+      )
+    );
     setShowEditModal(false);
   };
 
-  const handleDelete = () => {
-    console.log("Blog deleted:", selectedBlog);
-    // Logic để xóa bài viết (API call) sẽ được thêm tại đây
-    setShowDeleteModal(false);
+  const handleDelete = async () => {
+    try {
+      await deleteBlog(selectedBlog._id); // Call API to delete blog
+      setBlogs((prevBlogs) =>
+        prevBlogs.filter((blog) => blog._id !== selectedBlog._id)
+      );
+      setShowDeleteModal(false);
+      toast.success(`Bài viết "${selectedBlog.title}" đã được xóa thành công!`);
+    } catch (error) {
+      console.error("Error deleting blog:", error);
+      toast.error("Xóa bài viết thất bại.");
+    }
   };
 
   return (
@@ -61,67 +89,68 @@ const BlogAdmin = () => {
           </tr>
         </thead>
         <tbody>
-          {/* Dòng ví dụ */}
-          <tr>
-            <td>Bài viết ví dụ</td>
-            <td>Sức khỏe, Khoa học</td>
-            <td
-              style={{
-                maxWidth: "300px",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                whiteSpace: "nowrap",
-              }}
-            >
-              Đây là nội dung bài viết ví dụ. Nội dung sẽ được rút ngắn nếu quá
-              dài.
-            </td>
-            <td>Nguyễn Văn A</td>
-            <td>01/01/2024</td>
-            <td>
-              <Button
-                variant="warning"
-                size="sm"
-                className="mr-2"
-                onClick={() =>
-                  handleShowEditModal({
-                    title: "Bài viết ví dụ",
-                    category: "Sức khỏe",
-                    content: "Đây là nội dung bài viết ví dụ.",
-                    author: "Nguyễn Văn A",
-                    date: "2024-01-01",
-                    images: [],
-                  })
-                }
-              >
-                Chỉnh sửa
-              </Button>
-              <Button
-                variant="danger"
-                size="sm"
-                onClick={() =>
-                  handleShowDeleteModal({
-                    title: "Bài viết ví dụ",
-                  })
-                }
-              >
-                {" "}
-                Xóa
-              </Button>
-            </td>
-          </tr>
-          {/* Các dòng dữ liệu khác sẽ được chèn tại đây */}
+          {blogs.length > 0 ? (
+            blogs.map((blog) => (
+              <tr key={blog._id}>
+                <td>{blog.title || "N/A"}</td>
+                <td>
+                  {Array.isArray(blog.category)
+                    ? blog.category.join(", ")
+                    : "N/A"}
+                </td>
+                <td
+                  style={{
+                    maxWidth: "300px",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {blog.content || "No content available"}
+                </td>
+                <td>{blog.author_name || "Unknown"}</td>
+                <td>
+                  {blog.createdAt
+                    ? new Date(blog.createdAt).toLocaleDateString()
+                    : "N/A"}
+                </td>
+                <td>
+                  <Button
+                    variant="warning"
+                    size="sm"
+                    className="mr-2"
+                    onClick={() => handleShowEditModal(blog)}
+                  >
+                    Chỉnh sửa
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => handleShowDeleteModal(blog)}
+                  >
+                    Xóa
+                  </Button>
+                </td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td colSpan="7" style={{ textAlign: "center" }}>
+                Không có bài viết nào
+              </td>
+            </tr>
+          )}
         </tbody>
       </Table>
       <ReactPaginate
         previousLabel={"Previous"}
         nextLabel={"Next"}
         breakLabel={"..."}
-        pageCount={5} // Dynamic page count
+        pageCount={5}
         marginPagesDisplayed={2}
         pageRangeDisplayed={3}
         onPageChange={() => {}}
-        forcePage={1} // Sync ReactPaginate with currentPage
+        forcePage={1}
         containerClassName={"pagination justify-content-center"}
         pageClassName={"page-item"}
         pageLinkClassName={"page-link"}
@@ -134,14 +163,12 @@ const BlogAdmin = () => {
         activeClassName={"active"}
       />
 
-      {/* Modal thêm bài viết */}
       <AddBlogModal
         show={showModal}
         onClose={handleCloseModal}
         onSave={handleSave}
       />
 
-      {/* Modal chỉnh sửa bài viết */}
       {selectedBlog && (
         <EditBlogModal
           show={showEditModal}
@@ -151,7 +178,6 @@ const BlogAdmin = () => {
         />
       )}
 
-      {/* Modal xóa bài viết */}
       {selectedBlog && (
         <DeleteBlogModal
           show={showDeleteModal}

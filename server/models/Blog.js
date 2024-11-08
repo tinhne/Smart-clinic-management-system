@@ -11,7 +11,7 @@ const blogSchema = new mongoose.Schema(
       required: true,
     },
     image: {
-      type: String,
+      type: [String],
     },
     author_id: {
       type: mongoose.Schema.Types.ObjectId,

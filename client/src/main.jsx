@@ -32,6 +32,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ScheduleManage from "./pages/admin/ScheduleManage.jsx";
 import BlogAdmin from "./pages/admin/BlogAdmin.jsx";
+import AddVisit from "./components/Doctor/AddVisitModel.jsx";
 const router = createBrowserRouter([
   {
     path: "/login-register",

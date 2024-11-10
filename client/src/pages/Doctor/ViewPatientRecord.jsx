@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "../../style/DoctorFunction/ViewPatientRecord.scss";
 import ReactPaginate from "react-paginate";
 import {
@@ -6,192 +6,163 @@ import {
   getMedicalRecordByPatientId,
   addVisitHistory,
 } from "../../utils/MedicalRecord/MedicalRecordService";
+import { getUserById } from "../../utils/AuthAPI/AdminService";
+import DetailMedicalRecord from "../../components/Doctor/DetailMedicalRecord";
+import AddVisitModal from "../../components/Doctor/AddVisitModel";
 
 function ViewPatientRecord() {
-  const [medicalRecords, setMedicalRecords] = useState([]);
+  const [medicalRecord, setMedicalRecord] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [doctorInfo, setDoctorsInfo] = useState(null);
+  const [patientInfo, setPatientInfo] = useState(null);
+  const [showAddVisitModal, setShowAddVisitModal] = useState(false);
+  const [showDetailRecord, setShowDetailRecord] = useState(false);
   const [selectedRecord, setSelectedRecord] = useState(null);
-  const [newVisit, setNewVisit] = useState({
-    symptoms: "",
-    diagnosis: "",
-    treatment_plan: "",
-    notes: "",
-  });
 
-  // Fetch medical records
   useEffect(() => {
-    const fetchMedicalRecords = async (page = 1) => {
-      try {
-        const response = await getAllMedicalRecords(page, 5);
-        setMedicalRecords(response.medicalRecords || []);
-      } catch (error) {
-        console.error("Lỗi khi lấy hồ sơ y tế:", error.response ? error.response.data : error.message);
-      }
-    };
+    fetchMedicalRecord(currentPage);
+  }, [currentPage]);
 
-    fetchMedicalRecords();
-  }, []);
-
-  // Handle viewing details
-// Function to handle viewing details with added console.log for debugging
-const handleViewDetails = async (patient_id) => {
-  console.log("View details clicked for patient_id:", patient_id); // kiểm tra xem hàm có chạy khi nhấn nút không
-  if (!patient_id) {
-    console.error("No patient_id provided");
-    return; // Thoát nếu không có patient_id
-  }
-  try {
-    const response = await getMedicalRecordByPatientId(patient_id);
-    console.log("Fetched medical record details:", response); // kiểm tra dữ liệu trả về
-    setSelectedRecord(response.data); // Đặt chi tiết hồ sơ vào selectedRecord
-  } catch (error) {
-    console.error("Lỗi khi lấy chi tiết hồ sơ y tế:", error);
-  }
-};
-
-
-  // Mở giao diện tạo bệnh án mới
-  const handleAddVisit = (patient_id) => {
-    setSelectedRecord({ patient_id }); // Thiết lập bệnh nhân hiện tại để thêm lần khám
-  };
-
-  // Đóng giao diện chi tiết
-  const handleCloseDetails = () => {
-    setSelectedRecord(null);
-    setNewVisit({
-      symptoms: "",
-      diagnosis: "",
-      treatment_plan: "",
-      notes: "",
-    });
-  };
-
-  // Lưu lần khám mới vào API
-  const handleSaveVisit = async () => {
+  const fetchMedicalRecord = async (page) => {
+    setLoading(true);
+    setError(null);
     try {
-      const response = await addVisitHistory(selectedRecord.patient_id, newVisit);
-      if (response.status === 200) {
-        // Thêm lần khám mới vào record
-        setMedicalRecords((prevRecords) =>
-          prevRecords.map((record) =>
-            record.patient_id === selectedRecord.patient_id
-              ? { ...record, medical_history: [...record.medical_history, response.data] }
-              : record
-          )
-        );
-        handleCloseDetails();
+      const data = await getAllMedicalRecords(page, 10);
+      if (data) {
+        const records = data.medicalRecords;
+        const patientPromises = records.map(async (record) => {
+          const patientResponse = await getUserById(record.patient_id, "patient");
+          return {
+            ...record,
+            patient_info: {
+              name: `${patientResponse.user.first_name} ${patientResponse.user.last_name}`,
+              phone: patientResponse.user.phone,
+            },
+          };
+        });
+
+        const recordsWithPatientInfo = await Promise.all(patientPromises);
+        setMedicalRecord(recordsWithPatientInfo);
+        setCurrentPage(data.currentPage);
+        setTotalPages(data.totalPages);
       } else {
-        console.error("Lỗi khi lưu lần khám:", response.statusText);
+        setError("Không thể tải danh sách hồ sơ bệnh án");
       }
     } catch (error) {
-      console.error("Lỗi khi lưu lần khám:", error);
+      console.error("Error fetching medical records:", error);
+      setLoading(false);
     }
+  };
+
+  const handlePageChange = (newPage) => {
+    if (newPage >= 1 && newPage <= totalPages) {
+      setCurrentPage(newPage);
+    }
+  };
+
+  const handleShowDetailRecordModal = (record) => {
+    setSelectedRecord(record);
+    setShowDetailRecord(true);
+  };
+
+  const handleShowAddVisitModal = (record) => {
+    setSelectedRecord(record);
+    setShowAddVisitModal(true);
+  };
+
+  const handleCloseDetailRecordModal = () => {
+    setShowDetailRecord(false);
+    setSelectedRecord(null); // Clear selected record when closing the modal
+  };
+
+  const handleCloseAddVisitModal = () => {
+    setShowAddVisitModal(false);
+    setSelectedRecord(null); // Clear selected record when closing the modal
   };
 
   return (
     <div className="patient-record">
-      <h1>Danh sách hồ sơ bệnh nhân</h1>
+      <h1>Danh sách bệnh án</h1>
       <table className="record-table">
         <thead>
           <tr>
-            <th>ID Bệnh nhân</th>
-            <th>Tên</th>
+            <th>ID Bệnh án</th>
+            <th>Tên Bệnh nhân</th>
             <th>Số điện thoại</th>
+            <th>Ngày tạo</th>
             <th>Hành động</th>
           </tr>
         </thead>
         <tbody>
-          {medicalRecords && Array.isArray(medicalRecords) && medicalRecords.length > 0 ? (
-            medicalRecords.map((record, index) => (
-              <tr key={index}>
-                <td>{record.patient_id}</td>
-                <td>{record.patient_info?.name || "N/A"}</td>
-                <td>{record.patient_info?.phone || "N/A"}</td>
+          {medicalRecord.length > 0 ? (
+            medicalRecord.map((record) => (
+              <tr key={record._id}>
+                <td>{record._id}</td>
+                <td>{record.patient_info?.name || "Chưa có thông tin"}</td>
+                <td>{record.patient_info?.phone || "Chưa có thông tin"}</td>
+                <td>{new Date(record.createdAt).toLocaleDateString()}</td>
                 <td>
                   <button
                     className="btn btn-primary"
-                    onClick={() => handleViewDetails(record.patient_id)}
+                    onClick={() => handleShowDetailRecordModal(record)}
                   >
                     Xem chi tiết
                   </button>
                   <button
-                    className="btn btn-primary"
-                    onClick={() => handleAddVisit(record.patient_id)}
+                    className="btn btn-secondary"
+                    onClick={() => handleShowAddVisitModal(record)}
                   >
-                    Tạo bệnh án
+                    Tạo bệnh án mới
                   </button>
                 </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="4">Không có hồ sơ bệnh nhân nào.</td>
+              <td colSpan="5">Không có bệnh án nào</td>
             </tr>
           )}
         </tbody>
       </table>
 
+      {/* Pagination */}
       <ReactPaginate
         previousLabel={"Previous"}
         nextLabel={"Next"}
         breakLabel={"..."}
-        pageCount={10}
+        pageCount={totalPages}
         marginPagesDisplayed={2}
         pageRangeDisplayed={3}
-        onPageChange={() => {}}
+        onPageChange={(event) => handlePageChange(event.selected + 1)}
         containerClassName={"pagination"}
+        pageClassName={"page-item"}
+        pageLinkClassName={"page-link"}
+        previousClassName={"page-item"}
+        previousLinkClassName={"page-link"}
+        nextClassName={"page-item"}
+        nextLinkClassName={"page-link"}
+        breakClassName={"page-item"}
+        breakLinkClassName={"page-link"}
         activeClassName={"active"}
       />
 
-      {selectedRecord && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            {selectedRecord.patient_id && !selectedRecord.medical_history ? (
-              <>
-                <h2>Thêm Lần Khám Mới</h2>
-                <div className="visit-form">
-                  <label>Triệu chứng:</label>
-                  <input
-                    type="text"
-                    value={newVisit.symptoms}
-                    onChange={(e) => setNewVisit({ ...newVisit, symptoms: e.target.value })}
-                  />
-                  <label>Chuẩn đoán:</label>
-                  <input
-                    type="text"
-                    value={newVisit.diagnosis}
-                    onChange={(e) => setNewVisit({ ...newVisit, diagnosis: e.target.value })}
-                  />
-                  <label>Kế hoạch điều trị:</label>
-                  <input
-                    type="text"
-                    value={newVisit.treatment_plan}
-                    onChange={(e) => setNewVisit({ ...newVisit, treatment_plan: e.target.value })}
-                  />
-                  <label>Ghi chú:</label>
-                  <input
-                    type="text"
-                    value={newVisit.notes}
-                    onChange={(e) => setNewVisit({ ...newVisit, notes: e.target.value })}
-                  />
-                </div>
-                <button className="btn btn-primary" onClick={handleSaveVisit}>
-                  Lưu
-                </button>
-                <button className="btn-close" onClick={handleCloseDetails}>
-                  Đóng
-                </button>
-              </>
-            ) : (
-              <>
-                <h2>Chi tiết hồ sơ bệnh án</h2>
-                <p><strong>Họ và tên:</strong> {selectedRecord.patient_info?.name || "N/A"}</p>
-                <p><strong>Liên hệ:</strong> {selectedRecord.patient_info?.phone || "N/A"}</p>
-                {/* Chi tiết lịch sử khám */}
-                <button className="btn-close" onClick={handleCloseDetails}>Đóng</button>
-              </>
-            )}
-          </div>
-        </div>
+      {showDetailRecord && selectedRecord && (
+        <DetailMedicalRecord
+          show={showDetailRecord}
+          onClose={handleCloseDetailRecordModal}
+          selectedRecord={selectedRecord}
+        />
+      )}
+
+      {showAddVisitModal && selectedRecord && (
+        <AddVisitModal
+          show={showAddVisitModal}
+          onClose={handleCloseAddVisitModal}
+          selectedRecord={selectedRecord}
+        />
       )}
     </div>
   );

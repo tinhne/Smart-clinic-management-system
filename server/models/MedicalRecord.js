@@ -39,6 +39,7 @@ const medicalRecordSchema = new Schema(
       required: true,
       ref: "User",
     },
+    
     medical_history: [visitSchema]
   },
   { timestamps: true, versionKey: false }

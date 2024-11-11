@@ -10,15 +10,25 @@ import Cookies from "js-cookie";
 
 const categories = [
   { name: "Tất cả" },
-  { name: "Nhi khoa" },
-  { name: "Sản phụ khoa" },
-  { name: "Da liễu" },
-  { name: "Tiêu hoá" },
-  { name: "Cơ xương khớp" },
-  { name: "Dị ứng - miễn dịch" },
-  { name: "Gây mê hồi sức" },
+  { name: "Tuyền Nhiễm" },
+  { name: "Tim Mạch" },
+  { name: "Chấn Thương Chỉnh Hình" },
+  { name: "Hồi Sức - Cấp Cứu" },
+  { name: "Gây Mê Hồi Sức" },
+  { name: "Nội Thận" },
+  { name: "Nội Tiết" },
   { name: "Tai - mũi - họng" },
-  { name: "Ung bướu" },
+  { name: "Tâm Thần" },
+  { name: "Hô Hấp" },
+  { name: "Xét Nghiệm" },
+  { name: "Tâm Lý" },
+  { name: "Phẫu Thuật Tạo Hình" },
+  { name: "Đa Khoa" },
+  { name: "Sản Phụ Khoa" },
+  { name: "Cơ Xương Khớp" },
+  { name: "Răng - Hàm Mặt" },
+  { name: "Nhi Khoa" },
+  { name: "Da Liễu" },
 ];
 
 function DoctorList() {

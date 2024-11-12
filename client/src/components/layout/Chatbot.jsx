@@ -59,7 +59,12 @@ function NewChatBot() {
     <ThemeProvider theme={theme}>
       <ChatBot
         steps={[
-          { id: "1", message: "Chào bạn! Bạn tên là gì?", trigger: "2" },
+          {
+            id: "1",
+            message:
+              "Chào bạn, tôi là trợ lý ảo của Phòng khám - Đa Khoa Chất Lượng Cao❤️❤️. Tên bạn là gì ạ?",
+            trigger: "2",
+          },
           { id: "2", user: true, trigger: "3" },
           {
             id: "3",
@@ -89,7 +94,7 @@ function NewChatBot() {
                 trigger: "8",
               },
               {
-                value: "Hỗ trợ trực tiếp",
+                value: "Giới thiệu về phòng khám",
                 label: "Giới thiệu về phòng khám",
                 trigger: "11",
               },
@@ -97,6 +102,11 @@ function NewChatBot() {
                 value: "Dịch vụ khám",
                 label: "Dịch vụ khám",
                 trigger: "10",
+              },
+              {
+                value: "Tiếp tục hỏi",
+                label: "Tiếp tục hỏi",
+                trigger: "4",
               },
             ],
           },

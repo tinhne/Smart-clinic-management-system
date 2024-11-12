@@ -8,7 +8,7 @@ const {
   deleteUser,
   getAllDoctorsBySpecialty,
 } = require("../service/adminService");
-
+const User = require("../models/User");
 // Tạo tài khoản bác sĩ
 exports.createDoctor = async (req, res) => {
   const {
@@ -283,5 +283,22 @@ exports.deleteUser = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Lỗi server khi xóa tài khoản", error });
+  }
+};
+
+exports.countUsersByRole = async (req, res) => {
+  try {
+    const { role } = req.query;
+
+    const userCount = await User.countDocuments({ role });
+    
+    return res.status(200).json({  userCount });
+  } catch (error) {
+    console.error("Error counting users by role:", error);
+
+    return res.status(500).json({ 
+      message: "Server error when counting users by role", 
+      error: error.message || error 
+    });
   }
 };

@@ -6,7 +6,8 @@ const {
   updateUser,
   deleteUser,
   createPatient,
-  getDoctorsBySpecialty,  // Tạo tài khoản bệnh nhân (admin, doctor)
+  getDoctorsBySpecialty,
+  countUsersByRole  // Tạo tài khoản bệnh nhân (admin, doctor)
 } = require("../controllers/adminController");
 const { authenticate } = require("../middlewares/authenticate");
 const { authorize } = require("../middlewares/authorize");
@@ -36,7 +37,7 @@ router.put("/edit-users/:id", authenticate, updateUser);
 // Xóa người dùng (admin only)
 router.delete("/delete-users/:id", authenticate, authorize(["admin"]), deleteUser);
 
-
+router.get("/count-userbyRole",authenticate, authorize(["admin"]),countUsersByRole);
 
 
 module.exports = router;

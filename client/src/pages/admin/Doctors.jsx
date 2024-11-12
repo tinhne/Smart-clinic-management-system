@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   getAllUserByRole,
   createDoctor,
+  countUserByRole
 } from "../../utils/AuthAPI/AdminService"; // Import createDoctor
 import "../../style/adminStyle/doctors.scss";
 import { toast } from "react-toastify";
@@ -20,13 +21,18 @@ const Doctors = (props) => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false); // Thêm trạng thái modal tạo bác sĩ
   const [selectedUser, setSelectedUser] = useState(null);
+  const [totalUser, setTotalUser] = useState(0);
 
   const fetchDoctors = async (page) => {
     setLoading(true);
     setError(null);
     try {
       const data = await getAllUserByRole("doctor", page, 10);
+      const totalUser = await countUserByRole("doctor");
+
       if (data) {
+        setTotalUser(totalUser.userCount);
+
         setDoctors(data.users);
         setCurrentPage(data.currentPage);
         setTotalPages(data.totalPages);
@@ -72,6 +78,9 @@ const Doctors = (props) => {
           <button className="btn btn-primary" onClick={handleCreateModalShow}>
             Thêm Bác Sĩ Mới
           </button>
+          <div className="total-doctor">  
+          <span>Tổng số bác sĩ : {totalUser}</span>
+        </div>
         </div>
 
         {/* Hiển thị danh sách bác sĩ */}

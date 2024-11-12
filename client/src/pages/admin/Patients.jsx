@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   getAllUserByRole,
   createPatient,
+  countUserByRole
 } from "../../utils/AuthAPI/AdminService";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -20,7 +21,7 @@ function Patients() {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false); // Thêm trạng thái modal tạo bệnh nhân
   const [selectedUser, setSelectedUser] = useState(null);
-
+  const [totalUser, setTotalUser] = useState(0);
   useEffect(() => {
     fetchPatients(currentPage);
   }, [currentPage]);
@@ -30,7 +31,9 @@ function Patients() {
     setError(null);
     try {
       const data = await getAllUserByRole("patient", page, 10);
+      const totalUser = await countUserByRole("patient");
       if (data) {
+        setTotalUser(totalUser.userCount);
         setPatients(data.users);
         setCurrentPage(data.currentPage);
         setTotalPages(data.totalPages);
@@ -61,6 +64,9 @@ function Patients() {
         >
           Thêm Bệnh Nhân Mới
         </button>
+        <div className="total-patient">  
+          <span>Tổng số bệnh nhân : {totalUser}</span>
+        </div>
       </div>
 
       <div className="table-container">

@@ -1,6 +1,24 @@
 .patient-page {
   padding: 50px 20px 0 20px;
+  .add-patient-button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; /* Keep button and total-patient vertically aligned */
+  
+    .total-patient {
+        font-weight: bold;
+        color: #3498db;
+        padding: 10px; /* Increase padding for size without affecting button */
+        line-height: 1.2; /* Adjust line-height for better vertical alignment */
+        margin-right: 10px;
+        border-radius: 10px;
+        border: 3px solid white;
+    }
 
+    .btn {
+        flex-shrink: 0; /* Ensure button size is fixed */
+    }
+}
   .add-patient-form {
     padding-top: 20px;
     display: flex;

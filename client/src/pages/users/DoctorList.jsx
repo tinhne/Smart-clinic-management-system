@@ -7,17 +7,17 @@ import {
   getAllDoctorsBySpecialty,
 } from "../../utils/AuthAPI/AdminService";
 import Cookies from "js-cookie";
-
+import { toast } from "react-toastify";
 const categories = [
   { name: "Tất cả" },
-  { name: "Tuyền Nhiễm" },
+  { name: "Truyền Nhiễm" },
   { name: "Tim Mạch" },
   { name: "Chấn Thương Chỉnh Hình" },
   { name: "Hồi Sức - Cấp Cứu" },
   { name: "Gây Mê Hồi Sức" },
   { name: "Nội Thận" },
   { name: "Nội Tiết" },
-  { name: "Tai - mũi - họng" },
+  { name: "Tai - Mũi - Họng" },
   { name: "Tâm Thần" },
   { name: "Hô Hấp" },
   { name: "Xét Nghiệm" },
@@ -30,51 +30,70 @@ const categories = [
   { name: "Nhi Khoa" },
   { name: "Da Liễu" },
 ];
-
 function DoctorList() {
   const location = useLocation();
-
   const { specialties } = location.state || {};
   const [doctorList, setDoctorList] = useState([]);
   const [currentCategory, setCurrentCategory] = useState("Tất cả");
-  const navigate = useNavigate(); // Khai báo useNavigate
+  const [errorShown, setErrorShown] = useState(false); 
+  const navigate = useNavigate();
+
+  const [loading, setLoading] = useState(false);
 
   const fetchDoctors = async (specialty = null) => {
-    let data;
-
-    if (specialty === "Tất cả") {
-      data = await getAllUserByRole("doctor", 1, 1000); // Lấy tất cả bác sĩ
-    } else {
-      data = await getAllDoctorsBySpecialty({ specialty });
-    }
-
-    if (data) {
-      setDoctorList(data.doctors || data.users);
-    } else {
-      setDoctorList([]);
+    setLoading(true);
+    try {
+      let data;
+      if (specialty === "Tất cả") {
+        data = await getAllUserByRole("doctor", 1, 1000);
+      } else {
+        data = await getAllDoctorsBySpecialty({ specialty });
+      }
+  
+      if (data && (data.doctors?.length > 0 || data.users?.length > 0)) {
+        setDoctorList(data.doctors || data.users);
+        setErrorShown(false);
+      } else {
+        setDoctorList([]);
+        if (!errorShown) {
+          toast.error("Không tìm thấy bác sĩ nào.");
+          setErrorShown(true);
+        }
+      }
+    } catch (error) {
+      if (error.response && error.response.status === 404) {
+        // Nếu lỗi 404, đặt doctorList thành mảng rỗng
+        setDoctorList([]);
+      } else {
+        console.error("Error fetching doctors:", error);
+      }
+    } finally {
+      setLoading(false);
     }
   };
-
+  
+  
   useEffect(() => {
     if (specialties) {
       fetchDoctors(specialties);
     } else {
-      fetchDoctors(currentCategory); // Gọi hàm lấy bác sĩ khi component mount hoặc khi currentCategory thay đổi
+      setDoctorList([])
+      fetchDoctors(currentCategory);
+      
     }
-  }, [currentCategory]); // Chỉ gọi lại khi currentCategory thay đổi
+  }, []);
 
-  const handleChange = (categoryName) => {
+  const handleChange = async (categoryName) => {
     setCurrentCategory(categoryName);
-    fetchDoctors(categoryName);
+    await fetchDoctors(categoryName);
   };
 
-  // Hàm xử lý khi nhấn nút "Đặt khám"
   const handleAppointmentClick = (doctorId) => {
-    const isLoggedIn = Cookies.get("access_token"); // Kiểm tra trạng thái đăng nhập (thay đổi theo cách của bạn)
+    const isLoggedIn = Cookies.get("access_token");
     if (!isLoggedIn) {
-      navigate("/login-register"); // Chuyển hướng đến trang đăng nhập nếu chưa đăng nhập
+      navigate("/login-register");
     } else {
-      navigate(`/dat-kham/bac-si/${doctorId}`); // Nếu đã đăng nhập, chuyển đến trang đặt khám
+      navigate(`/dat-kham/bac-si/${doctorId}`);
     }
   };
 
@@ -98,14 +117,15 @@ function DoctorList() {
       </aside>
 
       <main className="doctor-list">
-        {doctorList.length > 0 ? (
+        {loading ? (
+          <p>Đang tải...</p>
+        ) : doctorList.length > 0 ? (
           doctorList.map((doctor) => (
             <div key={doctor._id} className="doctor-item">
               <img
                 src={`data:image/jpeg;base64,${doctor.imageUrl}`}
                 className="doctor-img"
               />
-
               <div className="doctor-info">
                 <h3>
                   {doctor.first_name} {doctor.last_name}
@@ -121,7 +141,7 @@ function DoctorList() {
               </div>
               <button
                 className="appointment-btn"
-                onClick={() => handleAppointmentClick(doctor._id)} // Gọi hàm khi nhấn nút
+                onClick={() => handleAppointmentClick(doctor._id)}
               >
                 Đặt khám
               </button>
@@ -133,10 +153,10 @@ function DoctorList() {
 
         <ReactPaginate
           nextLabel="next >"
-          onPageChange={() => console.log(123)} // Hàm xử lý khi thay đổi trang
+          onPageChange={() => console.log(123)}
           pageRangeDisplayed={3}
           marginPagesDisplayed={2}
-          pageCount={5} // Bạn có thể tính toán số trang dựa trên số lượng bác sĩ
+          pageCount={5}
           previousLabel="< previous"
           pageClassName="page-item"
           pageLinkClassName="page-link"

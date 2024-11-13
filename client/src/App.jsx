@@ -14,6 +14,9 @@ function App() {
       <Outlet></Outlet>
       <Footer></Footer>
       <ToastContainer
+      style={{
+        
+      }}
         position="top-right"
         autoClose={5000}
         hideProgressBar={false}

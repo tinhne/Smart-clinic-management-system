@@ -21,6 +21,10 @@ import sanphukhoa from "../../assets/img/Specialties/sanphukhoa.jpg";
 import taimuihong from "../../assets/img/Specialties/taimuihong.jpg";
 import tamthan from "../../assets/img/Specialties/tamthan.jpg";
 // import Chatbot from "../../components/chatbot/Chatbot";
+import chungnhan1 from "../../assets/img/chungnhan1.jpg";
+import chungnhan2 from "../../assets/img/chungnhan2.jpg";
+import chungnhan3 from "../../assets/img/chungnhan3.jpg";
+import chungnhan4 from "../../assets/img/chungnhan4.jpg";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -444,16 +448,16 @@ const HomePage = () => {
 
           <div className="icons-container">
             <div className="icon-item">
-              <img src={image} alt="icon" />
-              <p>
+              <img src={chungnhan1} alt="icon" />
+              <p style={{ fontWeight: "700" }}>
                 Hạ tầng đạt tiêu chuẩn
                 <br />
                 ISO 15189:2012
               </p>
             </div>
             <div className="icon-item">
-              <img src={image} alt="icon" />
-              <p>
+              <img src={chungnhan2} alt="icon" />
+              <p style={{ fontWeight: "700" }}>
                 Thông tin sức khỏe được
                 <br />
                 đảm bảo tốt nhất
@@ -462,16 +466,16 @@ const HomePage = () => {
               </p>
             </div>
             <div className="icon-item">
-              <img src={image} alt="icon" />
-              <p>
+              <img src={chungnhan3} alt="icon" />
+              <p style={{ fontWeight: "700" }}>
                 Thành viên
                 <br />
                 VNISA
               </p>
             </div>
             <div className="icon-item">
-              <img src={image} alt="icon" />
-              <p>
+              <img src={chungnhan4} alt="icon" />
+              <p style={{ fontWeight: "700" }}>
                 Pentest định kì
                 <br />
                 hằng năm

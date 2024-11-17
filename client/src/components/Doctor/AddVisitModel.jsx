@@ -1,7 +1,8 @@
-import React, { useState, useReducer, useMemo } from "react";
+import React, { useEffect, useState, useReducer, useMemo } from "react";
 import PropTypes from "prop-types";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import "./AddVisit.scss";
+import { getMedicines } from "../../services/medicineAPI";
 
 // Reducer for managing medications state
 const medicationReducer = (state, action) => {
@@ -20,6 +21,11 @@ const medicationReducer = (state, action) => {
 };
 
 const AddVisitModal = ({ show, onClose, saveVisit, selectedRecord }) => {
+  const [medicines, setMedicines] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [symptoms, setSymptoms] = useState("");
   const [diagnosis, setDiagnosis] = useState("");
   const [treatmentPlan, setTreatmentPlan] = useState("");
@@ -28,20 +34,34 @@ const AddVisitModal = ({ show, onClose, saveVisit, selectedRecord }) => {
   // Using reducer for managing medications
   const [medications, dispatch] = useReducer(medicationReducer, []);
   
-  const allMedicines = useMemo(
-    () => [
-      { id: 1, name: "Aspirin" },
-      { id: 2, name: "Paracetamol" },
-      { id: 3, name: "Ibuprofen" },
-    ],
-    []
-  );
+  const fetchMedicines = async (page) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getMedicines(page, 10);
+      if (data) {
+        setMedicines(data.medicines);
+        setCurrentPage(data.currentPage);
+        setTotalPages(data.totalPages);
+      } else {
+        setError("Không thể tải danh sách thuốc.");
+      }
+    } catch (error) {
+      console.error("Error fetching medicines:", error);
+      setError("Lỗi khi kết nối tới server.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchMedicines(currentPage);
+  }, [currentPage]);
 
   // Add medication to the list
   const handleAddMedication = (medication) => {
-    if (!medications.some((med) => med.id === medication.id)) {
-      dispatch({ type: "ADD_MEDICATION", payload: medication });
-    }
+    // Thêm thuốc mới vào danh sách mà không cần kiểm tra
+    dispatch({ type: "ADD_MEDICATION", payload: { ...medication, quantity: 1 } });
   };
 
   // Update quantity or dosage of a medication
@@ -69,6 +89,14 @@ const AddVisitModal = ({ show, onClose, saveVisit, selectedRecord }) => {
       </Modal.Header>
       <Modal.Body>
         <Form>
+        <Form.Group controlId="symptoms">
+            <Form.Label>Ngày</Form.Label>
+            <Form.Control
+              as="textarea"
+              value={symptoms}
+              onChange={(e) => setSymptoms(e.target.value)}
+            />
+          </Form.Group>
           <Form.Group controlId="symptoms">
             <Form.Label>Symptoms</Form.Label>
             <Form.Control
@@ -103,6 +131,7 @@ const AddVisitModal = ({ show, onClose, saveVisit, selectedRecord }) => {
                     <span>{med.name}</span>
                     <input
                       type="number"
+                      min="1"
                       value={med.quantity}
                       onChange={(e) =>
                         updateMedication(med.id, "quantity", e.target.value)
@@ -126,7 +155,7 @@ const AddVisitModal = ({ show, onClose, saveVisit, selectedRecord }) => {
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
               <ul>
-                {allMedicines
+                {medicines
                   .filter((med) =>
                     med.name.toLowerCase().includes(searchTerm.toLowerCase())
                   )

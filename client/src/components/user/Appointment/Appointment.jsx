@@ -32,11 +32,16 @@ const Appointment = () => {
           handleSelectAppointment(appointmentData[0]); // Mặc định chọn lịch đầu tiên
 
           const doctorsPromises = appointmentData.map(async (appointment) => {
-            const doctorResponse = await getUserById(
-              appointment.doctor_id,
-              "doctor"
-            );
-            return { id: appointment.doctor_id, info: doctorResponse.user };
+            try {
+              const doctorResponse = await getUserById(
+                appointment.doctor_id,
+                'doctor'
+              );
+              return { id: appointment.doctor_id, info: doctorResponse.user };
+            } catch (error) {
+              console.error(`Error fetching doctor info for ID ${appointment.doctor_id}:`, error);
+              return { id: appointment.doctor_id, info: null }; // Trả về null nếu có lỗi
+            }
           });
 
           const doctorsData = await Promise.all(doctorsPromises);
@@ -46,6 +51,7 @@ const Appointment = () => {
           }, {});
 
           setDoctorsInfo(doctorsMap);
+          console.log("Doctors Info:", doctorsMap); // Thêm dòng này để kiểm tra nội dung
         } else {
           setAppointments([]);
         }

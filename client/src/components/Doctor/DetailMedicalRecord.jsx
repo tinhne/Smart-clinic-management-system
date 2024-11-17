@@ -1,13 +1,42 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Modal, Button } from "react-bootstrap";
+import axios from "axios";
+import { getUserById } from "../../utils/AuthAPI/AdminService";
 
 const DetailMedicalRecord = ({ show, onClose, selectedRecord }) => {
-  if (!selectedRecord) return null; // Trả về null nếu không có selectedRecord
+  const [doctorInfo, setDoctorInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  // Kiểm tra xem tất cả các thuộc tính cần thiết có tồn tại không
+  useEffect(() => {
+    const fetchDoctorInfo = async (doctorId) => {
+      try {
+        const response = await getUserById(doctorId, "doctor");
+        console.log(response.user)
+        setDoctorInfo(response.user);
+      } catch (error) {
+        console.error("Error fetching doctor info:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (selectedRecord && selectedRecord.medical_history.length > 0) {
+      const doctorId = selectedRecord.medical_history[0].doctor_id;
+      fetchDoctorInfo(doctorId);
+    } else {
+      setLoading(false);
+    }
+  }, [selectedRecord]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (!selectedRecord) return null;
+
   const { patient_info = {}, medical_history = [] } = selectedRecord;
-  const { first_name, last_name, dob, gender, contact, address } = patient_info;
+  const { name, dob, gender, address } = patient_info;
 
   return (
     <Modal show={show} onHide={onClose} size="lg" centered>
@@ -17,44 +46,95 @@ const DetailMedicalRecord = ({ show, onClose, selectedRecord }) => {
       <Modal.Body>
         <div className="patient-info">
           <h3>Thông tin Bệnh nhân</h3>
-          <p><strong>Họ và tên:</strong> {first_name} {last_name}</p>
-          <p><strong>Ngày sinh:</strong> {dob || "Chưa có thông tin"}</p>
-          <p><strong>Giới tính:</strong> {gender || "Chưa có thông tin"}</p>
-          <p><strong>Liên hệ:</strong> {contact || "Chưa có thông tin"}</p>
-          <p><strong>Địa chỉ:</strong> {address || "Chưa có thông tin"}</p>
+          <p>
+            <strong>Họ và tên:</strong> {name}
+          </p>
+          <p>
+            <strong>Ngày sinh:</strong> {dob || "Chưa có thông tin"}
+          </p>
+          <p>
+            <strong>Giới tính:</strong> {gender || "Chưa có thông tin"}
+          </p>
+          <p>
+            <strong>Địa chỉ:</strong> {address || "Chưa có thông tin"}
+          </p>
         </div>
 
         <h3>Lịch sử khám</h3>
         <div className="time-line">
           {medical_history.length > 0 ? (
             medical_history.map((visit, index) => {
-              const { visit_date, doctor_info = {}, symptoms = [], diagnosis, treatment_plan, notes = [], prescriptions = [] } = visit;
-              const { name, specialization, experience, contact, clinic } = doctor_info;
+              const {
+                visit_date,
+                symptoms = [],
+                diagnosis,
+                treatment_plan,
+                notes = [],
+                prescriptions = [],
+              } = visit;
 
               return (
                 <div key={index}>
                   <h4>Ngày: {new Date(visit_date).toLocaleDateString()}</h4>
                   <h5>Thông tin Bác sĩ</h5>
-                  <p><strong>Họ và tên:</strong> {name}</p>
-                  <p><strong>Chuyên khoa:</strong> {specialization}</p>
-                  <p><strong>Kinh nghiệm:</strong> {experience}</p>
-                  <p><strong>Liên hệ:</strong> {contact}</p>
-                  <p><strong>Phòng khám:</strong> {clinic}</p>
-
+                  {doctorInfo ? (
+                    <>
+                      <p>
+                        <strong>Họ và tên:</strong> {doctorInfo.first_name} {doctorInfo.last_name}
+                      </p>
+                      <p>
+                        <strong>Email:</strong> {doctorInfo.email}
+                      </p>
+                      <p>
+                        <strong>Điện thoại:</strong> {doctorInfo.phone}
+                      </p>
+                      <p>
+                        <strong>Địa chỉ:</strong> {doctorInfo.address}
+                      </p>
+                      <p>
+                        <strong>Chuyên khoa:</strong> {doctorInfo.specialties.join(", ")}
+                      </p>
+                    </>
+                  ) : (
+                    <p>Không có thông tin bác sĩ.</p>
+                  )}
                   <h5>Thông tin Khám</h5>
-                  <p><strong>Triệu chứng:</strong> {symptoms.length ? symptoms.join(", ") : "Chưa có thông tin"}</p>
-                  <p><strong>Chuẩn đoán:</strong> {diagnosis || "Chưa có thông tin"}</p>
-                  <p><strong>Kế hoạch điều trị:</strong> {treatment_plan || "Chưa có thông tin"}</p>
-                  <p><strong>Ghi chú:</strong> {notes.length ? notes.join(", ") : "Chưa có thông tin"}</p>
+                  <p>
+                    <strong>Triệu chứng:</strong>{" "}
+                    {symptoms.length
+                      ? symptoms.join(", ")
+                      : "Chưa có thông tin"}
+                  </p>
+                  <p>
+                    <strong>Chuẩn đoán:</strong>{" "}
+                    {diagnosis || "Chưa có thông tin"}
+                  </p>
+                  <p>
+                    <strong>Kế hoạch điều trị:</strong>{" "}
+                    {treatment_plan || "Chưa có thông tin"}
+                  </p>
+                  <p>
+                    <strong>Ghi chú:</strong>{" "}
+                    {notes.length ? notes.join(", ") : "Chưa có thông tin"}
+                  </p>
 
                   <h5>Thông tin Thuốc</h5>
-                  {prescriptions.length > 0 ? (
+                  {Array.isArray(prescriptions) && prescriptions.length > 0 ? (
                     prescriptions.map((prescription, index) => (
                       <div key={index} className="prescription-item">
-                        <p><strong>Thuốc:</strong> {prescription.medication}</p>
-                        <p><strong>Liều lượng:</strong> {prescription.dosage}</p>
-                        <p><strong>Tần suất:</strong> {prescription.frequency}</p>
-                        <p><strong>Hướng dẫn:</strong> {prescription.instructions}</p>
+                        <p>
+                          <strong>Thuốc:</strong> {prescription.medication}
+                        </p>
+                        <p>
+                          <strong>Liều lượng:</strong> {prescription.dosage}
+                        </p>
+                        <p>
+                          <strong>Tần suất:</strong> {prescription.frequency}
+                        </p>
+                        <p>
+                          <strong>Hướng dẫn:</strong>{" "}
+                          {prescription.instructions}
+                        </p>
                       </div>
                     ))
                   ) : (
@@ -69,16 +149,18 @@ const DetailMedicalRecord = ({ show, onClose, selectedRecord }) => {
         </div>
       </Modal.Body>
       <Modal.Footer>
-        <Button variant="secondary" onClick={onClose}>Đóng</Button>
+        <Button variant="secondary" onClick={onClose}>
+          Đóng
+        </Button>
       </Modal.Footer>
     </Modal>
   );
 };
 
 DetailMedicalRecord.propTypes = {
-  show: PropTypes.bool.isRequired, // Modal có hiển thị không
-  onClose: PropTypes.func.isRequired, // Hàm đóng modal
-  selectedRecord: PropTypes.object, // Hồ sơ bệnh án được chọn
+  show: PropTypes.bool.isRequired,
+  onClose: PropTypes.func.isRequired,
+  selectedRecord: PropTypes.object,
 };
 
 export default DetailMedicalRecord;

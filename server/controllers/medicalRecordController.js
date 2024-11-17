@@ -54,7 +54,8 @@ exports.addVisitHistory = async (req, res) => {
             diagnosis: req.body.diagnosis,
             treatmentPlan: req.body.treatmentPlan,
             notes: req.body.notes,
-            prescriptionId: req.body.prescriptionId
+            prescriptionId: req.body.prescriptionId,
+            medications: req.body.medications
         };
 
         const result = await medicalRecordService.addVisitHistory(patientId, visitData);

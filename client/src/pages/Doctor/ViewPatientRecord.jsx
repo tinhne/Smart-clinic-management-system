@@ -74,7 +74,9 @@ function ViewPatientRecord() {
   };
 
   const handleShowAddVisitModal = (record) => {
-    setSelectedRecord(record);
+    const doctorId = record.medical_history.length > 0 ? record.medical_history[0].doctor_id : null;
+    console.log("Doctor ID:", doctorId);
+    setSelectedRecord({ ...record, doctor_id: doctorId });
     setShowAddVisitModal(true);
   };
 

@@ -1,86 +1,90 @@
-import React, { useEffect, useState, useReducer, useMemo } from "react";
+import React, { useEffect, useState, useReducer } from "react";
 import PropTypes from "prop-types";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
-import "./AddVisit.scss";
 import { getMedicines } from "../../services/medicineAPI";
+import { addVisitHistory } from "../../utils/MedicalRecord/MedicalRecordService";
+import "./AddVisit.scss";
 
-// Reducer for managing medications state
 const medicationReducer = (state, action) => {
   switch (action.type) {
     case "ADD_MEDICATION":
-      return [...state, { ...action.payload, quantity: 1, dosage: "" }];
+      return [...state, { ...action.payload }];
     case "UPDATE_MEDICATION":
       return state.map((med) =>
-        med.id === action.payload.id
+        med.medication_id === action.payload.medication_id
           ? { ...med, [action.payload.field]: action.payload.value }
           : med
       );
+    case "REMOVE_MEDICATION":
+      return state.filter((med) => med.medication_id !== action.payload.medication_id);
     default:
       return state;
   }
 };
 
-const AddVisitModal = ({ show, onClose, saveVisit, selectedRecord }) => {
+const AddVisitModal = ({ show, onClose, selectedRecord }) => {
   const [medicines, setMedicines] = useState([]);
-  const [currentPage, setCurrentPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(1);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [medications, dispatch] = useReducer(medicationReducer, []);
+  
   const [symptoms, setSymptoms] = useState("");
   const [diagnosis, setDiagnosis] = useState("");
   const [treatmentPlan, setTreatmentPlan] = useState("");
-  const [searchTerm, setSearchTerm] = useState("");
-  
-  // Using reducer for managing medications
-  const [medications, dispatch] = useReducer(medicationReducer, []);
-  
-  const fetchMedicines = async (page) => {
+  const [notes, setNotes] = useState("");
+  const [description, setDescription] = useState("Đơn thuốc cho bệnh nhân");
+
+  const fetchMedicines = async () => {
     setLoading(true);
-    setError(null);
     try {
-      const data = await getMedicines(page, 10);
-      if (data) {
-        setMedicines(data.medicines);
-        setCurrentPage(data.currentPage);
-        setTotalPages(data.totalPages);
-      } else {
-        setError("Không thể tải danh sách thuốc.");
-      }
+      const data = await getMedicines(1, 100);
+      setMedicines(data.medicines);
     } catch (error) {
       console.error("Error fetching medicines:", error);
-      setError("Lỗi khi kết nối tới server.");
     } finally {
       setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchMedicines(currentPage);
-  }, [currentPage]);
+    fetchMedicines();
+  }, []);
 
-  // Add medication to the list
   const handleAddMedication = (medication) => {
-    // Thêm thuốc mới vào danh sách mà không cần kiểm tra
-    dispatch({ type: "ADD_MEDICATION", payload: { ...medication, quantity: 1 } });
+    const existingMedication = medications.find(med => med.medication_id === medication._id);
+    if (!existingMedication) {
+      dispatch({ type: "ADD_MEDICATION", payload: { medication_id: medication._id, name: medication.name, quantity: 1, dosage: "" } });
+    }
   };
 
-  // Update quantity or dosage of a medication
-  const updateMedication = (id, field, value) => {
-    dispatch({ type: "UPDATE_MEDICATION", payload: { id, field, value } });
-  };
-
-  // Handle form submission and save visit data
-  const handleSave = () => {
-    const visitData = { 
-      patient_id: selectedRecord.patient_id,
-      symptoms, 
-      diagnosis, 
-      treatmentPlan, 
-      medications 
+  const handleSave = async () => {
+    const visitData = {
+      doctorId: selectedRecord.doctor_id,
+      symptoms: symptoms,
+      diagnosis: diagnosis,
+      treatmentPlan: treatmentPlan,
+      notes: notes,
+      description: description,
+      medications: medications.map(med => ({
+        medication_name: med.name,
+        quantity: med.quantity,
+        dosage: med.dosage
+      }))
     };
-    saveVisit(visitData);  // Lưu bệnh án
-    onClose();  // Đóng modal
+
+    console.log("Sending visitData:", visitData);
+
+    const response = await addVisitHistory(selectedRecord.patient_id, visitData);
+    if (response.success) {
+      onClose();
+    } else {
+      console.error(response.message);
+    }
   };
+
+  useEffect(() => {
+    console.log("Selected Record:", selectedRecord);
+  }, [selectedRecord]);
 
   return (
     <Modal show={show} onHide={onClose} centered>
@@ -89,14 +93,6 @@ const AddVisitModal = ({ show, onClose, saveVisit, selectedRecord }) => {
       </Modal.Header>
       <Modal.Body>
         <Form>
-        <Form.Group controlId="symptoms">
-            <Form.Label>Ngày</Form.Label>
-            <Form.Control
-              as="textarea"
-              value={symptoms}
-              onChange={(e) => setSymptoms(e.target.value)}
-            />
-          </Form.Group>
           <Form.Group controlId="symptoms">
             <Form.Label>Symptoms</Form.Label>
             <Form.Control
@@ -121,20 +117,27 @@ const AddVisitModal = ({ show, onClose, saveVisit, selectedRecord }) => {
               onChange={(e) => setTreatmentPlan(e.target.value)}
             />
           </Form.Group>
-
+          <Form.Group controlId="notes">
+            <Form.Label>Notes</Form.Label>
+            <Form.Control
+              as="textarea"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+            />
+          </Form.Group>
           <Row>
-            <Col md={6}>
+            <Col md={12}>
               <Form.Label>Medications</Form.Label>
-              <ul>
+              <ul className="medication-list">
                 {medications.map((med) => (
-                  <li key={med.id}>
+                  <li key={med.medication_id} className="medication-item">
                     <span>{med.name}</span>
                     <input
                       type="number"
                       min="1"
                       value={med.quantity}
                       onChange={(e) =>
-                        updateMedication(med.id, "quantity", e.target.value)
+                        dispatch({ type: "UPDATE_MEDICATION", payload: { medication_id: med.medication_id, field: "quantity", value: e.target.value } })
                       }
                     />
                     <input
@@ -142,9 +145,12 @@ const AddVisitModal = ({ show, onClose, saveVisit, selectedRecord }) => {
                       placeholder="Dosage"
                       value={med.dosage}
                       onChange={(e) =>
-                        updateMedication(med.id, "dosage", e.target.value)
+                        dispatch({ type: "UPDATE_MEDICATION", payload: { medication_id: med.medication_id, field: "dosage", value: e.target.value } })
                       }
                     />
+                    <Button onClick={() => dispatch({ type: "REMOVE_MEDICATION", payload: { medication_id: med.medication_id } })}>
+                      Remove
+                    </Button>
                   </li>
                 ))}
               </ul>
@@ -154,17 +160,12 @@ const AddVisitModal = ({ show, onClose, saveVisit, selectedRecord }) => {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
-              <ul>
+              <ul className="search-results">
                 {medicines
-                  .filter((med) =>
-                    med.name.toLowerCase().includes(searchTerm.toLowerCase())
-                  )
+                  .filter((med) => med.name.toLowerCase().includes(searchTerm.toLowerCase()))
                   .map((med) => (
-                    <li key={med.id}>
-                      <Button
-                        onClick={() => handleAddMedication(med)}
-                        variant="outline-primary"
-                      >
+                    <li key={med._id}>
+                      <Button onClick={() => handleAddMedication(med)} variant="outline-primary">
                         Add {med.name}
                       </Button>
                     </li>
@@ -189,7 +190,6 @@ const AddVisitModal = ({ show, onClose, saveVisit, selectedRecord }) => {
 AddVisitModal.propTypes = {
   show: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
-  saveVisit: PropTypes.func.isRequired,
   selectedRecord: PropTypes.object.isRequired,
 };
 

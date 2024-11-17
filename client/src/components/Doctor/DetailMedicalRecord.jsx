@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Modal, Button } from "react-bootstrap";
-import axios from "axios";
 import { getUserById } from "../../utils/AuthAPI/AdminService";
 
 const DetailMedicalRecord = ({ show, onClose, selectedRecord }) => {
@@ -12,7 +11,6 @@ const DetailMedicalRecord = ({ show, onClose, selectedRecord }) => {
     const fetchDoctorInfo = async (doctorId) => {
       try {
         const response = await getUserById(doctorId, "doctor");
-        console.log(response.user)
         setDoctorInfo(response.user);
       } catch (error) {
         console.error("Error fetching doctor info:", error);
@@ -37,6 +35,8 @@ const DetailMedicalRecord = ({ show, onClose, selectedRecord }) => {
 
   const { patient_info = {}, medical_history = [] } = selectedRecord;
   const { name, dob, gender, address } = patient_info;
+
+  console.log("Selected Record:", selectedRecord);
 
   return (
     <Modal show={show} onHide={onClose} size="lg" centered>
@@ -101,9 +101,7 @@ const DetailMedicalRecord = ({ show, onClose, selectedRecord }) => {
                   <h5>Thông tin Khám</h5>
                   <p>
                     <strong>Triệu chứng:</strong>{" "}
-                    {symptoms.length
-                      ? symptoms.join(", ")
-                      : "Chưa có thông tin"}
+                    {symptoms.length ? symptoms.join(", ") : "Chưa có thông tin"}
                   </p>
                   <p>
                     <strong>Chuẩn đoán:</strong>{" "}
@@ -123,17 +121,16 @@ const DetailMedicalRecord = ({ show, onClose, selectedRecord }) => {
                     prescriptions.map((prescription, index) => (
                       <div key={index} className="prescription-item">
                         <p>
-                          <strong>Thuốc:</strong> {prescription.medication}
+                          <strong>Thuốc:</strong> {prescription.medication_name || "Chưa có thông tin"}
                         </p>
                         <p>
-                          <strong>Liều lượng:</strong> {prescription.dosage}
+                          <strong>Liều lượng:</strong> {prescription.dosage || "Chưa có thông tin"}
                         </p>
                         <p>
-                          <strong>Tần suất:</strong> {prescription.frequency}
+                          <strong>Tần suất:</strong> {prescription.frequency || "Chưa có thông tin"}
                         </p>
                         <p>
-                          <strong>Hướng dẫn:</strong>{" "}
-                          {prescription.instructions}
+                          <strong>Hướng dẫn:</strong> {prescription.instructions || "Chưa có thông tin"}
                         </p>
                       </div>
                     ))

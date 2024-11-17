@@ -26,10 +26,10 @@ const visitSchema = new Schema({
   notes: {
     type: [String],
   },
-  prescriptions: {
+  prescriptions: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: "Prescription"
-  },
+  }],
 });
 
 const medicalRecordSchema = new Schema(
@@ -39,7 +39,6 @@ const medicalRecordSchema = new Schema(
       required: true,
       ref: "User",
     },
-    
     medical_history: [visitSchema]
   },
   { timestamps: true, versionKey: false }

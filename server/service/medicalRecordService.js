@@ -1,4 +1,6 @@
 const MedicalRecord = require("../models/MedicalRecord")
+const Medication = require("../models/Medication")
+const Prescription = require("../models/Prescription")
 
 //lấy tất cả hồ sơ bệnh án
 exports.getMedicalRecord = async (page = 1, limit = 5) => {
@@ -70,33 +72,84 @@ exports.createMedicalRecord = async (patientid) => {
 // Bác sĩ thêm thông tin sau mỗi lần khám
 exports.addVisitHistory = async (patientId, visitData) => {
     try {
-        const medicalRecord = await MedicalRecord.findOne({ patient_id: patientId })
-        if (!medicalRecord) {
-            return {
-                success: false,
-                message: "Không tìm thấy hồ sơ y tế của bệnh nhân"
-            }
+        console.log("Received visitData:", visitData);
+
+        // Kiểm tra các tham số cần thiết
+        if (!visitData.doctorId || !visitData.symptoms || !visitData.diagnosis || !visitData.treatmentPlan || !visitData.notes) {
+            return { success: false, message: "Thiếu tham số cần thiết." };
         }
-        medicalRecord.medical_history.push({
+
+        // Kiểm tra medications
+        if (!Array.isArray(visitData.medications) || visitData.medications.length === 0) {
+            return { success: false, message: "medications không phải là mảng hoặc rỗng." };
+        }
+
+        const medicalRecord = await MedicalRecord.findOne({ patient_id: patientId });
+
+        if (!medicalRecord) {
+            return { success: false, message: "Không tìm thấy hồ sơ bệnh án cho bệnh nhân." };
+        }
+
+        const newVisit = {
             doctor_id: visitData.doctorId,
             visit_date: new Date(),
             symptoms: visitData.symptoms,
             diagnosis: visitData.diagnosis,
             treatment_plan: visitData.treatmentPlan,
             notes: visitData.notes,
-            prescriptions: visitData.prescriptionId
-        })
-        await medicalRecord.save()
-        return {
-            success: true,
-            medicalRecord,
-            message: "Đã thêm thông tin khám bệnh mới"
+            prescriptions: []
+        };
+
+        const medications = [];
+        let totalPrice = 0;
+
+        for (const medication of visitData.medications) {
+            const med = await Medication.findOne({ name: medication.medication_name });
+
+            if (med) {
+                if (med.quantity_available < medication.quantity) {
+                    console.error(`Không đủ số lượng thuốc ${med.name}`);
+                    return { success: false, message: `Không đủ số lượng thuốc ${med.name}` };
+                }
+                med.quantity_available -= medication.quantity;
+                await med.save();
+
+                medications.push({
+                    medication_id: med._id,
+                    quantity: medication.quantity,
+                    dosage: medication.dosage,
+                    price: med.price
+                });
+
+                totalPrice += med.price * medication.quantity;
+            } else {
+                console.error(`Không tìm thấy thuốc với tên ${medication.medication_name}`);
+                return { success: false, message: `Không tìm thấy thuốc với tên ${medication.medication_name}` };
+            }
         }
+
+        if (medications.length > 0) {
+            const newPrescription = new Prescription({
+                description: visitData.description || "Đơn thuốc cho bệnh nhân",
+                medications: medications,
+                patient_id: patientId,
+                doctor_id: visitData.doctorId,
+                total_price: totalPrice
+            });
+
+            await newPrescription.save();
+
+            newVisit.prescriptions.push(newPrescription._id);
+            medicalRecord.medical_history.push(newVisit);
+            await medicalRecord.save();
+        } else {
+            console.error("Không có thuốc nào được thêm vào.");
+            return { success: false, message: "Không có thuốc nào được thêm vào." };
+        }
+
+        return { success: true, data: medicalRecord };
     } catch (error) {
-        console.error("Lỗi khi thêm thông tin khám bệnh: ", error)
-        return {
-            success: false,
-            message: "Lỗi khi thêm thông tin khám bệnh"
-        }
+        console.error("Lỗi khi thêm thông tin khám bệnh:", error);
+        return { success: false, message: "Lỗi khi thêm thông tin khám bệnh" };
     }
-}
+};

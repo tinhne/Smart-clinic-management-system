@@ -71,6 +71,9 @@
     }
   }
 }
+.dropdown-menu[data-bs-popper] {
+  left: -39px !important;
+}
 @media (min-width: 1400px) {
   .container,
   .container-lg,

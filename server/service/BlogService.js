@@ -1,19 +1,21 @@
 const Blog = require("../models/Blog");
-exports.createBlog = async (blogData, author_id, author_name) => {
+exports.createBlog = async (blogData) => {
   try {
-    console.log("Received Blog Data:", blogData); // Log data before saving
-    const newBlog = new Blog({ ...blogData, author_id, author_name });
-
-    // Check and convert image data
-    if (Array.isArray(blogData.images) && blogData.images.length > 0) {
-      newBlog.images = blogData.images; // Directly assign if already in Base64
-    }
-
-    const savedBlog = await newBlog.save();
-    console.log("Saved Blog Entry:", savedBlog); // Log saved data for verification
-    return savedBlog;
+    // Tạo blog mới
+    const blog = new Blog(blogData);
+    await blog.save();
+    return {
+      success: true,
+      data: blog,
+      message: "Blog đã được tạo thành công",
+    };
   } catch (error) {
-    throw new Error(`Error creating blog: ${error.message}`);
+    console.error("Lỗi khi tạo blog:", error);
+    return {
+      success: false,
+      message: "Tạo blog thất bại",
+      error: error.message,
+    };
   }
 };
 

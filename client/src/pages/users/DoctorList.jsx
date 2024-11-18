@@ -10,26 +10,24 @@ import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 const categories = [
   { name: "Tất cả" },
-  { name: "Truyền Nhiễm" },
-  { name: "Tim Mạch" },
-  { name: "Chấn Thương Chỉnh Hình" },
-  { name: "Hồi Sức - Cấp Cứu" },
-  { name: "Gây Mê Hồi Sức" },
-  { name: "Nội Thận" },
-  { name: "Nội Tiết" },
-  { name: "Tai - Mũi - Họng" },
-  { name: "Tâm Thần" },
-  { name: "Hô Hấp" },
-  { name: "Xét Nghiệm" },
-  { name: "Tâm Lý" },
-  { name: "Phẫu Thuật Tạo Hình" },
-  { name: "Đa Khoa" },
-  { name: "Sản Phụ Khoa" },
-  { name: "Cơ Xương Khớp" },
-  { name: "Răng - Hàm Mặt" },
-  { name: "Nhi Khoa" },
+  { name: "Chuẩn Đoán Hình Ảnh" },
+  { name: "Xương Khớp" },
+  { name: "Y Học Cổ Truyền" },
   { name: "Da Liễu" },
+  { name: "Dị Ứng Miễn Dịch" },
+  { name: "Lao Phổi" },
+  { name: "Gây Mê Hồi Sức" },
+  { name: "Lão Khoa" },
+  { name: "Nhi Khoa" },
+  { name: "Truyền Nhiễm" },
+  { name: "Xét Nghiệm" },
+  { name: "Hô Hấp" },
+  { name: "Tâm Thần" },
+  { name: "Sản Phụ Khoa" },
+  { name: "Tai - Mũi - Họng" },
+  { name: "Nội Thần Kinh" }
 ];
+
 function DoctorList() {
   const location = useLocation();
   const { specialties } = location.state || {};

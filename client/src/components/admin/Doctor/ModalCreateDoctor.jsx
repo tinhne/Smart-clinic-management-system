@@ -230,29 +230,25 @@ const ModalCreateDoctor = ({
                     required
                   >
                     <option value="">Chọn chuyên khoa</option>
+                    <option value="Tất cả">Tất cả</option>
+                    <option value="Chuẩn Đoán Hình Ảnh">
+                      Chuẩn Đoán Hình Ảnh
+                    </option>
+                    <option value="Xương Khớp">Xương Khớp</option>
+                    <option value="Y Học Cổ Truyền">Y Học Cổ Truyền</option>
                     <option value="Da Liễu">Da Liễu</option>
-                    <option value="Tiêu Hóa">Tiêu Hóa</option>
-                    <option value="Chấn Thương Chỉnh Hình">
-                      Chấn Thương Chỉnh hình
-                    </option>
-                    <option value="Tim Mạch">Tim Mạch</option>
-                    <option value="Nhi Khoa">Nhi Khoa</option>
-                    <option value="Hồi Sức - Cấp Cứu">Hồi Sức - Cấp Cứu</option>
+                    <option value="Dị Ứng Miễn Dịch">Dị Ứng Miễn Dịch</option>
+                    <option value="Lao Phổi">Lao Phổi</option>
                     <option value="Gây Mê Hồi Sức">Gây Mê Hồi Sức</option>
-                    <option value="Nội Thận">Nội Thận</option>
-                    <option value="Tai - Mũi - Họng">Tai - Mũi - Họng</option>
-                    <option value="Nội Tiết">Nội Tiết</option>
-                    <option value="Phẫu Thuật Tạo Hình">
-                      Phẫu Thuật Tạo Hình
-                    </option>
-                    <option value="Tâm Lý">Tâm Lý</option>
+                    <option value="Lão Khoa">Lão Khoa</option>
+                    <option value="Nhi Khoa">Nhi Khoa</option>
+                    <option value="Truyền Nhiễm">Truyền Nhiễm</option>
                     <option value="Xét Nghiệm">Xét Nghiệm</option>
                     <option value="Hô Hấp">Hô Hấp</option>
                     <option value="Tâm Thần">Tâm Thần</option>
-                    <option value="Đa Khoa">Đa Khoa</option>
                     <option value="Sản Phụ Khoa">Sản Phụ Khoa</option>
-                    <option value="Cơ Xương Khớp">Cơ Xương Khớp</option>
-                    <option value="Răng - Hàm - Mặt">Răng - Hàm - Mặt</option>
+                    <option value="Tai - Mũi - Họng">Tai - Mũi - Họng</option>
+                    <option value="Nội Thần Kinh">Nội Thần Kinh</option>
                   </Form.Control>
                 </Form.Group>
                 <Form.Group controlId="formPassword">

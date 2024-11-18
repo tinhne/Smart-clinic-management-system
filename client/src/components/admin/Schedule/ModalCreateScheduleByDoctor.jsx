@@ -1,12 +1,17 @@
-import Button from 'react-bootstrap/Button';
-import Modal from 'react-bootstrap/Modal';
+import Button from "react-bootstrap/Button";
+import Modal from "react-bootstrap/Modal";
 import PropTypes from "prop-types";
 import { useState } from "react";
-import { createDoctorSchedule } from '../../../utils/SchedualAPI/SchedualService';
-import { toast, ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { createDoctorSchedule } from "../../../utils/SchedualAPI/SchedualService";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const ModalCreateScheduleByDoctor = ({ show, handleClose, doctor, onScheduleCreated  }) => {
+const ModalCreateScheduleByDoctor = ({
+  show,
+  handleClose,
+  doctor,
+  onScheduleCreated,
+}) => {
   const [date, setDate] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
@@ -26,7 +31,7 @@ const ModalCreateScheduleByDoctor = ({ show, handleClose, doctor, onScheduleCrea
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     // Validate date
     if (!date) {
       toast.error("Ngày không được để trống!");
@@ -36,23 +41,25 @@ const ModalCreateScheduleByDoctor = ({ show, handleClose, doctor, onScheduleCrea
       toast.error("Ngày phải theo định dạng dd-mm-yyyy!");
       return;
     }
-  
+
     // Validate time
     if (!validateTimeFormat(startTime) || !validateTimeFormat(endTime)) {
-      toast.error("Thời gian phải theo định dạng hh:mm và nằm trong khung 24 giờ!");
+      toast.error(
+        "Thời gian phải theo định dạng hh:mm và nằm trong khung 24 giờ!"
+      );
       return;
     }
-  
+
     // Validate that slot duration is not less than 10 minutes
     if (slotDuration < 10) {
       toast.error("Thời Gian Mỗi Slot không được nhỏ hơn 10 phút!");
       return;
     }
-  
+
     // Convert date from dd-mm-yyyy to yyyy-mm-dd
     const [day, month, year] = date.split("-");
     const formattedDate = `${year}-${month}-${day}`; // Rearrange to yyyy-mm-dd
-  
+
     // Prepare schedule data
     const scheduleData = {
       doctor_id: doctor._id, // Use the selected doctor's ID
@@ -63,34 +70,38 @@ const ModalCreateScheduleByDoctor = ({ show, handleClose, doctor, onScheduleCrea
       },
       slot_duration: slotDuration,
     };
-  
+
     try {
-        const response = await createDoctorSchedule(scheduleData);
-        if (response.success) {
-          toast.success(response.msg);
-          onScheduleCreated(); // Call the callback to notify schedule creation
-          handleClose(); // Close the modal after creating the schedule
-        } else {
-          toast.error("Không thể tạo lịch: " + response.msg);
-        }
-      } catch (error) {
-        console.error("Error creating schedule:", error);
-        toast.error(error.response.data.msg);
+      const response = await createDoctorSchedule(scheduleData);
+      if (response.success) {
+        toast.success(response.msg);
+        onScheduleCreated(); // Call the callback to notify schedule creation
+        handleClose(); // Close the modal after creating the schedule
+      } else {
+        toast.error("Không thể tạo lịch: " + response.msg);
       }
+    } catch (error) {
+      console.error("Error creating schedule:", error);
+      toast.error(error.response.data.msg);
+    }
   };
-  
 
   return (
     <div>
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title className="text-primary">Tạo Lịch Làm Việc Cho Bác Sĩ {doctor?.first_name} {doctor?.last_name}</Modal.Title>
+          <Modal.Title className="text-primary">
+            Tạo Lịch Làm Việc Cho Bác Sĩ {doctor?.first_name}{" "}
+            {doctor?.last_name}
+          </Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
-              <label htmlFor="scheduleDate" className="form-label">Ngày</label>
+              <label htmlFor="scheduleDate" className="form-label">
+                Ngày
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -100,10 +111,14 @@ const ModalCreateScheduleByDoctor = ({ show, handleClose, doctor, onScheduleCrea
                 onChange={(e) => setDate(e.target.value)}
                 required
               />
-              <small className="form-text text-muted">Vui lòng nhập ngày theo định dạng dd-mm-yyyy.</small>
+              <small className="form-text text-muted">
+                Vui lòng nhập ngày theo định dạng dd-mm-yyyy.
+              </small>
             </div>
             <div className="mb-3">
-              <label htmlFor="startTime" className="form-label">Thời Gian Bắt Đầu (hh:mm)</label>
+              <label htmlFor="startTime" className="form-label">
+                Thời Gian Bắt Đầu (hh:mm)
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -113,10 +128,14 @@ const ModalCreateScheduleByDoctor = ({ show, handleClose, doctor, onScheduleCrea
                 onChange={(e) => setStartTime(e.target.value)}
                 required
               />
-              <small className="form-text text-muted">Vui lòng nhập thời gian theo định dạng 24 giờ (hh:mm).</small>
+              <small className="form-text text-muted">
+                Vui lòng nhập thời gian theo định dạng 24 giờ (hh:mm).
+              </small>
             </div>
             <div className="mb-3">
-              <label htmlFor="endTime" className="form-label">Thời Gian Kết Thúc (hh:mm)</label>
+              <label htmlFor="endTime" className="form-label">
+                Thời Gian Kết Thúc (hh:mm)
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -126,10 +145,14 @@ const ModalCreateScheduleByDoctor = ({ show, handleClose, doctor, onScheduleCrea
                 onChange={(e) => setEndTime(e.target.value)}
                 required
               />
-              <small className="form-text text-muted">Vui lòng nhập thời gian theo định dạng 24 giờ (hh:mm).</small>
+              <small className="form-text text-muted">
+                Vui lòng nhập thời gian theo định dạng 24 giờ (hh:mm).
+              </small>
             </div>
             <div className="mb-3">
-              <label htmlFor="slotDuration" className="form-label">Thời Gian Mỗi Slot (phút)</label>
+              <label htmlFor="slotDuration" className="form-label">
+                Thời Gian Mỗi Slot (phút)
+              </label>
               <input
                 type="text"
                 className="form-control"
@@ -151,7 +174,7 @@ const ModalCreateScheduleByDoctor = ({ show, handleClose, doctor, onScheduleCrea
           </form>
         </Modal.Body>
       </Modal>
-
+      <ToastContainer></ToastContainer>
     </div>
   );
 };
@@ -162,7 +185,6 @@ ModalCreateScheduleByDoctor.propTypes = {
   handleClose: PropTypes.func.isRequired,
   doctor: PropTypes.object,
   onScheduleCreated: PropTypes.func.isRequired, // Add prop type for the callback
-
 };
 
 export default ModalCreateScheduleByDoctor;

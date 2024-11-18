@@ -7,7 +7,7 @@ const createMedicalRecord = (data) => {
 
 // Thêm một lần khám mới vào lịch sử khám bệnh của bệnh nhân
 const addVisitHistory = (patientId, visitData) => {
-    return axios.post(`/api/medicalRecord/${patientId}/addVisit`, visitData);
+    return axios.post(`/api/medicalRecord/${patientId}/add-visit`, visitData);
 };
 
 // Lấy hồ sơ bệnh án theo ID bệnh nhân

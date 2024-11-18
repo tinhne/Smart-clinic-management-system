@@ -35,11 +35,15 @@ function ViewPatientRecord() {
         const records = data.medicalRecords;
         const patientPromises = records.map(async (record) => {
           const patientResponse = await getUserById(record.patient_id, "patient");
+          console.log(patientResponse)
           return {
             ...record,
             patient_info: {
               name: `${patientResponse.user.first_name} ${patientResponse.user.last_name}`,
               phone: patientResponse.user.phone,
+              dob: patientResponse.user.birthdate,
+              gender: patientResponse.user.gender,
+              address: patientResponse.user.address,
             },
           };
         });
@@ -64,12 +68,15 @@ function ViewPatientRecord() {
   };
 
   const handleShowDetailRecordModal = (record) => {
+    console.log(record)
     setSelectedRecord(record);
     setShowDetailRecord(true);
   };
 
   const handleShowAddVisitModal = (record) => {
-    setSelectedRecord(record);
+    const doctorId = record.medical_history.length > 0 ? record.medical_history[0].doctor_id : null;
+    console.log("Doctor ID:", doctorId);
+    setSelectedRecord({ ...record, doctor_id: doctorId });
     setShowAddVisitModal(true);
   };
 

@@ -1,17 +1,30 @@
-const Appointment = require('../models/Appointment');
-const Schedule = require('../models/Schedule');
-const User = require('../models/User');
-const { sendSMS } = require('./smsService'); // Adjust the path if needed
-const medicalRecordService = require('./medicalRecordService'); // Thêm dòng này
-
+const Appointment = require("../models/Appointment");
+const Schedule = require("../models/Schedule");
+const User = require("../models/User");
+const { sendSMS } = require("./smsService"); // Adjust the path if needed
+const medicalRecordService = require("./medicalRecordService"); // Thêm dòng này
 
 // Bệnh nhân đặt lịch hẹn
 exports.BookingAppointment = async (appointmentData) => {
   // Lấy dữ liệu từ appointmentData
-  const { appointment_date, time_slot, patient_id, doctor_id, note, appointment_type, video_call_link } = appointmentData;
+  const {
+    appointment_date,
+    time_slot,
+    patient_id,
+    doctor_id,
+    note,
+    appointment_type,
+    video_call_link,
+  } = appointmentData;
 
   // Kiểm tra các trường bắt buộc
-  if (!appointment_date || !time_slot || !patient_id || !doctor_id || !appointment_type) {
+  if (
+    !appointment_date ||
+    !time_slot ||
+    !patient_id ||
+    !doctor_id ||
+    !appointment_type
+  ) {
     throw new Error("Thiếu thông tin bắt buộc");
   }
 
@@ -34,11 +47,13 @@ exports.BookingAppointment = async (appointmentData) => {
     doctor_id,
     note,
     appointment_type,
-    status:"confirmed",
+    status: "confirmed",
     video_call_link: appointment_type === "online" ? video_call_link : "", // Chỉ lưu link nếu là khám online
   });
   // Kiểm tra nếu bệnh nhân đã có hồ sơ bệnh án chưa
-  let medicalRecord = await medicalRecordService.getMedicalRecordByPatientId(patient_id);
+  let medicalRecord = await medicalRecordService.getMedicalRecordByPatientId(
+    patient_id
+  );
   if (!medicalRecord) {
     // Nếu chưa có, tạo hồ sơ bệnh án mới cho bệnh nhân
     medicalRecord = await medicalRecordService.createMedicalRecord(patient_id);
@@ -63,10 +78,15 @@ exports.confirmAppointment = async (id) => {
     await appointment.save();
 
     // Cập nhật lịch làm việc của bác sĩ để xóa khung giờ đã được đặt
-    const schedule = await Schedule.findOne({ doctor_id: appointment.doctor_id, date: appointment.appointment_date });
+    const schedule = await Schedule.findOne({
+      doctor_id: appointment.doctor_id,
+      date: appointment.appointment_date,
+    });
     if (schedule) {
       // Xóa khung giờ đã đặt từ available_slots
-      schedule.available_slots = schedule.available_slots.filter(slot => slot !== appointment.time_slot);
+      schedule.available_slots = schedule.available_slots.filter(
+        (slot) => slot !== appointment.time_slot
+      );
       await schedule.save();
     }
 
@@ -82,7 +102,7 @@ exports.confirmAppointment = async (id) => {
 
     return appointment; // Trả về appointment sau khi xử lý
   } catch (error) {
-    console.error('Lỗi khi xác nhận lịch hẹn:', error.message);
+    console.error("Lỗi khi xác nhận lịch hẹn:", error.message);
     throw new Error(error.message);
   }
 };
@@ -96,17 +116,16 @@ exports.cancelAppointment = async (appointmentId) => {
   return appointment;
 };
 
-
-
 // Lấy lịch hẹn của bệnh nhân
 exports.getPatientAppointments = async (patientId) => {
-  const appointments = await Appointment.find({ patient_id: patientId }).sort({appointment_date: -1});
+  const appointments = await Appointment.find({ patient_id: patientId }).sort({
+    appointment_date: -1,
+  });
   if (!appointments.length) {
     throw new Error("Không có lịch hẹn nào cho bệnh nhân này.");
   }
   return appointments;
 };
-
 
 // Trong appointmentService.js
 
@@ -114,12 +133,12 @@ exports.getPatientAppointments = async (patientId) => {
 exports.getDoctorAppointments = async (doctorId) => {
   try {
     // Lấy tất cả các lịch hẹn của bác sĩ, sắp xếp theo ngày gần nhất
-    const appointments = await Appointment.find({ 
+    const appointments = await Appointment.find({
       doctor_id: doctorId,
     })
-    .sort({ appointment_date: 1 }) // Sắp xếp theo ngày tăng dần
-    .populate('patient_id', 'first_name last_name phone email imageUrl') // Lấy thông tin bệnh nhân
-    .lean();
+      .sort({ appointment_date: 1 }) // Sắp xếp theo ngày tăng dần
+      .populate("patient_id", "first_name last_name phone email imageUrl") // Lấy thông tin bệnh nhân
+      .lean();
 
     if (!appointments.length) {
       throw new Error("Không có lịch hẹn nào cho bác sĩ này.");
@@ -135,12 +154,12 @@ exports.getDoctorAppointments = async (doctorId) => {
 // Thêm hàm mới để lấy danh sách chi tiết lịch hẹn của bác sĩ
 exports.getDoctorAppointmentDetails = async (doctorId) => {
   try {
-    const appointments = await Appointment.find({ 
-      doctor_id: doctorId 
+    const appointments = await Appointment.find({
+      doctor_id: doctorId,
     })
-    .populate('patient_id', 'first_name last_name phone email imageUrl') // Lấy thông tin bệnh nhân
-    .sort({ appointment_date: -1 }) // Sắp xếp theo ngày tăng dần
-    .lean();
+      .populate("patient_id", "first_name last_name phone email imageUrl") // Lấy thông tin bệnh nhân
+      .sort({ appointment_date: -1 }) // Sắp xếp theo ngày tăng dần
+      .lean();
 
     if (!appointments.length) {
       throw new Error("Không có lịch hẹn nào cho bác sĩ này.");
@@ -156,18 +175,20 @@ exports.getDoctorAppointmentDetails = async (doctorId) => {
 exports.getDoctorAvailableSchedule = async (doctorId) => {
   try {
     // Lấy tất cả các lịch hẹn đã đặt cho bác sĩ
-    const appointments = await Appointment.find({ 
+    const appointments = await Appointment.find({
       doctor_id: doctorId,
-      status: { $ne: 'cancelled' } // Không lấy các lịch hẹn đã hủy
+      status: { $ne: "cancelled" }, // Không lấy các lịch hẹn đã hủy
     })
-    .select('appointment_date time_slot')
-    .lean();
+      .select("appointment_date time_slot")
+      .lean();
 
     // Tạo một đối tượng để chứa các ngày và khung giờ đã đặt
-    const schedule = {};  
+    const schedule = {};
 
     appointments.forEach((appointment) => {
-      const appointmentDate = appointment.appointment_date.toISOString().split('T')[0];
+      const appointmentDate = appointment.appointment_date
+        .toISOString()
+        .split("T")[0];
       const timeSlot = appointment.time_slot;
 
       if (!schedule[appointmentDate]) {
@@ -190,4 +211,3 @@ exports.getDoctorAvailableSchedule = async (doctorId) => {
     throw new Error("Lỗi khi lấy lịch trống: " + error.message);
   }
 };
-

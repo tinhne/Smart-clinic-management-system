@@ -90,66 +90,66 @@ const BlogAdmin = () => {
         </thead>
         <tbody>
           {blogs.length > 0 ? (
-            blogs.map((blog) => (
-              <tr key={blog._id}>
-                <td>{blog.title || "N/A"}</td>
-                <td>
-                  {Array.isArray(blog.category)
-                    ? blog.category.join(", ")
-                    : "N/A"}
-                </td>
-                <td
-                  style={{
-                    maxWidth: "300px",
-                    overflow: "hidden",
-                    textOverflow: "ellipsis",
-                    whiteSpace: "nowrap",
-                  }}
-                >
-                  {blog.content || "No content available"}
-                </td>
-                <td>{blog.author_name || "Unknown"}</td>
-                <td>
-                  {blog.createdAt
-                    ? new Date(blog.createdAt).toLocaleDateString("en-CA") // Canadian locale provides "YYYY-MM-DD"
-                    : "N/A"}
-                </td>
-
-                <td>
-                  {/* Check if there are images and render the first one or map over all */}
-                  {blog.image && blog.image.length > 0 ? (
-                    <img
-                      src={blog.image[0]} // Display the first image or change to map for multiple
-                      alt="Blog"
-                      style={{
-                        width: "100px",
-                        height: "100px",
-                        objectFit: "cover",
-                      }}
-                    />
-                  ) : (
-                    "No image"
-                  )}
-                </td>
-                <td>
-                  <Button
-                    variant="warning"
-                    size="sm"
-                    className="mr-2"
-                    onClick={() => handleShowEditModal(blog)}
+            blogs
+              .filter((blog) => blog && blog._id) // Loại bỏ các phần tử không hợp lệ
+              .map((blog) => (
+                <tr key={blog._id}>
+                  <td>{blog?.title || "Không xác định"}</td>
+                  <td>
+                    {Array.isArray(blog?.category)
+                      ? blog.category.join(", ")
+                      : "Không xác định"}
+                  </td>
+                  <td
+                    style={{
+                      maxWidth: "300px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
                   >
-                    Chỉnh sửa
-                  </Button>
-                  <Button
-                    variant="danger"
-                    size="sm"
-                    onClick={() => handleShowDeleteModal(blog)}
-                  >
-                    Xóa
-                  </Button>
-                </td>
-              </tr>
-            ))
+                    {blog?.content || "Không có nội dung"}
+                  </td>
+                  <td>{blog?.author_name || "Không rõ"}</td>
+                  <td>
+                    {blog?.createdAt
+                      ? new Date(blog.createdAt).toLocaleDateString("en-CA")
+                      : "N/A"}
+                  </td>
+                  <td>
+                    {blog?.image && blog.image.length > 0 ? (
+                      <img
+                        src={blog.image[0]}
+                        alt="Blog"
+                        style={{
+                          width: "100px",
+                          height: "100px",
+                          objectFit: "cover",
+                        }}
+                      />
+                    ) : (
+                      "Không có hình ảnh"
+                    )}
+                  </td>
+                  <td>
+                    <Button
+                      variant="warning"
+                      size="sm"
+                      className="mr-2"
+                      onClick={() => handleShowEditModal(blog)}
+                    >
+                      Chỉnh sửa
+                    </Button>
+                    <Button
+                      variant="danger"
+                      size="sm"
+                      onClick={() => handleShowDeleteModal(blog)}
+                    >
+                      Xóa
+                    </Button>
+                  </td>
+                </tr>
+              ))
           ) : (
             <tr>
               <td colSpan="7" style={{ textAlign: "center" }}>
@@ -200,7 +200,7 @@ const BlogAdmin = () => {
           show={showDeleteModal}
           onClose={handleCloseDeleteModal}
           onDelete={handleDelete}
-          blogTitle={selectedBlog.title}
+          blogTitle={selectedBlog.title || "Không xác định"}
         />
       )}
     </div>

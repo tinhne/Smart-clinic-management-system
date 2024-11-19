@@ -1,26 +1,48 @@
 const blogService = require("../service/BlogService");
 
 exports.createBlog = async (req, res) => {
-  const { title, image, content, tags, category } = req.body;
-
   try {
-    const author_id = req.user._id;
-    const author_name = req.user.username;
+    const { category, title, summary,  author_name, content } = req.body;
 
-    const newBlog = await blogService.createBlog(
-      { title, image, content, tags, category },
-      author_id,
-      author_name
-    );
+    // Kiểm tra dữ liệu đầu vào
+    if (!category || !title || !summary || !author_name || !content) {
+      return res.status(400).json({
+        success: false,
+        message: "Thiếu các trường thông tin bắt buộc",
+      });
+    }
 
-    res.status(201).json({
-      message: "Blog created successfully",
-      blog: newBlog,
+    // Gửi dữ liệu tới service
+    const result = await blogService.createBlog({
+      category,
+      title,
+      summary,
+      
+      author_name,
+      content,
     });
+
+    if (result.success) {
+      return res.status(201).json({
+        success: true,
+        message: "Tạo blog thành công",
+        data: result.data,
+      });
+    } else {
+      return res.status(500).json({
+        success: false,
+        message: "Có lỗi xảy ra khi tạo blog",
+      });
+    }
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    console.error("Lỗi trong quá trình tạo blog:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Đã xảy ra lỗi ngoài ý muốn",
+    });
   }
 };
+
 
 exports.getAllBlogs = async (req, res) => {
   try {

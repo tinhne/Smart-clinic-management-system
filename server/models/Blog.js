@@ -10,24 +10,31 @@ const blogSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    image: {
-      type: [String],
+    summary: {
+      type: String,
+      required: true, // Tóm tắt bài viết
     },
-    author_id: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
+   
     author_name: {
       type: String,
-      required: true,
+      required: true, // Tên tác giả
     },
     content: {
-      type: String,
+      type: [
+        {
+          image: {
+            type: String, // URL của ảnh trong phần nội dung
+          },
+          image_description: {
+            type: String, // Mô tả ảnh
+          },
+          text: {
+            type: String, // Nội dung văn bản
+            required: true,
+          },
+        },
+      ],
       required: true,
-    },
-    tags: {
-      type: [String],
     },
   },
   { timestamps: true, versionKey: false }

@@ -153,7 +153,6 @@ const ScheduleManage = () => {
 
   useEffect(() => {
     const formattedDate = selectedDate.toISOString().split("T")[0];
-    console.log(">>>>>>>>", formattedDate);
     fetchSchedules(formattedDate);
   }, [selectedDate]);
 

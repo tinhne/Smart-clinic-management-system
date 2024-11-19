@@ -22,56 +22,93 @@ const convertToBase64 = (file) => {
 const AddBlogModal = ({ show, onClose, onSave }) => {
   const [newBlog, setNewBlog] = useState({
     title: "",
-    category: "",
-    content: "",
-    author: "",
-    date: new Date().toISOString().split("T")[0],
-    image: [], // Changed from 'images' to 'image'
+    category: [],
+    summary: "",
+    author_name: "",
+    content: [
+      {
+        image: "",
+        image_description: "",
+        text: "",
+      },
+    ],
   });
 
-  const handleChange = (e) => {
+  const handleChange = (e, index) => {
     const { name, value } = e.target;
-    setNewBlog((prev) => ({ ...prev, [name]: value }));
+
+    if (index !== undefined) {
+      // Update content section
+      setNewBlog((prev) => {
+        const updatedContent = [...prev.content];
+        if (updatedContent[index]) {
+          updatedContent[index][name] = value;
+        }
+        return { ...prev, content: updatedContent };
+      });
+    } else if (name === "category") {
+      // Ensure category is always a single-element array
+      setNewBlog((prev) => ({ ...prev, category: [value] }));
+    } else {
+      setNewBlog((prev) => ({ ...prev, [name]: value }));
+    }
   };
 
-  const handleImageChange = async (e) => {
-    const files = Array.from(e.target.files);
+  const handleImageChange = async (e, index) => {
+    const file = e.target.files[0];
+    if (file) {
+      const base64Image = await convertToBase64(file);
+      setNewBlog((prev) => {
+        const updatedContent = [...prev.content];
+        updatedContent[index].image = base64Image;
+        return { ...prev, content: updatedContent };
+      });
+    }
+  };
 
-    // Convert each file to Base64 format
-    const base64Images = await Promise.all(
-      files.map((file) => convertToBase64(file))
-    );
-
-    console.log("Converted Base64 Images:", base64Images); // Log to confirm conversion
-
-    setNewBlog((prev) => ({ ...prev, image: base64Images })); // Set to 'image'
+  const handleAddContent = () => {
+    setNewBlog((prev) => ({
+      ...prev,
+      content: [
+        ...prev.content,
+        {
+          image: "",
+          image_description: "",
+          text: "",
+        },
+      ],
+    }));
   };
 
   const handleSave = async () => {
     try {
       console.log("Saving blog with data:", newBlog);
-
-      const createdBlog = await createBlog(newBlog); // Send to backend
+      const createdBlog = await createBlog(newBlog);
       console.log("API response:", createdBlog);
 
-      if (createdBlog && createdBlog.blog) {
+      if (createdBlog ) {
         onSave(createdBlog.blog);
-        toast.success("Blog created successfully!");
+        toast.success("Bài viết đã được tạo thành công!");
         onClose();
         setNewBlog({
           title: "",
-          category: "",
-          content: "",
-          author: "",
-          date: new Date().toISOString().split("T")[0],
-          image: [], // Reset to 'image'
+          category: [],
+          summary: "",
+          author_name: "",
+          content: [
+            {
+              image: "",
+              image_description: "",
+              text: "",
+            },
+          ],
         });
       } else {
-        throw new Error("Invalid blog data received");
+        throw new Error("Dữ liệu bài viết không hợp lệ nhận được");
       }
     } catch (error) {
       console.error("Error creating blog:", error);
-      toast.error("Failed to create blog.");
+      toast.error("Tạo bài viết thất bại.");
     }
   };
 
@@ -98,7 +135,7 @@ const AddBlogModal = ({ show, onClose, onSave }) => {
               <Form.Control
                 as="select"
                 name="category"
-                value={newBlog.category}
+                value={newBlog.category[0] || ""}
                 onChange={handleChange}
               >
                 <option value="">Chọn danh mục</option>
@@ -108,45 +145,74 @@ const AddBlogModal = ({ show, onClose, onSave }) => {
                 <option value="Tin tức">Tin tức</option>
               </Form.Control>
             </Form.Group>
-            <Form.Group controlId="formContent">
-              <Form.Label>Nội dung</Form.Label>
+            <Form.Group controlId="formSummary">
+              <Form.Label>Tóm tắt</Form.Label>
               <Form.Control
-                as="textarea"
-                rows={3}
-                placeholder="Nhập nội dung"
-                name="content"
-                value={newBlog.content}
+                type="text"
+                placeholder="Nhập tóm tắt"
+                name="summary"
+                value={newBlog.summary}
                 onChange={handleChange}
               />
             </Form.Group>
-            <Form.Group controlId="formDate">
-              <Form.Label>Ngày tạo</Form.Label>
+            <Form.Group controlId="formAuthor">
+              <Form.Label>Tên tác giả</Form.Label>
               <Form.Control
-                type="date"
-                name="date"
-                value={newBlog.date}
+                type="text"
+                placeholder="Nhập tên tác giả"
+                name="author_name"
+                value={newBlog.author_name}
                 onChange={handleChange}
               />
             </Form.Group>
-            <Form.Group controlId="formImages">
-              <Form.Label>Hình ảnh</Form.Label>
-              <Form.Control type="file" multiple onChange={handleImageChange} />
-              <div className="mt-2">
-                {newBlog.image.map((imgSrc, index) => (
-                  <img
-                    key={index}
-                    src={imgSrc}
-                    alt={`Hình ${index + 1}`}
-                    className="img-thumbnail m-1"
-                    style={{
-                      width: "100px",
-                      height: "100px",
-                      objectFit: "cover",
-                    }}
+
+            {newBlog.content.map((contentItem, index) => (
+              <div key={index} className="mb-3">
+                <Form.Group controlId={`formContentImage_${index}`}>
+                  <Form.Label>Hình ảnh nội dung {index + 1}</Form.Label>
+                  <Form.Control
+                    type="file"
+                    onChange={(e) => handleImageChange(e, index)}
                   />
-                ))}
+                  {contentItem.image && (
+                    <img
+                      src={contentItem.image}
+                      alt={`Hình ảnh ${index + 1}`}
+                      className="img-thumbnail mt-2"
+                      style={{
+                        width: "100px",
+                        height: "100px",
+                        objectFit: "cover",
+                      }}
+                    />
+                  )}
+                </Form.Group>
+                <Form.Group controlId={`formImageDescription_${index}`}>
+                  <Form.Label>Mô tả hình ảnh {index + 1}</Form.Label>
+                  <Form.Control
+                    type="text"
+                    placeholder="Nhập mô tả hình ảnh"
+                    name="image_description"
+                    value={contentItem.image_description}
+                    onChange={(e) => handleChange(e, index)}
+                  />
+                </Form.Group>
+                <Form.Group controlId={`formText_${index}`}>
+                  <Form.Label>Nội dung {index + 1}</Form.Label>
+                  <Form.Control
+                    as="textarea"
+                    rows={3}
+                    placeholder="Nhập nội dung"
+                    name="text"
+                    value={contentItem.text}
+                    onChange={(e) => handleChange(e, index)}
+                  />
+                </Form.Group>
               </div>
-            </Form.Group>
+            ))}
+            <Button variant="link" onClick={handleAddContent}>
+              Thêm nội dung (+)
+            </Button>
           </Form>
         </Modal.Body>
         <Modal.Footer>

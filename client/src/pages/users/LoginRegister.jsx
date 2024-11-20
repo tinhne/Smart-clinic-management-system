@@ -4,7 +4,6 @@ import { LoginApi, ResgisterApi } from "../../utils/AuthAPI/LoginRegisterAPI";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Cookies from "js-cookie"; // Thư viện quản lý Cookies
-import { ToastContainer } from "react-toastify";
 
 function LoginRegister() {
   const [isRegistering, setIsRegistering] = useState(false);
@@ -281,18 +280,7 @@ function LoginRegister() {
           )}
         </div>
       </div>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="light"
-      />
+      
     </div>
     
   );

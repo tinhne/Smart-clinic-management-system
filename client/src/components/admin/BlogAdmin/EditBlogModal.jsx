@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import PropTypes from "prop-types";
-import { Modal, Form, Button } from "react-bootstrap";
-import { ToastContainer, toast } from "react-toastify";
+import { Modal, Form, Button, Row, Col } from "react-bootstrap";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { updateBlog } from "../../../utils/BlogManagement/BlogManagement";
 
-// Helper function to convert a file to Base64
 const convertToBase64 = (file) => {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
@@ -18,21 +17,14 @@ const convertToBase64 = (file) => {
 const EditBlogModal = ({ show, onClose, onSave, blog }) => {
   const [editedBlog, setEditedBlog] = useState({
     title: "",
-    category: "",
-    content: "",
-    author: "",
-    date: "",
-    image: [],
+    category: [],
+    content: [],
+    author_name: "",
   });
 
   useEffect(() => {
     if (blog) {
-      // Convert `createdAt` date to `YYYY-MM-DD` format for `type="date"` input compatibility
-      const formattedDate = blog.createdAt
-        ? new Date(blog.createdAt).toISOString().split("T")[0]
-        : new Date().toISOString().split("T")[0];
-
-      setEditedBlog({ ...blog, date: formattedDate });
+      setEditedBlog({ ...blog });
     }
   }, [blog]);
 
@@ -41,134 +33,178 @@ const EditBlogModal = ({ show, onClose, onSave, blog }) => {
     setEditedBlog((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleImageChange = async (e) => {
-    const files = Array.from(e.target.files);
-    const base64Images = await Promise.all(
-      files.map((file) => convertToBase64(file))
-    );
-    setEditedBlog((prev) => ({ ...prev, image: base64Images }));
+  const handleCategoryChange = (category) => {
+    setEditedBlog((prev) => {
+      const isSelected = prev.category.includes(category);
+      const updatedCategory = isSelected
+        ? prev.category.filter((item) => item !== category)
+        : [...prev.category, category];
+      return { ...prev, category: updatedCategory };
+    });
+  };
+
+  const handleContentChange = (index, field, value) => {
+    const updatedContent = [...editedBlog.content];
+    updatedContent[index][field] = value;
+    setEditedBlog((prev) => ({ ...prev, content: updatedContent }));
+  };
+
+  const handleImageChange = async (index, file) => {
+    const base64Image = await convertToBase64(file);
+    handleContentChange(index, "image", base64Image);
+  };
+
+  const handleAddContent = () => {
+    setEditedBlog((prev) => ({
+      ...prev,
+      content: [...prev.content, { text: "", image: "", image_description: "" }],
+    }));
+  };
+
+  const handleRemoveContent = (index) => {
+    const updatedContent = [...editedBlog.content];
+    updatedContent.splice(index, 1);
+    setEditedBlog((prev) => ({ ...prev, content: updatedContent }));
   };
 
   const handleSave = async () => {
-    const updatedBlogData = {
-      ...editedBlog,
-      image: editedBlog.image,
-    };
+    if (
+      !editedBlog.title.trim() ||
+      !editedBlog.category.length ||
+      !editedBlog.author_name.trim()
+    ) {
+      toast.error("Vui lòng điền đầy đủ thông tin cần thiết!");
+      return;
+    }
 
     try {
-      await updateBlog(editedBlog._id, updatedBlogData);
-      toast.success("Blog updated successfully!");
-      onSave(updatedBlogData); // Notify parent to update UI
+      await updateBlog(editedBlog._id, editedBlog);
+      toast.success("Bài viết đã được cập nhật thành công!");
+      onSave(editedBlog);
       onClose();
     } catch (error) {
       console.error("Error updating blog:", error);
-      const errorMessage =
-        error.response && error.response.data && error.response.data.message
-          ? error.response.data.message
-          : "Failed to update blog. Please try again.";
-      toast.error(errorMessage);
+      toast.error("Không thể cập nhật bài viết. Vui lòng thử lại.");
     }
   };
 
   return (
-    <>
-      <Modal show={show} onHide={onClose}>
-        <Modal.Header closeButton>
-          <Modal.Title>Chỉnh sửa Bài viết</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <Form>
-            <Form.Group controlId="formTitle">
-              <Form.Label>Tiêu đề</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Nhập tiêu đề"
-                name="title"
-                value={editedBlog.title || ""}
-                onChange={handleChange}
-              />
-            </Form.Group>
-            <Form.Group controlId="formCategory">
-              <Form.Label>Danh mục</Form.Label>
-              <Form.Control
-                as="select"
-                name="category"
-                value={editedBlog.category || ""}
-                onChange={handleChange}
-              >
-                <option value="">Chọn danh mục</option>
-                <option value="Sức khỏe">Sức khỏe</option>
-                <option value="Dinh dưỡng">Dinh dưỡng</option>
-                <option value="Tập luyện">Tập luyện</option>
-                <option value="Tin tức">Tin tức</option>
-              </Form.Control>
-            </Form.Group>
-            <Form.Group controlId="formContent">
-              <Form.Label>Nội dung</Form.Label>
-              <Form.Control
-                as="textarea"
-                rows={3}
-                placeholder="Nhập nội dung"
-                name="content"
-                value={editedBlog.content || ""}
-                onChange={handleChange}
-              />
-            </Form.Group>
-            <Form.Group controlId="formAuthor">
-              <Form.Label>Tác giả</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Nhập tên tác giả"
-                name="author"
-                value={editedBlog.author_name || ""}
-                onChange={handleChange}
-              />
-            </Form.Group>
-            <Form.Group controlId="formDate">
-              <Form.Label>Ngày tạo</Form.Label>
-              <Form.Control
-                type="date"
-                name="date"
-                value={editedBlog.date || ""}
-                onChange={handleChange}
-              />
-            </Form.Group>
-            <Form.Group controlId="formImages">
-              <Form.Label>Hình ảnh</Form.Label>
-              <Form.Control type="file" multiple onChange={handleImageChange} />
-              <div className="mt-2">
-                {editedBlog.image && editedBlog.image.length > 0 ? (
-                  editedBlog.image.map((imgSrc, index) => (
+    <Modal show={show} onHide={onClose} size="lg">
+      <Modal.Header closeButton>
+        <Modal.Title>Chỉnh sửa Bài viết</Modal.Title>
+      </Modal.Header>
+      <Modal.Body>
+        <Form>
+          <Form.Group controlId="formTitle">
+            <Form.Label>Tiêu đề</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Nhập tiêu đề"
+              name="title"
+              value={editedBlog.title || ""}
+              onChange={handleChange}
+            />
+          </Form.Group>
+
+          <Form.Group controlId="formCategory">
+            <Form.Label>Danh mục</Form.Label>
+            <div>
+              {["Sức khỏe", "Dinh dưỡng", "Tập luyện", "Tin tức"].map(
+                (category, idx) => (
+                  <Form.Check
+                    key={idx}
+                    type="checkbox"
+                    label={category}
+                    checked={editedBlog.category.includes(category)}
+                    onChange={() => handleCategoryChange(category)}
+                  />
+                )
+              )}
+            </div>
+          </Form.Group>
+
+          <Form.Group controlId="formAuthor">
+            <Form.Label>Tác giả</Form.Label>
+            <Form.Control
+              type="text"
+              placeholder="Nhập tên tác giả"
+              name="author_name"
+              value={editedBlog.author_name || ""}
+              onChange={handleChange}
+            />
+          </Form.Group>
+
+          <Form.Label>Nội dung</Form.Label>
+          {editedBlog.content.map((item, index) => (
+            <div key={index} className="mb-3 border p-3 rounded">
+              <Row>
+                <Col md={12} className="mb-2">
+                  <Form.Control
+                    as="textarea"
+                    rows={2}
+                    placeholder="Nhập nội dung"
+                    value={item.text || ""}
+                    onChange={(e) =>
+                      handleContentChange(index, "text", e.target.value)
+                    }
+                  />
+                </Col>
+                <Col md={6}>
+                  <Form.Control
+                    type="file"
+                    onChange={(e) =>
+                      handleImageChange(index, e.target.files[0])
+                    }
+                  />
+                  {item.image && (
                     <img
-                      key={index}
-                      src={imgSrc}
-                      alt={`Hình ${index + 1}`}
-                      className="img-thumbnail m-1"
-                      style={{
-                        width: "100px",
-                        height: "100px",
-                        objectFit: "cover",
-                      }}
+                      src={item.image}
+                      alt={`Content ${index + 1}`}
+                      className="img-thumbnail mt-2"
+                      style={{ maxHeight: "100px" }}
                     />
-                  ))
-                ) : (
-                  <p>No image available</p>
-                )}
-              </div>
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={onClose}>
-            Hủy
+                  )}
+                </Col>
+                <Col md={6}>
+                  <Form.Control
+                    type="text"
+                    placeholder="Nhập mô tả ảnh"
+                    value={item.image_description || ""}
+                    onChange={(e) =>
+                      handleContentChange(
+                        index,
+                        "image_description",
+                        e.target.value
+                      )
+                    }
+                    className="mt-2"
+                  />
+                </Col>
+              </Row>
+              <Button
+                variant="danger"
+                size="sm"
+                className="mt-2"
+                onClick={() => handleRemoveContent(index)}
+              >
+                Xóa nội dung
+              </Button>
+            </div>
+          ))}
+          <Button variant="success" onClick={handleAddContent}>
+            Thêm nội dung
           </Button>
-          <Button variant="primary" onClick={handleSave}>
-            Lưu
-          </Button>
-        </Modal.Footer>
-      </Modal>
-      <ToastContainer />
-    </>
+        </Form>
+      </Modal.Body>
+      <Modal.Footer>
+        <Button variant="secondary" onClick={onClose}>
+          Hủy
+        </Button>
+        <Button variant="primary" onClick={handleSave}>
+          Lưu thay đổi
+        </Button>
+      </Modal.Footer>
+    </Modal>
   );
 };
 

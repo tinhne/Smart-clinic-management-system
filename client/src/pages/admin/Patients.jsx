@@ -4,7 +4,7 @@ import {
   createPatient,
   countUserByRole
 } from "../../utils/AuthAPI/AdminService";
-import { ToastContainer, toast } from "react-toastify";
+import {  toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../../style/adminStyle/patient.scss";
 import ModalDeletePatient from "../../components/admin/patient/ModalDeletePaitent";
@@ -54,7 +54,6 @@ function Patients() {
 
   return (
     <div className="patient-page">
-      <ToastContainer position="top-right" autoClose={5000} />
 
       {/* Nút mở modal tạo bệnh nhân */}
       <div className="add-patient-button">

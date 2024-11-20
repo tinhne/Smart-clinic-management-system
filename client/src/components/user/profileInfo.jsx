@@ -1,6 +1,6 @@
 import "../../style/userProfile/profileInfo.scss";
 import React, { useState, useEffect } from "react";
-import { toast, ToastContainer } from "react-toastify";
+import { toast,} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getUserById, editUser } from "../../utils/AuthAPI/userService";
 import jwt_decode from "jwt-decode";
@@ -80,7 +80,6 @@ const ContentProfile = () => {
 
   return (
     <main className="content">
-      <ToastContainer />
       <div className="profile">
         <div className="profile-content">
           {isEditing ? (

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Modal, Form, Button } from "react-bootstrap";
 import { createBlog } from "../../../utils/BlogManagement/BlogManagement";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 // Helper function to convert a file to Base64
@@ -86,7 +86,7 @@ const AddBlogModal = ({ show, onClose, onSave }) => {
       const createdBlog = await createBlog(newBlog);
       console.log("API response:", createdBlog);
 
-      if (createdBlog ) {
+      if (createdBlog) {
         onSave(createdBlog.blog);
         toast.success("Bài viết đã được tạo thành công!");
         onClose();
@@ -224,7 +224,7 @@ const AddBlogModal = ({ show, onClose, onSave }) => {
           </Button>
         </Modal.Footer>
       </Modal>
-      <ToastContainer />
+    
     </>
   );
 };

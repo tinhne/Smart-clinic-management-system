@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Modal, Button, Form, Row, Col } from "react-bootstrap";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "../../admin/Doctor/ModalCreateDoctor.scss";
 
@@ -394,7 +394,7 @@ const ModalCreateDoctor = ({
           </Form>
         </Modal.Body>
       </Modal>
-      <ToastContainer />
+     
     </>
   );
 };

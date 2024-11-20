@@ -5,7 +5,8 @@ import AddBlogModal from "../../components/admin/BlogAdmin/AddBlogModal";
 import EditBlogModal from "../../components/admin/BlogAdmin/EditBlogModal";
 import DeleteBlogModal from "../../components/admin/BlogAdmin/DeleteBlogModal";
 import { getBlog, deleteBlog } from "../../utils/BlogManagement/BlogManagement";
-import { toast } from "react-toastify";
+import { toast, ToastContainer  } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const BlogAdmin = () => {
   const [blogs, setBlogs] = useState([]);
@@ -15,12 +16,18 @@ const BlogAdmin = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState(null);
 
+  // Fetch blog data from API
   const fetchBlogs = async () => {
     try {
       const data = await getBlog();
-      setBlogs(data.blogs);
+      if (data?.blogs) {
+        setBlogs(data.blogs);
+      } else {
+        throw new Error("Dữ liệu blogs không hợp lệ");
+      }
     } catch (error) {
-      setError("Error fetching blogs");
+      console.error("Error fetching blogs:", error.message);
+      setError("Không thể lấy dữ liệu bài viết.");
     }
   };
 
@@ -28,54 +35,77 @@ const BlogAdmin = () => {
     fetchBlogs();
   }, []);
 
+  // Handle Modal Add
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
 
+  // Handle Modal Edit
   const handleShowEditModal = (blog) => {
     setSelectedBlog(blog);
     setShowEditModal(true);
   };
   const handleCloseEditModal = () => setShowEditModal(false);
 
+  // Handle Modal Delete
   const handleShowDeleteModal = (blog) => {
     setSelectedBlog(blog);
     setShowDeleteModal(true);
   };
   const handleCloseDeleteModal = () => setShowDeleteModal(false);
 
-  const handleSave = (newBlog) => {
-    setBlogs((prevBlogs) => [newBlog, ...prevBlogs]); // Add new blog at the start of the array
+  // Add a new blog
+  const handleSave = async (newBlog) => {
+    setBlogs((prevBlogs) => [newBlog, ...prevBlogs]);
+    await fetchBlogs();
     handleCloseModal();
   };
 
+  // Save edited blog
   const handleSaveEdit = (updatedBlog) => {
     setBlogs((prevBlogs) =>
       prevBlogs.map((blog) =>
         blog._id === updatedBlog._id ? updatedBlog : blog
       )
     );
-    setShowEditModal(false);
+    handleCloseEditModal();
   };
 
+  // Delete blog
   const handleDelete = async () => {
+    const toastId = toast.loading("Đang xóa bài viết...");
     try {
-      await deleteBlog(selectedBlog._id); // Call API to delete blog
+      console.log("Đang xóa bài viết với ID:", selectedBlog._id); // Kiểm tra ID
+      await deleteBlog(selectedBlog._id); // Xóa bài viết
+
       setBlogs((prevBlogs) =>
         prevBlogs.filter((blog) => blog._id !== selectedBlog._id)
       );
-      setShowDeleteModal(false);
-      toast.success(`Bài viết "${selectedBlog.title}" đã được xóa thành công!`);
+
+      toast.update(toastId, {
+        render: `Bài viết "${selectedBlog.title}" đã được xóa thành công!`,
+        type: "success",
+        isLoading: false,
+        autoClose: 3000,
+      });
+      handleCloseDeleteModal();
     } catch (error) {
-      console.error("Error deleting blog:", error);
-      toast.error("Xóa bài viết thất bại.");
+      console.error("Error during delete:", error); // Kiểm tra lỗi
+      toast.update(toastId, {
+        render: "Không thể xóa bài viết.",
+        type: "error",
+        isLoading: false,
+        autoClose: 3000,
+      });
     }
   };
 
   return (
     <div className="container mt-4">
+        <ToastContainer />
       <Button className="mb-3" variant="primary" onClick={handleShowModal}>
         Thêm Bài viết
       </Button>
+      {error && <p className="text-danger">{error}</p>}
       <Table striped bordered hover responsive>
         <thead className="thead-light">
           <tr>
@@ -84,14 +114,13 @@ const BlogAdmin = () => {
             <th>Nội dung</th>
             <th>Tác giả</th>
             <th>Ngày tạo</th>
-            <th>Hình ảnh</th>
             <th>Hành động</th>
           </tr>
         </thead>
         <tbody>
           {blogs.length > 0 ? (
             blogs
-              .filter((blog) => blog && blog._id) // Loại bỏ các phần tử không hợp lệ
+              .filter((blog) => blog?._id) // Ensure valid blogs
               .map((blog) => (
                 <tr key={blog._id}>
                   <td>{blog?.title || "Không xác định"}</td>
@@ -108,28 +137,13 @@ const BlogAdmin = () => {
                       whiteSpace: "nowrap",
                     }}
                   >
-                    {blog?.content || "Không có nội dung"}
+                    {blog?.content[0]?.text || "Không có nội dung"}
                   </td>
                   <td>{blog?.author_name || "Không rõ"}</td>
                   <td>
                     {blog?.createdAt
-                      ? new Date(blog.createdAt).toLocaleDateString("en-CA")
+                      ? new Date(blog.createdAt).toLocaleDateString("vi-VN")
                       : "N/A"}
-                  </td>
-                  <td>
-                    {blog?.image && blog.image.length > 0 ? (
-                      <img
-                        src={blog.image[0]}
-                        alt="Blog"
-                        style={{
-                          width: "100px",
-                          height: "100px",
-                          objectFit: "cover",
-                        }}
-                      />
-                    ) : (
-                      "Không có hình ảnh"
-                    )}
                   </td>
                   <td>
                     <Button
@@ -152,13 +166,14 @@ const BlogAdmin = () => {
               ))
           ) : (
             <tr>
-              <td colSpan="7" style={{ textAlign: "center" }}>
+              <td colSpan="6" style={{ textAlign: "center" }}>
                 Không có bài viết nào
               </td>
             </tr>
           )}
         </tbody>
       </Table>
+      {/* Pagination */}
       <ReactPaginate
         previousLabel={"Previous"}
         nextLabel={"Next"}
@@ -167,7 +182,6 @@ const BlogAdmin = () => {
         marginPagesDisplayed={2}
         pageRangeDisplayed={3}
         onPageChange={() => {}}
-        forcePage={1}
         containerClassName={"pagination justify-content-center"}
         pageClassName={"page-item"}
         pageLinkClassName={"page-link"}
@@ -180,12 +194,12 @@ const BlogAdmin = () => {
         activeClassName={"active"}
       />
 
+      {/* Modals */}
       <AddBlogModal
         show={showModal}
         onClose={handleCloseModal}
         onSave={handleSave}
       />
-
       {selectedBlog && (
         <EditBlogModal
           show={showEditModal}
@@ -194,7 +208,6 @@ const BlogAdmin = () => {
           blog={selectedBlog}
         />
       )}
-
       {selectedBlog && (
         <DeleteBlogModal
           show={showDeleteModal}
@@ -203,6 +216,7 @@ const BlogAdmin = () => {
           blogTitle={selectedBlog.title || "Không xác định"}
         />
       )}
+
     </div>
   );
 };

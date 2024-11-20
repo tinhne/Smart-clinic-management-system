@@ -3,7 +3,7 @@ import Modal from "react-bootstrap/Modal";
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { createDoctorSchedule } from "../../../utils/SchedualAPI/SchedualService";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const ModalCreateScheduleByDoctor = ({
@@ -174,7 +174,6 @@ const ModalCreateScheduleByDoctor = ({
           </form>
         </Modal.Body>
       </Modal>
-      <ToastContainer></ToastContainer>
     </div>
   );
 };

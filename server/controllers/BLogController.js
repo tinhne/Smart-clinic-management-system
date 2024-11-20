@@ -2,7 +2,7 @@ const blogService = require("../service/BlogService");
 
 exports.createBlog = async (req, res) => {
   try {
-    const { category, title, summary,  author_name, content } = req.body;
+    const { category, title, summary, author_name, content } = req.body;
 
     // Kiểm tra dữ liệu đầu vào
     if (!category || !title || !summary || !author_name || !content) {
@@ -17,7 +17,7 @@ exports.createBlog = async (req, res) => {
       category,
       title,
       summary,
-      
+
       author_name,
       content,
     });
@@ -43,13 +43,16 @@ exports.createBlog = async (req, res) => {
   }
 };
 
-
 exports.getAllBlogs = async (req, res) => {
   try {
-    const blogs = await blogService.getAllBlogs();
-    res.status(200).json({ blogs }); // Bọc `blogs` trong một đối tượng
+    const blogs = await blogService.getAllBlogs(); // Gọi hàm trong service
+    res.status(200).json({ success: true, blogs });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error(error.message);
+    res.status(500).json({
+      success: false,
+      message: "Không thể lấy danh sách blog",
+    });
   }
 };
 
@@ -65,23 +68,26 @@ exports.getBlogById = async (req, res) => {
 };
 
 exports.updateBlogById = async (req, res) => {
-  const { id } = req.params;
-  const { title, image, content, tags, category } = req.body;
-
   try {
-    const updatedBlog = await blogService.updateBlogById(id, {
-      title,
-      image,
-      content,
-      tags,
-      category,
-    });
+    const { id } = req.params; // Extract blog ID from the URL params
+    const updatedData = req.body; // Get updated data from the request body
 
-    res
-      .status(200)
-      .json({ message: "Blog updated successfully", blog: updatedBlog });
+    // Call the service to update the blog
+    const updatedBlog = await blogService.updateBlogById(id, updatedData);
+
+    // If no blog is found, return a 404 response
+    if (!updatedBlog) {
+      return res.status(404).json({ success: false, message: "Blog not found" });
+    }
+
+    // Respond with the updated blog
+    res.status(200).json({
+      success: true,
+      message: "Blog updated successfully",
+      data: updatedBlog,
+    });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ success: false, message: error.message });
   }
 };
 

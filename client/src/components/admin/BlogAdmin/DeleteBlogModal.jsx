@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, ToastContainer } from "react-bootstrap";
 
 const DeleteBlogModal = ({ show, onClose, onDelete, blogTitle }) => {
   return (

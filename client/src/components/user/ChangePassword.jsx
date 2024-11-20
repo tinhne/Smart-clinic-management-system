@@ -1,7 +1,9 @@
 import React, { useState } from "react";
 import "../../style/userProfile/profileSidebar.scss";
 import "../../style/userProfile/ChangePassword.scss";
-import { toast, ToastContainer } from "react-toastify";
+import { toast
+  
+} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { FaEye, FaEyeSlash } from "react-icons/fa"; // Import icons
 import { changePassword } from "../../utils/AuthAPI/userService";

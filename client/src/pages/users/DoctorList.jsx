@@ -22,7 +22,7 @@ const categories = [
   { name: "Truyền Nhiễm" },
   { name: "Xét Nghiệm" },
   { name: "Hô Hấp" },
-  { name: "Tâm Thần" },
+  { name: "Tâm Thần" }, 
   { name: "Sản Phụ Khoa" },
   { name: "Tai - Mũi - Họng" },
   { name: "Nội Thần Kinh" }

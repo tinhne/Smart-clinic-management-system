@@ -22,9 +22,10 @@ exports.createBlog = async (blogData) => {
 // Get all blogs
 exports.getAllBlogs = async () => {
   try {
-    return await Blog.find().populate("author_id", "username");
+    const blogs = await Blog.find().sort({ createdAt: -1 });
+    return blogs;
   } catch (error) {
-    throw new Error(`Error fetching blogs: ${error.message}`);
+    throw new Error("Lỗi khi lấy danh sách blog: " + error.message);
   }
 };
 
@@ -39,24 +40,17 @@ exports.getBlogById = async (id) => {
   }
 };
 
-exports.updateBlogById = async (id, blogData) => {
+exports.updateBlogById = async (id, updatedData) => {
   try {
-    // Ensure `image` is treated as an array, even if only one image is passed
-    if (blogData.image && !Array.isArray(blogData.image)) {
-      blogData.image = [blogData.image];
-    }
-
+    // Find the blog by ID and update it
     const updatedBlog = await Blog.findByIdAndUpdate(
       id,
-      { $set: blogData }, // Use `$set` to fully replace the image field
-      { new: true, runValidators: true }
+      { $set: updatedData }, // Update the fields with new data
+      { new: true, runValidators: true } // Return the updated blog and validate the input
     );
-
-    if (!updatedBlog) throw new Error("Blog not found");
     return updatedBlog;
   } catch (error) {
-    console.error("Error updating blog:", error);
-    throw new Error(`Error updating blog: ${error.message}`);
+    throw new Error(error.message || "Error updating blog");
   }
 };
 

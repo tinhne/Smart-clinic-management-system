@@ -27,26 +27,32 @@ exports.createMedicine = async (req, res) => {
 };
 
 exports.getAllMedicines = async (req, res) => {
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 5;
+  const page = parseInt(req.query.page) || 1; // Trang hiện tại
+  const limit = parseInt(req.query.limit) || 5; // Số lượng thuốc mỗi trang
+  const search = req.query.search || ""; // Từ khóa tìm kiếm (mặc định là rỗng)
 
   try {
-    const response = await getAllMedicines(page, limit);
+    // Gọi hàm lấy danh sách thuốc, truyền thêm tham số search
+    const response = await getAllMedicines(page, limit, search);
 
     if (response.success) {
       return res.status(200).json({
         success: true,
         message: "Lấy danh sách thuốc thành công",
-        medicines: response.medicines,
-        currentPage: response.currentPage,
-        totalPages: response.totalPages,
+        medicines: response.medicines, // Danh sách thuốc
+        currentPage: response.currentPage, // Trang hiện tại
+        totalPages: response.totalPages, // Tổng số trang
       });
     } else {
-      return res.status(404).json({ message: response.message });
+      return res.status(404).json({
+        success: false,
+        message: response.message,
+      });
     }
   } catch (error) {
     console.error("Error fetching medicines:", error);
     return res.status(500).json({
+      success: false,
       message: "Lỗi server khi lấy danh sách thuốc",
       error,
     });

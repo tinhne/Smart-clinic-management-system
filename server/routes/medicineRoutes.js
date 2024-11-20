@@ -12,11 +12,12 @@ const router = express.Router();
 router.post(
   "/create-medicine",
   authenticate,
-  authorize(["admin","doctor"]),
+  authorize(["admin", "doctor"]),
   createMedicine
 );
 
-router.get("/all-medicines", authenticate, getAllMedicines);
+router.get("/all-medicines", getAllMedicines);
+// đóng authenticate lại khi ko đăng nhập vẫn có thể xem thuốc
 
 router.put(
   "/update-medicine/:id",

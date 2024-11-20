@@ -13,14 +13,26 @@ exports.createMedicine = async (medicineData) => {
 };
 
 // lấy tất cả loại thuốc
-exports.getAllMedicines = async (page = 1, limit = 5) => {
+exports.getAllMedicines = async (page = 1, limit = 5, search = "") => {
   try {
     const skip = (page - 1) * limit;
-    const medicines = await Medication.find()
+
+    // Tạo điều kiện tìm kiếm
+    const query = search
+      ? {
+          $or: [
+            { name: { $regex: search, $options: "i" } }, // Tìm theo tên (không phân biệt hoa thường)
+            { description: { $regex: search, $options: "i" } }, // Tìm trong mô tả
+          ],
+        }
+      : {};
+
+    const medicines = await Medication.find(query)
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
-    const totalMedicines = await Medication.countDocuments();
+
+    const totalMedicines = await Medication.countDocuments(query);
     const totalPages = Math.ceil(totalMedicines / limit);
 
     return {

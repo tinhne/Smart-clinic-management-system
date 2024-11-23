@@ -36,11 +36,11 @@
   max-width: 1369px;
   margin: 20px auto;
   padding: 0 20px;
-  min-height: 850px;
+  gap: 0 10px;
   .articles {
-    flex: 3;
+    
     margin-right: 20px;
-    max-width: 950px;
+    width: 70%;
 
     .article {
       background-color: #fff;
@@ -107,7 +107,8 @@
     }
   }
 
-  .sidebar {
+  .sidebar-blog {
+    height: 100%;
     flex: 1;
     position: -webkit-sticky; /* For Safari */
     position: sticky;
@@ -175,8 +176,21 @@
       padding: 20px;
       margin-bottom: 20px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-
+    
+      span {
+        display: block;
+        font-family: Inter;
+        font-size: 17px;
+        font-weight: 500;
+        line-height: 20.57px;
+        text-align: left;
+        margin-bottom: 10px;
+        padding-bottom: 5px; /* Optional, for some space at the bottom */
+        border-bottom: 2px solid #00ff00; /* Green underline */
+      }
+    
       p {
+        
         font-family: Inter;
         font-size: 17px;
         font-weight: 500;
@@ -185,18 +199,20 @@
         margin-bottom: 10px;
         padding-bottom: 5px;
       }
+    
       .most-blog {
         display: flex;
+    
         .most-viewed-img {
           margin-right: 20px;
-
+    
           img {
             width: 100px;
             height: auto;
             object-fit: cover;
           }
         }
-
+    
         .most-viewed-info {
           .title {
             font-family: Inter;
@@ -204,6 +220,7 @@
             font-weight: 500;
             line-height: 18px;
           }
+    
           .view {
             font-family: Inter;
             font-size: 12px;
@@ -213,5 +230,6 @@
         }
       }
     }
+    
   }
 }

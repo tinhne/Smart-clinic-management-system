@@ -47,7 +47,7 @@ const Blog = () => {
       <main className="main-content">
         <Outlet context={{ selectedCategory }} /> {/* Pass selectedCategory to Outlet */}
 
-        <aside className="sidebar">
+        <aside className="sidebar-blog">
           <section className="categories">
             <p>Danh Mục</p>
             <ul>
@@ -66,7 +66,7 @@ const Blog = () => {
           </section>
 
           <section className="most-viewed">
-            <p>Xem nhiều nhất</p>
+            <span>Xem nhiều nhất</span>
             {isLoading ? ( // Display loading spinner if data is loading
               <div className="loading">Đang tải...</div>
             ) : (

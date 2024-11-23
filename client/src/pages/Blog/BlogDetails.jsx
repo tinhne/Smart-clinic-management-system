@@ -18,7 +18,11 @@ const BlogDetails = () => {
   }, [id]);
 
   if (!blog) {
-    return <p className="loading">Loading...</p>;
+    return <p className="loading" 
+    style={{
+        "width":"70%"
+    }}
+    >Loading...</p>;
   }
 
   return (

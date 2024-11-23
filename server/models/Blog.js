@@ -30,11 +30,14 @@ const blogSchema = new mongoose.Schema(
           },
           text: {
             type: String, // Nội dung văn bản
-            required: true,
           },
         },
       ],
       required: true,
+    },
+    views: {
+      type: Number,
+      default: 0, // Giá trị mặc định là 0
     },
   },
   { timestamps: true, versionKey: false }

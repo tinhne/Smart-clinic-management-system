@@ -36,11 +36,11 @@
   max-width: 1369px;
   margin: 20px auto;
   padding: 0 20px;
-
+  min-height: 850px;
   .articles {
     flex: 3;
     margin-right: 20px;
-    max-width:950px;
+    max-width: 950px;
 
     .article {
       background-color: #fff;
@@ -48,8 +48,6 @@
       padding: 20px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       display: flex;
-      
-
       img {
         width: 200px;
         height: 200px;
@@ -103,16 +101,7 @@
           font-weight: 300;
           line-height: 18.15px;
           text-align: left;
-          padding: 20px;
-        }
-        .p5 {
-          font-family: Inter;
-          font-size: 16px;
-          font-weight: 300;
-          line-height: 18.15px;
-          text-align: left;
-          color: #000000;
-          padding: 0 20px 20px 20px;
+          padding: 40px;
         }
       }
     }
@@ -120,12 +109,17 @@
 
   .sidebar {
     flex: 1;
+    position: -webkit-sticky; /* For Safari */
+    position: sticky;
+    top: 20px; /* Set the top distance from the viewport */
+    align-self: flex-start; /* Ensure it stays at the top of the container */
 
     .categories {
       background-color: #fff;
       padding: 20px;
       margin-bottom: 20px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 8px;
 
       p {
         font-family: Inter;
@@ -140,20 +134,36 @@
 
       ul {
         list-style: none;
+        padding-left: 0;
 
         li {
           margin-bottom: 10px;
 
-          a {
+          button {
             text-decoration: none;
-            color: #000000;
-            font-size: 15px;
-            font-weight: 400;
+            color: #333;
+            font-size: 16px;
+            font-weight: 500;
             line-height: 18.15px;
+            padding: 10px 20px;
+            width: 100%;
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
             text-align: left;
+            transition: all 0.3s ease;
 
             &:hover {
-              color: #1974dc;
+              background-color: #1974dc;
+              color: #fff;
+              border-color: #1974dc;
+            }
+
+            &.active {
+              background-color: #1974dc;
+              color: #fff;
+              border-color: #1974dc;
             }
           }
         }
@@ -173,18 +183,17 @@
         line-height: 20.57px;
         text-align: left;
         margin-bottom: 10px;
-        border-bottom: 2px solid #00ff00;
         padding-bottom: 5px;
       }
       .most-blog {
         display: flex;
         .most-viewed-img {
-          margin-right: 20px; 
+          margin-right: 20px;
 
           img {
-            width: 100px; 
-            height: auto; 
-            object-fit: cover; 
+            width: 100px;
+            height: auto;
+            object-fit: cover;
           }
         }
 
@@ -192,16 +201,14 @@
           .title {
             font-family: Inter;
             font-size: 15px;
-            font-weight: 400;
+            font-weight: 500;
             line-height: 18px;
-            margin: 0 0 5px;
-            border: none;
           }
-
           .view {
-            font-size: 14px;
-            color: #999;
-            border: none;
+            font-family: Inter;
+            font-size: 12px;
+            font-weight: 400;
+            color: #888;
           }
         }
       }

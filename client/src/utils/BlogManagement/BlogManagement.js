@@ -15,5 +15,13 @@ const updateBlog = (id, data) => {
 const deleteBlog = (id) => {
   return axios.delete(`/api/blog/delete-blog-by-id/${id}`);
 };
-
-export { getBlog, createBlog, updateBlog, deleteBlog };
+const updateViewBlog=(id)=>{
+  return axios.post(`/api/blog/increment-views/${id}`);
+}
+const getBlogById=(id)=>{
+  return axios.get(`/api/blog/get-blog-by-id/${id}`);
+};
+const getBlogByCategory = (category) => {
+  return axios.post('/api/blog/tin-tuc/the-loai', { category: category });
+};
+export { getBlog, createBlog, updateBlog, deleteBlog,updateViewBlog,getBlogById,getBlogByCategory };

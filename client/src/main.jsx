@@ -28,8 +28,10 @@ import ServiceClinic from "./pages/users/ServiceClinic.jsx";
 import ClinicInfo from "./pages/users/ClinicInfor.jsx";
 import ViewPatientRecord from "./pages/Doctor/ViewPatientRecord.jsx";
 import ViewSchedule from "./pages/Doctor/ViewSchedule.jsx";
-import ScheduleManage from "../src/pages/admin/ScheduleManage.jsx"
-import BlogAdmin from "../src/pages/admin/BlogAdmin.jsx"
+import ScheduleManage from "../src/pages/admin/ScheduleManage.jsx";
+import BlogAdmin from "../src/pages/admin/BlogAdmin.jsx";
+import BlogDetails from "./pages/Blog/BlogDetails.jsx";
+import BlogList from "./pages/Blog/BLogList.jsx";
 const router = createBrowserRouter([
   {
     path: "/login-register",
@@ -89,8 +91,8 @@ const router = createBrowserRouter([
           },
           {
             path: "/thong-tin/ho-so-benh-nhan",
-            element: <ViewPatientRecord/>
-          }
+            element: <ViewPatientRecord />,
+          },
         ],
       },
     ],
@@ -151,16 +153,15 @@ const router = createBrowserRouter([
     path: "/tin-tuc/",
     element: <Blog />,
     children: [
-      {
-        index: true,
-        element: <Blog />,
-      },
+      { index: true, element: <BlogList /> },
+      { path: "", element: <BlogList /> },
+      { path: "bai-viet/:id", element: <BlogDetails /> },
     ],
   },
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-  <RouterProvider router={router} />
+    <RouterProvider router={router} />
   </React.StrictMode>
 );

@@ -32,11 +32,11 @@ exports.getAllBlogs = async () => {
 // Get blog by ID
 exports.getBlogById = async (id) => {
   try {
-    const blog = await Blog.findById(id).populate("author_id", "username");
-    if (!blog) throw new Error("Blog not found");
+    const blog = await Blog.findById(id);
     return blog;
   } catch (error) {
-    throw new Error(`Error fetching blog: ${error.message}`);
+    console.error("Error in blogService - findBlogById:", error);
+    throw error; // Ném lỗi để controller xử lý
   }
 };
 
@@ -61,5 +61,14 @@ exports.deleteBlogById = async (id) => {
     if (!deletedBlog) throw new Error("Blog not found");
   } catch (error) {
     throw new Error(`Error deleting blog: ${error.message}`);
+  }
+};
+// Trong service layer
+exports.getBlogsByCategory = async (category) => {
+  try {
+    // Tìm các bài viết có category tương ứng
+    return await Blog.find({ category: category });
+  } catch (error) {
+    throw new Error("Lỗi khi lấy bài viết theo category.");
   }
 };

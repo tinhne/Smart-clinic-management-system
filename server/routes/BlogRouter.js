@@ -10,14 +10,9 @@ router.post(
   authorize("admin"),
   blogController.createBlog
 );
-router.get("/get-all-blogs", authenticate, blogController.getAllBlogs);
-
-router.get(
-  "/get-blog-by-id/:id",
-  authenticate,
-  authorize("admin"),
-  blogController.getBlogById
-);
+router.get("/get-all-blogs", blogController.getAllBlogs);
+router.post('/tin-tuc/the-loai', blogController.getBlogsByCategory);
+router.get("/get-blog-by-id/:id", blogController.getBlogById);
 
 router.put(
   "/update-blog-by-id/:id",
@@ -32,5 +27,6 @@ router.delete(
   authorize("admin"),
   blogController.deleteBlogById
 );
+router.post("/increment-views/:id", blogController.UpdateViewsBlog);
 
 module.exports = router;

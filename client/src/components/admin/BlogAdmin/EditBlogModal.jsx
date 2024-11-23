@@ -20,6 +20,7 @@ const EditBlogModal = ({ show, onClose, onSave, blog }) => {
     category: [],
     content: [],
     author_name: "",
+    summary: "",
   });
 
   useEffect(() => {
@@ -33,14 +34,11 @@ const EditBlogModal = ({ show, onClose, onSave, blog }) => {
     setEditedBlog((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleCategoryChange = (category) => {
-    setEditedBlog((prev) => {
-      const isSelected = prev.category.includes(category);
-      const updatedCategory = isSelected
-        ? prev.category.filter((item) => item !== category)
-        : [...prev.category, category];
-      return { ...prev, category: updatedCategory };
-    });
+  const handleCategoryChange = (e) => {
+    const selectedOptions = Array.from(e.target.selectedOptions).map(
+      (option) => option.value
+    );
+    setEditedBlog((prev) => ({ ...prev, category: selectedOptions }));
   };
 
   const handleContentChange = (index, field, value) => {
@@ -57,7 +55,10 @@ const EditBlogModal = ({ show, onClose, onSave, blog }) => {
   const handleAddContent = () => {
     setEditedBlog((prev) => ({
       ...prev,
-      content: [...prev.content, { text: "", image: "", image_description: "" }],
+      content: [
+        ...prev.content,
+        { text: "", image: "", image_description: "" },
+      ],
     }));
   };
 
@@ -68,26 +69,29 @@ const EditBlogModal = ({ show, onClose, onSave, blog }) => {
   };
 
   const handleSave = async () => {
+    // Kiểm tra các trường bắt buộc
     if (
-      !editedBlog.title.trim() ||
+      !editedBlog.title?.trim() ||
       !editedBlog.category.length ||
-      !editedBlog.author_name.trim()
+      !editedBlog.author_name?.trim() ||
+      !editedBlog.summary?.trim()
     ) {
       toast.error("Vui lòng điền đầy đủ thông tin cần thiết!");
       return;
     }
-
+  
     try {
+      // Gọi API cập nhật
       await updateBlog(editedBlog._id, editedBlog);
       toast.success("Bài viết đã được cập nhật thành công!");
       onSave(editedBlog);
-      onClose();
+      onClose(); // Đóng modal
     } catch (error) {
       console.error("Error updating blog:", error);
       toast.error("Không thể cập nhật bài viết. Vui lòng thử lại.");
     }
   };
-
+  
   return (
     <Modal show={show} onHide={onClose} size="lg">
       <Modal.Header closeButton>
@@ -108,19 +112,37 @@ const EditBlogModal = ({ show, onClose, onSave, blog }) => {
 
           <Form.Group controlId="formCategory">
             <Form.Label>Danh mục</Form.Label>
-            <div>
+            <Form.Select
+              name="category"
+              value={editedBlog.category[0] || ""} // Chỉ hiển thị danh mục đầu tiên
+              onChange={(e) =>
+                setEditedBlog((prev) => ({
+                  ...prev,
+                  category: [e.target.value],
+                }))
+              }
+            >
+              <option value="">Chọn danh mục</option>
               {["Sức khỏe", "Dinh dưỡng", "Tập luyện", "Tin tức"].map(
                 (category, idx) => (
-                  <Form.Check
-                    key={idx}
-                    type="checkbox"
-                    label={category}
-                    checked={editedBlog.category.includes(category)}
-                    onChange={() => handleCategoryChange(category)}
-                  />
+                  <option key={idx} value={category}>
+                    {category}
+                  </option>
                 )
               )}
-            </div>
+            </Form.Select>
+          </Form.Group>
+
+          <Form.Group controlId="formSummary">
+            <Form.Label>Tóm tắt</Form.Label>
+            <Form.Control
+              as="textarea"
+              rows={3}
+              placeholder="Nhập tóm tắt"
+              name="summary"
+              value={editedBlog.summary || ""}
+              onChange={handleChange}
+            />
           </Form.Group>
 
           <Form.Group controlId="formAuthor">

@@ -5,7 +5,7 @@ import {
   countUserByRole
 } from "../../utils/AuthAPI/AdminService"; // Import createDoctor
 import "../../style/adminStyle/doctors.scss";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import ModalDeleteDoctor from "../../components/admin/Doctor/ModalDeleteDoctor";
 import ModalEditDoctor from "../../components/admin/Doctor/ModalUpdateDoctor";
@@ -136,6 +136,7 @@ const Doctors = (props) => {
               </tbody>
             </table>
           )}
+          <ToastContainer></ToastContainer>
         </div>
 
         {/* Nút phân trang */}

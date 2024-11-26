@@ -139,7 +139,7 @@ exports.createPatient = async (req, res) => {
   // Chắc chắn rằng ảnh là một chuỗi Base64 hợp lệ
   const imageUrl = patientImage.replace(/^data:image\/\w+;base64,/, "");
 
-  if (!isValidBase64(imageUrl)) {
+  if (!isBase64(imageUrl)) {
     return res.status(400).json({ message: "Dữ liệu ảnh không hợp lệ." });
   }
 

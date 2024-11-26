@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Modal, Button, Form } from "react-bootstrap";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const ModalCreateMedicine = ({
@@ -54,18 +54,24 @@ const ModalCreateMedicine = ({
       medicineQuantity,
       medicalImage,
     } = formData;
-
-    if (
-      !medicineName ||
-      !medicineDes ||
-      !unit ||
-      !medicinePrice ||
-      !medicineQuantity
-    ) {
+  
+    if (!medicineName || !medicineDes || !unit || !medicinePrice || !medicineQuantity) {
       toast.error("Vui lòng điền đầy đủ thông tin.");
       return;
     }
-
+  
+    // Kiểm tra đơn giá có phải là số dương không
+    if (isNaN(medicinePrice) || parseFloat(medicinePrice) <= 0) {
+      toast.error("Đơn giá không hợp lệ.");
+      return;
+    }
+  
+    // Kiểm tra số lượng có phải là số dương không
+    if (isNaN(medicineQuantity) || parseInt(medicineQuantity, 10) <= 0) {
+      toast.error("Số lượng không hợp lệ.");
+      return;
+    }
+  
     try {
       const newMedicine = {
         name: medicineName,
@@ -75,7 +81,7 @@ const ModalCreateMedicine = ({
         quantity_available: parseInt(medicineQuantity, 10),
         medicalImage: medicalImage ? await convertToBase64(medicalImage) : null,
       };
-
+  
       const response = await addNewMedicine(newMedicine);
       if (response.success) {
         toast.success("Thêm thuốc thành công!");
@@ -97,6 +103,7 @@ const ModalCreateMedicine = ({
       toast.error("Lỗi khi kết nối tới server.");
     }
   };
+  
 
   const convertToBase64 = (file) => {
     return new Promise((resolve, reject) => {
@@ -112,6 +119,8 @@ const ModalCreateMedicine = ({
   };
 
   return (
+    <>
+   
     <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>Thêm Thuốc Mới</Modal.Title>
@@ -203,6 +212,8 @@ const ModalCreateMedicine = ({
         </Form>
       </Modal.Body>
     </Modal>
+            <ToastContainer></ToastContainer>
+    </>
   );
 };
 

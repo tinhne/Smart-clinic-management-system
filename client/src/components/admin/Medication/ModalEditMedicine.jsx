@@ -28,15 +28,15 @@ const ModalEditMedicine = ({
         medicineName: editingMedicine.name || "",
         medicineDes: editingMedicine.description || "",
         unit: editingMedicine.unit_of_caculation || "vien",
-        medicinePrice: editingMedicine.price
-          ? editingMedicine.price.toString()
+        medicinePrice: editingMedicine?.price
+          ? editingMedicine?.price?.toString()
           : "",
-        medicineQuantity: editingMedicine.quantity_available
-          ? editingMedicine.quantity_available.toString()
+        medicineQuantity: editingMedicine?.quantity_available
+          ? editingMedicine?.quantity_available?.toString()
           : "",
-        medicalImage: editingMedicine.medicalImage || null,
+        medicalImage: editingMedicine?.medicalImage || null,
       });
-      setImagePreview(editingMedicine.medicalImage);
+      setImagePreview(editingMedicine?.medicalImage);
     }
   }, [editingMedicine]);
 
@@ -82,6 +82,18 @@ const ModalEditMedicine = ({
       !medicineQuantity
     ) {
       toast.error("Vui lòng điền đầy đủ thông tin.");
+      return;
+    }
+
+    // Kiểm tra đơn giá có phải là số dương không
+    if (isNaN(medicinePrice) || parseFloat(medicinePrice) <= 0) {
+      toast.error("Đơn giá không hợp lệ.");
+      return;
+    }
+
+    // Kiểm tra số lượng có phải là số dương không
+    if (isNaN(medicineQuantity) || parseInt(medicineQuantity, 10) <= 0) {
+      toast.error("Số lượng không hợp lệ.");
       return;
     }
 

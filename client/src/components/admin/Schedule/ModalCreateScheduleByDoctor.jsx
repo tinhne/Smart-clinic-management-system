@@ -3,7 +3,7 @@ import Modal from "react-bootstrap/Modal";
 import PropTypes from "prop-types";
 import { useState } from "react";
 import { createDoctorSchedule } from "../../../utils/SchedualAPI/SchedualService";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const ModalCreateScheduleByDoctor = ({
@@ -17,14 +17,14 @@ const ModalCreateScheduleByDoctor = ({
   const [endTime, setEndTime] = useState("");
   const [slotDuration, setSlotDuration] = useState(30);
 
+  // Validate time in hh:mm format
   const validateTimeFormat = (time) => {
-    // Regular expression for validating HH:mm format
     const timePattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
     return timePattern.test(time);
   };
 
+  // Validate date in dd-mm-yyyy format
   const validateDateFormat = (date) => {
-    // Regular expression for validating DD-MM-YYYY format
     const datePattern = /^(0[1-9]|[12][0-9]|3[01])-(0[1-9]|1[0-2])-\d{4}$/;
     return datePattern.test(date);
   };
@@ -43,16 +43,18 @@ const ModalCreateScheduleByDoctor = ({
     }
 
     // Validate time
-    if (!validateTimeFormat(startTime) || !validateTimeFormat(endTime)) {
-      toast.error(
-        "Thời gian phải theo định dạng hh:mm và nằm trong khung 24 giờ!"
-      );
+    if (!startTime || !validateTimeFormat(startTime)) {
+      toast.error("Thời gian bắt đầu phải theo định dạng hh:mm và nằm trong khung 24 giờ!");
+      return;
+    }
+    if (!endTime || !validateTimeFormat(endTime)) {
+      toast.error("Thời gian kết thúc phải theo định dạng hh:mm và nằm trong khung 24 giờ!");
       return;
     }
 
-    // Validate that slot duration is not less than 10 minutes
+    // Validate slot duration
     if (slotDuration < 10) {
-      toast.error("Thời Gian Mỗi Slot không được nhỏ hơn 10 phút!");
+      toast.error("Thời gian mỗi slot không được nhỏ hơn 10 phút!");
       return;
     }
 
@@ -115,6 +117,7 @@ const ModalCreateScheduleByDoctor = ({
                 Vui lòng nhập ngày theo định dạng dd-mm-yyyy.
               </small>
             </div>
+
             <div className="mb-3">
               <label htmlFor="startTime" className="form-label">
                 Thời Gian Bắt Đầu (hh:mm)
@@ -132,6 +135,7 @@ const ModalCreateScheduleByDoctor = ({
                 Vui lòng nhập thời gian theo định dạng 24 giờ (hh:mm).
               </small>
             </div>
+
             <div className="mb-3">
               <label htmlFor="endTime" className="form-label">
                 Thời Gian Kết Thúc (hh:mm)
@@ -149,6 +153,7 @@ const ModalCreateScheduleByDoctor = ({
                 Vui lòng nhập thời gian theo định dạng 24 giờ (hh:mm).
               </small>
             </div>
+
             <div className="mb-3">
               <label htmlFor="slotDuration" className="form-label">
                 Thời Gian Mỗi Slot (phút)
@@ -163,6 +168,7 @@ const ModalCreateScheduleByDoctor = ({
                 required
               />
             </div>
+
             <div className="d-flex justify-content-end">
               <Button type="submit" variant="primary" className="me-2">
                 Tạo Lịch
@@ -174,6 +180,7 @@ const ModalCreateScheduleByDoctor = ({
           </form>
         </Modal.Body>
       </Modal>
+      <ToastContainer />
     </div>
   );
 };
@@ -183,7 +190,7 @@ ModalCreateScheduleByDoctor.propTypes = {
   show: PropTypes.bool.isRequired,
   handleClose: PropTypes.func.isRequired,
   doctor: PropTypes.object,
-  onScheduleCreated: PropTypes.func.isRequired, // Add prop type for the callback
+  onScheduleCreated: PropTypes.func.isRequired,
 };
 
 export default ModalCreateScheduleByDoctor;

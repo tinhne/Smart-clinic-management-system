@@ -2,7 +2,7 @@ import PropTypes from "prop-types"; // Import PropTypes
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { deletedUser } from "../../../utils/AuthAPI/AdminService";
-import {  toast } from 'react-toastify';
+import {  toast,ToastContainer } from 'react-toastify';
 
 const ModalDeleteUser = (props) => {
   const { showDeleteModal, setShowDeleteModal, selectedUser, fetchPatients } = props;
@@ -24,6 +24,7 @@ const ModalDeleteUser = (props) => {
     }
     
   return (
+    <>
     <Modal show={showDeleteModal} onHide={handleClose}>
       <Modal.Header closeButton>
         <Modal.Title>Xác nhận xóa người dùng</Modal.Title>
@@ -47,6 +48,9 @@ const ModalDeleteUser = (props) => {
         </Button>
       </Modal.Footer>
     </Modal>
+      <ToastContainer></ToastContainer>
+     
+      </>
   );
 };
 

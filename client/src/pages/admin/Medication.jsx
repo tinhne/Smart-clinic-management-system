@@ -97,11 +97,15 @@ function Medication() {
               {medicines.length > 0 ? (
                 medicines.map((medicine) => (
                   <tr key={medicine._id}>
-                    <td>{medicine.name}</td>
-                    <td>{medicine.description}</td>
-                    <td>{medicine.unit_of_caculation}</td>
-                    <td>{medicine.price.toLocaleString()} VND</td>
-                    <td>{medicine.quantity_available}</td>
+                    <td>{medicine.name || "Không xác định"}</td>
+                    <td>{medicine.description || "Không xác định"}</td>
+                    <td>{medicine.unit_of_caculation || "Không rõ"}</td>
+                    <td>
+                      {medicine.price !== null && medicine.price !== undefined
+                        ? medicine.price.toLocaleString() + " VND"
+                        : "N/A"}
+                    </td>
+                    <td>{medicine.quantity_available || 0}</td>
                     <td>
                       <button
                         className="btn btn-edit"

@@ -57,21 +57,22 @@ const ModalCreateDoctor = ({
 
   const handleCertificateChange = (e) => {
     const files = Array.from(e.target.files);
+
+    // Chuyển đổi mỗi file thành base64
     const previews = files.map((file) => {
       const reader = new FileReader();
-      reader.readAsDataURL(file); // Chuyển đổi tệp thành base64
       return new Promise((resolve) => {
-        reader.onloadend = () => resolve(reader.result); // Lưu giá trị base64
+        reader.onloadend = () => resolve(reader.result);
+        reader.readAsDataURL(file);
       });
     });
 
-    // Sau khi tất cả các tệp chứng chỉ được chuyển đổi thành base64
-    Promise.all(previews).then((images) => {
-      console.log("File previews:", images); // Kiểm tra hình ảnh xem trước
-      setCertificatePreview(images); // Lưu hình ảnh xem trước
+    // Xử lý khi tất cả ảnh đã được chuyển đổi
+    Promise.all(previews).then((newImages) => {
+      setCertificatePreview((prev) => [...prev, ...newImages]); // Thêm ảnh mới vào danh sách xem trước
       setFormData((prev) => ({
         ...prev,
-        certifications: images, // Lưu chứng chỉ dưới dạng base64
+        certifications: [...prev.certifications, ...newImages], // Thêm ảnh mới vào dữ liệu form
       }));
     });
   };
@@ -90,12 +91,28 @@ const ModalCreateDoctor = ({
       specialization,
       address,
       description,
-      experience, // <-- Include experience here
+      experience,
       doctorImage,
       certifications,
       password,
     } = formData;
 
+    // Name validation: Ensure no numbers
+    const nameRegex = /^[a-zA-ZÀ-ỹ\s]+$/;
+    if (!nameRegex.test(firstName) || !nameRegex.test(lastName)) {
+      toast.error("Họ và tên không được chứa số hoặc ký tự không hợp lệ.");
+      return;
+    }
+
+    // Date of birth validation: Ensure date is in the past
+    const today = new Date();
+    const birthDate = new Date(dob);
+    if (birthDate >= today) {
+      toast.error("Ngày sinh phải nhỏ hơn ngày hiện tại.");
+      return;
+    }
+
+    // General validation for required fields
     if (
       !title ||
       !firstName ||
@@ -107,7 +124,7 @@ const ModalCreateDoctor = ({
       !specialization ||
       !address ||
       !description ||
-      !experience || // <-- Add validation for experience here
+      !experience ||
       !doctorImage ||
       !password
     ) {
@@ -127,7 +144,7 @@ const ModalCreateDoctor = ({
         specialties: specialization.split(",").map((spec) => spec.trim()),
         address,
         description,
-        experience, // <-- Send experience to backend
+        experience,
         doctorImage,
         certifications,
         password,
@@ -148,7 +165,7 @@ const ModalCreateDoctor = ({
           specialization: "",
           address: "",
           description: "",
-          experience: "", // Reset experience as well
+          experience: "",
           doctorImage: null,
           certifications: [],
           password: "",
@@ -175,7 +192,7 @@ const ModalCreateDoctor = ({
             <Row>
               <Col md={6}>
                 <Form.Group controlId="formTitle">
-                  <Form.Label>Tiêu đề</Form.Label>
+                  <Form.Label>Chức danh</Form.Label>
                   <Form.Control
                     as="select"
                     name="title"
@@ -183,7 +200,7 @@ const ModalCreateDoctor = ({
                     onChange={handleInputChange}
                     required
                   >
-                    <option value="">Chọn tiêu đề</option>
+                    <option value="">Chọn chức danh</option>
                     <option value="Bác sĩ">GS</option>
                     <option value="Giáo sư">PGS</option>
                     <option value="Tiến sĩ">TS</option>
@@ -358,6 +375,7 @@ const ModalCreateDoctor = ({
             </Form.Group>
 
             {/* Ảnh chứng nhận */}
+
             <Form.Group controlId="formcertifications" className="mt-3">
               <Form.Label>Ảnh chứng nhận</Form.Label>
               <Form.Control
@@ -371,17 +389,7 @@ const ModalCreateDoctor = ({
                 <div className="certificate-preview mt-2">
                   {certificatePreview.map((src, index) => (
                     <div key={index} className="certificate-item">
-                      <img
-                        src={src}
-                        alt={`Certificate ${index}`}
-                        style={{
-                          width: "200px",
-                          height: "200px",
-                          objectFit: "cover",
-                          borderRadius: "5px",
-                          border: "1px solid #ddd",
-                        }}
-                      />
+                      <img src={src} alt={`Certificate ${index}`} />
                     </div>
                   ))}
                 </div>
@@ -394,7 +402,6 @@ const ModalCreateDoctor = ({
           </Form>
         </Modal.Body>
       </Modal>
-     
     </>
   );
 };

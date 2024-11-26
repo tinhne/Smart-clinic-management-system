@@ -62,7 +62,7 @@ function NewChatBot() {
           {
             id: "1",
             message:
-              "Chào bạn, tôi là trợ lý ảo của Phòng khám - Đa Khoa Chất Lượng Cao❤️❤️. Tên bạn là gì ạ?",
+              "Chào bạn, tôi là trợ lý ảo của Phòng khám❤️❤️. Tên bạn là gì ạ?",
             trigger: "2",
           },
           { id: "2", user: true, trigger: "3" },

@@ -272,70 +272,71 @@
       &.expanded {
         display: grid;
         grid-template-columns: repeat(7, 1fr); // Lưới 8 cột
-        grid-gap: 20px;
+        grid-gap: 5px;
         white-space: normal; // Cho phép các thẻ xuống hàng
         max-height: none; // Loại bỏ giới hạn chiều cao
         overflow: hidden; // Loại bỏ thanh cuộn
       }
       .specialty-card {
-        background-color: #fff;
-        border-radius: 12px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #ffffff;
+        border-radius: 16px; // Bo góc lớn hơn
+        box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1); // Bóng mờ tinh tế
         text-align: center;
         padding: 20px;
-        min-width: 150px;
-        transition: transform 0.3s ease-in-out;
+        min-width: 200px;
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
         display: inline-block;
-        cursor: pointer;
+        cursor: pointer; // Thêm hiệu ứng click
+      
         &:hover {
-          transform: translateY(-5px);
-          span {
-            color: blue; // Đổi màu chữ của thẻ <p> thành màu xanh
-          }
+          transform: translateY(-10px); // Thẻ nhô lên khi hover
+          box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); // Tăng độ mờ
         }
-
+      
         .specialty-image {
+          margin-bottom: 15px; // Thêm khoảng cách dưới hình ảnh
+      
           img {
             width: 80px;
             height: 80px;
-            top: 2932px;
-            left: 385px;
-            gap: 0px;
-            border-radius: 7px 0px 0px 0px;
-            opacity: 0px;
+            object-fit: cover; // Đảm bảo hình ảnh vừa khít trong khung
+            border-radius: 50%; // Hình ảnh tròn
+            background-color: #f0f0f0; // Màu nền xám nhạt nếu ảnh không tải
           }
         }
-
+      
         .specialty-info {
           h3 {
-            font-size: 18px;
-            color: #333;
-            margin-top: 10px;
+            font-size: 16px;
+            color: #2c3e50; // Xanh đậm trung tính
+            font-weight: bold;
+            margin: 0;
           }
-
+      
           p {
             font-size: 14px;
-            color: #666;
+            color: #7f8c8d; // Xám nhạt
+            margin: 5px 0 0 0;
           }
         }
-
+      
         .specialty-action {
-          button {
-            background-color: #007bff;
-            color: white;
-            padding: 10px 20px;
-            margin-top: 15px;
-            border: none;
-            border-radius: 8px;
+          margin-top: 10px;
+      
+          span {
+            font-size: 16px;
+            color: #34495e; // Xanh đậm
+            font-weight: 500;
             cursor: pointer;
-            transition: background-color 0.3s;
-
+            transition: color 0.3s ease-in-out;
+      
             &:hover {
-              background-color: #0056b3;
+              color: #3498db; // Đổi thành xanh sáng hơn khi hover
             }
           }
         }
       }
+      
     }
 
     // Individual doctor card
@@ -349,7 +350,7 @@
       height: 36px;
       cursor: pointer;
       transition: background-color 0.3s;
-      margin-left: 900px;
+      margin-left: 1090px;
       margin-top: 40px;
       &:hover {
         background-color: #1e5a8d;

@@ -5,10 +5,19 @@ const { authenticate } = require("../middlewares/authenticate");
 const { authorize } = require("../middlewares/authorize");
 
 // Tạo hồ sơ bệnh án cho bệnh nhân
-router.post("/create", authenticate, medicalRecordController.createMedicalRecord);
+router.post(
+  "/create",
+  authenticate,
+  medicalRecordController.createMedicalRecord
+);
 
 // Thêm lịch sử khám bệnh vào hồ sơ bệnh án của bệnh nhân
-router.post("/:patientId/add-visit", authenticate, authorize("doctor"), medicalRecordController.addVisitHistory);
+router.post(
+  "/:patientId/add-visit",
+  authenticate,
+  authorize("doctor"),
+  medicalRecordController.addVisitHistory
+);
 
 // Lấy danh sách hồ sơ bệnh án (có phân trang)
 router.get("/", medicalRecordController.getAllMedicalRecords);

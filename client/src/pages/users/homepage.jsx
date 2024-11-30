@@ -223,15 +223,15 @@ const HomePage = () => {
                 handleBookingBySpecialties("Chuẩn Đoán Hình Ảnh");
               }}
             >
-              <div className="specialty-card">
-                <div className="specialty-image">
-                  <img src={ChandoanhinhanhIMG} />
-                </div>
-                <div className="specialty-info"></div>
-                <div className="specialty-action">
-                  <span>Chuẩn Đoán Hình Ảnh</span>
-                </div>
+              {/* <div className="specialty-card"> */}
+              <div className="specialty-image">
+                <img src={ChandoanhinhanhIMG} />
               </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Chuẩn Đoán Hình Ảnh</span>
+              </div>
+              {/* </div> */}
             </div>
             <div
               className="specialty-card"
@@ -240,15 +240,15 @@ const HomePage = () => {
                 handleBookingBySpecialties("Xương Khớp");
               }}
             >
-              <div className="specialty-card">
-                <div className="specialty-image">
-                  <img src={Coxuongkhop} />
-                </div>
-                <div className="specialty-info"></div>
-                <div className="specialty-action">
-                  <span>Xương Khớp</span>
-                </div>
+              {/* <div className="specialty-card"> */}
+              <div className="specialty-image">
+                <img src={Coxuongkhop} />
               </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Xương Khớp</span>
+              </div>
+              {/* </div> */}
             </div>
             <div
               className="specialty-card"
@@ -258,15 +258,15 @@ const HomePage = () => {
               }}
             >
               {" "}
-              <div className="specialty-card">
-                <div className="specialty-image">
-                  <img src={avatar} />
-                </div>
-                <div className="specialty-info"></div>
-                <div className="specialty-action">
-                  <span>Y Học Cổ Truyền</span>
-                </div>
+              {/* <div className="specialty-card"> */}
+              <div className="specialty-image">
+                <img src={avatar} />
               </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Y Học Cổ Truyền</span>
+              </div>
+              {/* </div> */}
             </div>
             <div
               className="specialty-card"
@@ -275,15 +275,15 @@ const HomePage = () => {
                 handleBookingBySpecialties("Da Liễu");
               }}
             >
-              <div className="specialty-card">
-                <div className="specialty-image">
-                  <img src={Dalieu} />
-                </div>
-                <div className="specialty-info"></div>
-                <div className="specialty-action">
-                  <span>Da Liễu</span>
-                </div>
+              {/* <div className="specialty-card"> */}
+              <div className="specialty-image">
+                <img src={Dalieu} />
               </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Da Liễu</span>
+              </div>
+              {/* </div> */}
             </div>
             <div
               className="specialty-card"
@@ -292,15 +292,15 @@ const HomePage = () => {
                 handleBookingBySpecialties("Dị Ứng Miễn Dịch");
               }}
             >
-              <div className="specialty-card">
-                <div className="specialty-image">
-                  <img src={Diungmiendich} />
-                </div>
-                <div className="specialty-info"></div>
-                <div className="specialty-action">
-                  <span>Dị Ứng Miễn Dịch</span>
-                </div>
+              {/* <div className="specialty-card"> */}
+              <div className="specialty-image">
+                <img src={Diungmiendich} />
               </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Dị Ứng Miễn Dịch</span>
+              </div>
+              {/* </div> */}
             </div>
             <div
               className="specialty-card"
@@ -309,15 +309,15 @@ const HomePage = () => {
                 handleBookingBySpecialties("Lao Phổi");
               }}
             >
-              <div className="specialty-card">
-                <div className="specialty-image">
-                  <img src={laobenhphoi} />
-                </div>
-                <div className="specialty-info"></div>
-                <div className="specialty-action">
-                  <span>Lao Phổi</span>
-                </div>
+              {/* <div className="specialty-card"> */}
+              <div className="specialty-image">
+                <img src={laobenhphoi} />
               </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Lao Phổi</span>
+              </div>
+              {/* </div> */}
             </div>
             <div
               className="specialty-card"
@@ -326,15 +326,15 @@ const HomePage = () => {
                 handleBookingBySpecialties("Gây Mê Hồi Sức");
               }}
             >
-              <div className="specialty-card">
-                <div className="specialty-image">
-                  <img src={Gaymehoisuc} />
-                </div>
-                <div className="specialty-info"></div>
-                <div className="specialty-action">
-                  <span>Gây Mê Hồi Sức</span>
-                </div>
+              {/* <div className="specialty-card"> */}
+              <div className="specialty-image">
+                <img src={Gaymehoisuc} />
               </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Gây Mê Hồi Sức</span>
+              </div>
+              {/* </div> */}
             </div>
             <div
               className="specialty-card"
@@ -344,15 +344,15 @@ const HomePage = () => {
               }}
             >
               {" "}
-              <div className="specialty-card">
-                <div className="specialty-image">
-                  <img src={laokhoa} />
-                </div>
-                <div className="specialty-info"></div>
-                <div className="specialty-action">
-                  <span>Lão Khoa</span>
-                </div>
+              {/* <div className="specialty-card"> */}
+              <div className="specialty-image">
+                <img src={laokhoa} />
               </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Lão Khoa</span>
+              </div>
+              {/* </div> */}
             </div>
             <div
               className="specialty-card"
@@ -376,15 +376,15 @@ const HomePage = () => {
                 handleBookingBySpecialties("Truyền Nhiễm");
               }}
             >
-              <div className="specialty-card">
-                <div className="specialty-image">
-                  <img src={truyennhiem} />
-                </div>
-                <div className="specialty-info"></div>
-                <div className="specialty-action">
-                  <span>Truyền Nhiễm</span>
-                </div>
+              {/* <div className="specialty-card"> */}
+              <div className="specialty-image">
+                <img src={truyennhiem} />
               </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Truyền Nhiễm</span>
+              </div>
+              {/* </div> */}
             </div>
             <div
               className="specialty-card"
@@ -393,15 +393,15 @@ const HomePage = () => {
                 handleBookingBySpecialties("Xét Nghiệm");
               }}
             >
-              <div className="specialty-card">
-                <div className="specialty-image">
-                  <img src={xetnghiem} />
-                </div>
-                <div className="specialty-info"></div>
-                <div className="specialty-action">
-                  <span>Xét Nghiệm</span>
-                </div>
+              {/* <div className="specialty-card"> */}
+              <div className="specialty-image">
+                <img src={xetnghiem} />
               </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Xét Nghiệm</span>
+              </div>
+              {/* </div> */}
             </div>
             <div
               className="specialty-card"
@@ -410,15 +410,15 @@ const HomePage = () => {
                 handleBookingBySpecialties("Hô Hấp");
               }}
             >
-              <div className="specialty-card">
-                <div className="specialty-image">
-                  <img src={Hohap} />
-                </div>
-                <div className="specialty-info"></div>
-                <div className="specialty-action">
-                  <span>Hô Hấp</span>
-                </div>
+              {/* <div className="specialty-card"> */}
+              <div className="specialty-image">
+                <img src={Hohap} />
               </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Hô Hấp</span>
+              </div>
+              {/* </div> */}
             </div>
             <div
               className="specialty-card"
@@ -427,25 +427,25 @@ const HomePage = () => {
                 handleBookingBySpecialties("Tâm Thần");
               }}
             >
-              <div className="specialty-card">
-                <div className="specialty-image">
-                  <img src={tamthan} />
-                </div>
-                <div className="specialty-info"></div>
-                <div className="specialty-action">
-                  <span>Tâm thần</span>
-                </div>
-              </div>
-            </div>
-            <div className="specialty-card">
+              {/* <div className="specialty-card"> */}
               <div className="specialty-image">
-                <img src={Hohap} />
+                <img src={tamthan} />
               </div>
               <div className="specialty-info"></div>
               <div className="specialty-action">
-                <span>Hô hấp</span>
+                <span>Tâm thần</span>
               </div>
+              {/* </div> */}
             </div>
+            {/* <div className="specialty-card"> */}
+            {/* <div className="specialty-image">
+              <img src={Hohap} />
+            </div>
+            <div className="specialty-info"></div>
+            <div className="specialty-action">
+              <span>Hô hấp</span>
+            </div> */}
+            {/* </div> */}
             <div
               className="specialty-card"
               value="Sản Phụ Khoa"
@@ -453,15 +453,15 @@ const HomePage = () => {
                 handleBookingBySpecialties("Sản Phụ Khoa");
               }}
             >
-              <div className="specialty-card">
-                <div className="specialty-image">
-                  <img src={sanphukhoa} />
-                </div>
-                <div className="specialty-info"></div>
-                <div className="specialty-action">
-                  <span>Sản Phụ Khoa</span>
-                </div>
+              {/* <div className="specialty-card"> */}
+              <div className="specialty-image">
+                <img src={sanphukhoa} />
               </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Sản Phụ Khoa</span>
+              </div>
+              {/* </div> */}
             </div>
             <div
               className="specialty-card"
@@ -471,15 +471,15 @@ const HomePage = () => {
               }}
             >
               {" "}
-              <div className="specialty-card">
-                <div className="specialty-image">
-                  <img src={taimuihong} />
-                </div>
-                <div className="specialty-info"></div>
-                <div className="specialty-action">
-                  <span>Tai - Mũi - Họng</span>
-                </div>
+              {/* <div className="specialty-card"> */}
+              <div className="specialty-image">
+                <img src={taimuihong} />
               </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Tai - Mũi - Họng</span>
+              </div>
+              {/* </div> */}
             </div>
             <div
               className="specialty-card"
@@ -488,15 +488,15 @@ const HomePage = () => {
                 handleBookingBySpecialties("Nội Thần Kinh");
               }}
             >
-              <div className="specialty-card">
-                <div className="specialty-image">
-                  <img src={noithankinh} />
-                </div>
-                <div className="specialty-info"></div>
-                <div className="specialty-action">
-                  <span>Nội Thần Kinh</span>
-                </div>
+              {/* <div className="specialty-card"> */}
+              <div className="specialty-image">
+                <img src={noithankinh} />
               </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Nội Thần Kinh</span>
+              </div>
+              {/* </div> */}
             </div>
           </div>
           <div>

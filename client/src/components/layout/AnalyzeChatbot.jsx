@@ -2160,7 +2160,7 @@ function analyzeInput(input) {
       "Ngoài giờ hành chính, Bệnh viện vẫn tiếp đón bệnh nhân cấp cứu theo quy định của Bộ Y tế. Nếu bạn cần thêm thông tin, vui lòng cho tôi biết!",
     "Tạm biệt":
       "Dạ, tạm biệt bạn! Nếu bạn có bất kỳ câu hỏi nào khác trong tương lai hoặc cần sự trợ giúp, hãy quay lại nhé. Chúc bạn một ngày tốt lành!",
-    "chào biệt":
+    "tạm biệt":
       "Dạ, tạm biệt bạn! Nếu bạn có bất kỳ câu hỏi nào khác trong tương lai hoặc cần sự trợ giúp, hãy quay lại nhé. Chúc bạn một ngày tốt lành!",
     "Tiểu đường":
       "Dạ, nếu bạn bị tiểu đường, hãy chú ý:" +

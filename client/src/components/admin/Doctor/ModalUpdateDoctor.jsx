@@ -51,22 +51,46 @@ const ModalEditDoctor = (props) => {
     const { id, value } = e.target;
     setFormData({ ...formData, [id]: value });
   };
-
   const handleSave = async () => {
+    const { first_name, last_name, birthdate } = formData;
+    const nameRegex = /^[a-zA-ZÀ-ỹ\s]+$/; // Regex cho tên hợp lệ
+    const today = new Date();
+  
+    // Kiểm tra họ tên
+    if (!first_name || !nameRegex.test(first_name.trim())) {
+      toast.error("First name không hợp lệ. Vui lòng không sử dụng số hoặc ký tự đặc biệt.");
+      return;
+    }
+  
+    if (!last_name || !nameRegex.test(last_name.trim())) {
+      toast.error("Last name không hợp lệ. Vui lòng không sử dụng số hoặc ký tự đặc biệt.");
+      return;
+    }
+  
+    // Kiểm tra ngày sinh
+    const birthdateObj = new Date(birthdate);
+    if (!birthdate || birthdateObj > today) {
+      toast.error("Ngày sinh không hợp lệ. Vui lòng chọn ngày không lớn hơn ngày hiện tại.");
+      return;
+    }
+  
+    // Gửi yêu cầu cập nhật nếu dữ liệu hợp lệ
     try {
+      console.log("Form data:", formData); // Debug dữ liệu
       const response = await editUser(selectedUser._id, formData);
       if (response.success) {
         toast.success("Cập nhật thành công");
-        fetchDoctors(1);
-        handleClose();
+        fetchDoctors(1); // Cập nhật danh sách
+        handleClose(); // Đóng modal
       } else {
-        toast.error(response.data.message || "Có lỗi xảy ra");
+        toast.error(response.data.message || "Có lỗi xảy ra khi cập nhật.");
       }
     } catch (error) {
       console.error("Error updating user:", error);
-      toast.error(error.response?.data?.message || "Có lỗi khi cập nhật");
+      toast.error(error.response?.data?.message || "Có lỗi xảy ra khi cập nhật.");
     }
   };
+  
 
   // Function to check for missing fields
   const getMissingFields = () => {

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
 import { Modal, Button, Form } from "react-bootstrap";
-import { toast } from "react-toastify";
+import { toast ,ToastContainer} from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const ModalCreateService = ({
@@ -32,6 +32,12 @@ const ModalCreateService = ({
       return;
     }
 
+    // Kiểm tra đơn giá có phải là số dương không
+    if (isNaN(servicePrice) || parseFloat(servicePrice) <= 0) {
+      toast.error("Đơn giá không hợp lệ.");
+      return;
+    }
+
     try {
       const newService = {
         name: serviceName,
@@ -56,6 +62,7 @@ const ModalCreateService = ({
   };
 
   return (
+    <>
     <Modal show={show} onHide={handleClose} centered>
       <Modal.Header closeButton>
         <Modal.Title>Thêm Dịch Vụ Mới</Modal.Title>
@@ -80,7 +87,7 @@ const ModalCreateService = ({
               value={formData.servicePrice}
               onChange={handleInputChange}
               required
-            />
+              />
           </Form.Group>
           <Button variant="primary" type="submit" className="mt-3">
             Thêm
@@ -88,6 +95,8 @@ const ModalCreateService = ({
         </Form>
       </Modal.Body>
     </Modal>
+    <ToastContainer></ToastContainer>
+</>
   );
 };
 

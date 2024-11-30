@@ -61,17 +61,44 @@ const ModalCreatePatient = ({
       patientImage,
     } = formData;
 
-    if (
-      !firstName ||
-      !lastName ||
-      !email ||
-      !gender ||
-      !dob ||
-      !phone ||
-      !address ||
-      !password
-    ) {
-      toast.error("Vui lòng điền đầy đủ thông tin.");
+    // Kiểm tra hợp lệ
+    const nameRegex = /^[a-zA-Z\s]+$/; // Chỉ cho phép ký tự chữ cái và khoảng trắng
+    const phoneRegex = /^[0-9]+$/; // Chỉ cho phép số
+    const today = new Date();
+
+    if (!firstName || !nameRegex.test(firstName.trim())) {
+      toast.error("Họ không hợp lệ. Vui lòng không nhập số hoặc ký tự đặc biệt.");
+      return;
+    }
+
+    if (!lastName || !nameRegex.test(lastName.trim())) {
+      toast.error("Tên không hợp lệ. Vui lòng không nhập số hoặc ký tự đặc biệt.");
+      return;
+    }
+
+    if (!email || !/\S+@\S+\.\S+/.test(email)) {
+      toast.error("Email không hợp lệ.");
+      return;
+    }
+
+    const dobDate = new Date(dob);
+    if (!dob || dobDate > today) {
+      toast.error("Ngày sinh không hợp lệ. Vui lòng chọn ngày không lớn hơn ngày hiện tại.");
+      return;
+    }
+
+    if (!phone || !phoneRegex.test(phone.trim())) {
+      toast.error("Số điện thoại không hợp lệ. Vui lòng chỉ nhập số.");
+      return;
+    }
+
+    if (!address) {
+      toast.error("Địa chỉ không được để trống.");
+      return;
+    }
+
+    if (!password || password.length < 6) {
+      toast.error("Mật khẩu phải có ít nhất 6 ký tự.");
       return;
     }
 
@@ -80,6 +107,7 @@ const ModalCreatePatient = ({
       return;
     }
 
+    // Chuẩn bị dữ liệu và gửi yêu cầu
     const reader = new FileReader();
     reader.onloadend = async () => {
       const base64Image = reader.result;

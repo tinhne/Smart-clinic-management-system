@@ -1,14 +1,10 @@
 import React, { useEffect, useState } from "react";
 import "../../style/adminStyle/service.scss";
-import {
-  getAllServices,
-  addNewService,
-  deleteService,
-  updateService,
-} from "../../services/serviceAPI";
+import { getAllServices, addNewService, deleteService, updateService } from "../../services/serviceAPI";
 import ModalCreateService from "../../components/admin/ServiceManage/ModalCreateService";
 import ModalEditService from "../../components/admin/ServiceManage/ModalEditService";
 import ModalDeleteService from "../../components/admin/ServiceManage/ModalDeleteService";
+import { Spinner } from "react-bootstrap"; // Import Spinner
 
 function Services() {
   const [services, setServices] = useState([]);
@@ -82,7 +78,11 @@ function Services() {
 
       <div className="table-container">
         {loading ? (
-          <p>Đang tải...</p>
+          <div className="d-flex justify-content-center align-items-center" style={{ height: "200px" }}>
+          <Spinner animation="border" role="status" variant="primary">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        </div>
         ) : error ? (
           <p>{error}</p>
         ) : (

@@ -1,11 +1,9 @@
 import React, { useState, useEffect } from "react";
-import {
-  getAllUserByRole,
-  createPatient,
-  countUserByRole
-} from "../../utils/AuthAPI/AdminService";
-import {  toast } from "react-toastify";
+import { Spinner } from "react-bootstrap"; // Import Spinner từ React-Bootstrap
+import { getAllUserByRole, createPatient, countUserByRole } from "../../utils/AuthAPI/AdminService";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "bootstrap/dist/css/bootstrap.min.css"; // Đảm bảo bootstrap được import
 import "../../style/adminStyle/patient.scss";
 import ModalDeletePatient from "../../components/admin/patient/ModalDeletePaitent";
 import ModalEditPatient from "../../components/admin/patient/ModalUpdatePaitent";
@@ -15,19 +13,20 @@ function Patients() {
   const [patients, setPatients] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false); // Hiển thị Spinner khi loading
   const [error, setError] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [showCreateModal, setShowCreateModal] = useState(false); // Thêm trạng thái modal tạo bệnh nhân
+  const [showCreateModal, setShowCreateModal] = useState(false); // Trạng thái modal tạo bệnh nhân
   const [selectedUser, setSelectedUser] = useState(null);
   const [totalUser, setTotalUser] = useState(0);
+
   useEffect(() => {
     fetchPatients(currentPage);
   }, [currentPage]);
 
   const fetchPatients = async (page) => {
-    setLoading(true);
+    setLoading(true); // Bắt đầu loading
     setError(null);
     try {
       const data = await getAllUserByRole("patient", page, 10);
@@ -43,7 +42,7 @@ function Patients() {
     } catch (error) {
       setError("Lỗi khi kết nối tới server.");
     }
-    setLoading(false);
+    setLoading(false); // Kết thúc loading
   };
 
   const handlePageChange = (newPage) => {
@@ -54,7 +53,6 @@ function Patients() {
 
   return (
     <div className="patient-page">
-
       {/* Nút mở modal tạo bệnh nhân */}
       <div className="add-patient-button">
         <button
@@ -63,14 +61,18 @@ function Patients() {
         >
           Thêm Bệnh Nhân Mới
         </button>
-        <div className="total-patient">  
-          <span>Tổng số bệnh nhân : {totalUser}</span>
+        <div className="total-patient">
+          <span>Tổng số bệnh nhân: {totalUser}</span>
         </div>
       </div>
 
       <div className="table-container">
         {loading ? (
-          <p>Đang tải...</p>
+          <div className="d-flex justify-content-center align-items-center" style={{ height: "200px" }}>
+          <Spinner animation="border" role="status" variant="primary">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        </div>
         ) : error ? (
           <p>{error}</p>
         ) : (

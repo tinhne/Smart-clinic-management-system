@@ -29,6 +29,7 @@
     "react-paginate": "^8.2.0",
     "react-router-dom": "^6.26.2",
     "react-simple-chatbot": "^0.6.1",
+    "react-spinners": "^0.14.1",
     "react-toastify": "^10.0.6",
     "recharts": "^2.13.1",
     "sass": "^1.79.4",

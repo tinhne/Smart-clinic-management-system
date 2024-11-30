@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "../../style/LoginRegister/LoginRegister.scss";
 import { LoginApi, ResgisterApi } from "../../utils/AuthAPI/LoginRegisterAPI";
 import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { toast,ToastContainer } from "react-toastify";
 import Cookies from "js-cookie"; // Thư viện quản lý Cookies
 
 function LoginRegister() {
@@ -280,7 +280,7 @@ function LoginRegister() {
           )}
         </div>
       </div>
-      
+      <ToastContainer></ToastContainer>
     </div>
     
   );

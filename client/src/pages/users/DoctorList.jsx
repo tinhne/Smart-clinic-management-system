@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 const categories = [
   { name: "Tất cả" },
   { name: "Chuẩn Đoán Hình Ảnh" },
-  { name: "Xương Khớp" },
+  { name: "Cơ Xương Khớp" },
   { name: "Y Học Cổ Truyền" },
   { name: "Da Liễu" },
   { name: "Dị Ứng Miễn Dịch" },

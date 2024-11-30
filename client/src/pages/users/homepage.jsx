@@ -235,9 +235,9 @@ const HomePage = () => {
             </div>
             <div
               className="specialty-card"
-              value="Xương Khớp"
+              value="Cơ Xương Khớp"
               onClick={(e) => {
-                handleBookingBySpecialties("Xương Khớp");
+                handleBookingBySpecialties("Cơ Xương Khớp");
               }}
             >
               {/* <div className="specialty-card"> */}

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Button, Table } from "react-bootstrap";
+import { Button, Table, Spinner } from "react-bootstrap"; // Import Spinner
 import ReactPaginate from "react-paginate";
 import AddBlogModal from "../../components/admin/BlogAdmin/AddBlogModal";
 import EditBlogModal from "../../components/admin/BlogAdmin/EditBlogModal";
 import DeleteBlogModal from "../../components/admin/BlogAdmin/DeleteBlogModal";
 import { getBlog, deleteBlog } from "../../utils/BlogManagement/BlogManagement";
-import { toast, ToastContainer  } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const BlogAdmin = () => {
@@ -15,9 +15,11 @@ const BlogAdmin = () => {
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState(null);
+  const [loading, setLoading] = useState(false);  // Loading state
 
   // Fetch blog data from API
   const fetchBlogs = async () => {
+    setLoading(true);  // Set loading to true before fetching
     try {
       const data = await getBlog();
       if (data?.blogs) {
@@ -28,6 +30,8 @@ const BlogAdmin = () => {
     } catch (error) {
       console.error("Error fetching blogs:", error.message);
       setError("Không thể lấy dữ liệu bài viết.");
+    } finally {
+      setLoading(false);  // Set loading to false after fetching
     }
   };
 
@@ -101,7 +105,7 @@ const BlogAdmin = () => {
 
   return (
     <div className="container mt-4">
-        <ToastContainer />
+      <ToastContainer />
       <Button className="mb-3" variant="primary" onClick={handleShowModal}>
         Thêm Bài viết
       </Button>
@@ -118,7 +122,13 @@ const BlogAdmin = () => {
           </tr>
         </thead>
         <tbody>
-          {blogs.length > 0 ? (
+          {loading ? (
+            <tr>
+              <td colSpan="6" className="text-center">
+                <Spinner animation="border" variant="primary" /> Đang tải dữ liệu...
+              </td>
+            </tr>
+          ) : blogs.length > 0 ? (
             blogs
               .filter((blog) => blog?._id) // Ensure valid blogs
               .map((blog) => (
@@ -216,7 +226,6 @@ const BlogAdmin = () => {
           blogTitle={selectedBlog.title || "Không xác định"}
         />
       )}
-
     </div>
   );
 };

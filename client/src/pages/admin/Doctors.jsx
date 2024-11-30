@@ -6,6 +6,7 @@ import {
 } from "../../utils/AuthAPI/AdminService"; // Import createDoctor
 import "../../style/adminStyle/doctors.scss";
 import { toast, ToastContainer } from "react-toastify";
+import { Spinner } from "react-bootstrap"; // Import Spinner
 import "react-toastify/dist/ReactToastify.css";
 import ModalDeleteDoctor from "../../components/admin/Doctor/ModalDeleteDoctor";
 import ModalEditDoctor from "../../components/admin/Doctor/ModalUpdateDoctor";
@@ -79,14 +80,19 @@ const Doctors = (props) => {
             Thêm Bác Sĩ Mới
           </button>
           <div className="total-doctor">  
-          <span>Tổng số bác sĩ : {totalUser}</span>
-        </div>
+            <span>Tổng số bác sĩ : {totalUser}</span>
+          </div>
         </div>
 
         {/* Hiển thị danh sách bác sĩ */}
         <div className="table-container">
           {loading ? (
-            <p>Đang tải...</p>
+            // Hiển thị spinner trong khi dữ liệu đang tải
+            <div className="d-flex justify-content-center align-items-center" style={{ height: "200px" }}>
+              <Spinner animation="border" role="status" variant="primary">
+                <span className="visually-hidden">Loading...</span>
+              </Spinner>
+            </div>
           ) : error ? (
             <p>{error}</p>
           ) : (

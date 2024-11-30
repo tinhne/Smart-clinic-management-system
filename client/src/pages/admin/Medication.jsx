@@ -9,6 +9,8 @@ import {
 import ModalCreateMedicine from "../../components/admin/Medication/ModalCreateMedicine";
 import ModalEditMedicine from "../../components/admin/Medication/ModalEditMedicine";
 import ModalDeleteMedicine from "../../components/admin/Medication/ModalDeleteMedicine";
+import { Spinner } from "react-bootstrap"; // Import Spinner từ React-Bootstrap
+import "bootstrap/dist/css/bootstrap.min.css"; // Import CSS Bootstrap
 
 function Medication() {
   const [medicines, setMedicines] = useState([]);
@@ -78,7 +80,11 @@ function Medication() {
 
       <div className="table-container">
         {loading ? (
-          <p>Đang tải...</p>
+           <div className="d-flex justify-content-center align-items-center" style={{ height: "200px" }}>
+          <Spinner animation="border" role="status" variant="primary">
+            <span className="visually-hidden">Loading...</span>
+          </Spinner>
+        </div>
         ) : error ? (
           <p>{error}</p>
         ) : (

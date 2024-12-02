@@ -83,7 +83,7 @@ const ModalCreatePatient = ({
 
     const dobDate = new Date(dob);
     if (!dob || dobDate > today) {
-      toast.error("Ngày sinh không hợp lệ. Vui lòng chọn ngày không lớn hơn ngày hiện tại.");
+      toast.error("Ngày sinh không hợp lệ.");
       return;
     }
 

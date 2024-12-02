@@ -117,13 +117,13 @@ function Medication() {
                         className="btn btn-edit"
                         onClick={() => handleEditModalShow(medicine)}
                       >
-                        Edit
+                        Sửa 
                       </button>
                       <button
                         className="btn btn-delete"
                         onClick={() => handleDeleteModalShow(medicine)}
                       >
-                        Delete
+                        Xóa
                       </button>
                     </td>
                   </tr>

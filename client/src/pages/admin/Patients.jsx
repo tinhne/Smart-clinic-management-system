@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Spinner } from "react-bootstrap"; // Import Spinner từ React-Bootstrap
-import { getAllUserByRole, createPatient, countUserByRole } from "../../utils/AuthAPI/AdminService";
+import {
+  getAllUserByRole,
+  createPatient,
+  countUserByRole,
+} from "../../utils/AuthAPI/AdminService";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css"; // Đảm bảo bootstrap được import
@@ -68,11 +72,14 @@ function Patients() {
 
       <div className="table-container">
         {loading ? (
-          <div className="d-flex justify-content-center align-items-center" style={{ height: "200px" }}>
-          <Spinner animation="border" role="status" variant="primary">
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>
-        </div>
+          <div
+            className="d-flex justify-content-center align-items-center"
+            style={{ height: "200px" }}
+          >
+            <Spinner animation="border" role="status" variant="primary">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          </div>
         ) : error ? (
           <p>{error}</p>
         ) : (
@@ -104,7 +111,7 @@ function Patients() {
                           setShowEditModal(true); // Hiển thị modal chỉnh sửa
                         }}
                       >
-                        Edit
+                        Sửa
                       </button>
                       <button
                         className="btn btn-delete"
@@ -113,7 +120,7 @@ function Patients() {
                           setShowDeleteModal(true); // Hiển thị modal xóa
                         }}
                       >
-                        Delete
+                        Xóa
                       </button>
                     </td>
                   </tr>

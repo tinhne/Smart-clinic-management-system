@@ -105,13 +105,13 @@ function Services() {
                         className="btn btn-edit"
                         onClick={() => handleEditModalShow(service)}
                       >
-                        Edit
+                        Sửa
                       </button>
                       <button
                         className="btn btn-delete"
                         onClick={() => handleDeleteModalShow(service)}
                       >
-                        Delete
+                        Xóa
                       </button>
                     </td>
                   </tr>

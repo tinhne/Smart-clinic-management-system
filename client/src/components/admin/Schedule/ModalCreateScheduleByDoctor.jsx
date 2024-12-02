@@ -17,6 +17,12 @@ const ModalCreateScheduleByDoctor = ({
   const [endTime, setEndTime] = useState("");
   const [slotDuration, setSlotDuration] = useState(30);
 
+  // Error states
+  const [dateError, setDateError] = useState("");
+  const [startTimeError, setStartTimeError] = useState("");
+  const [endTimeError, setEndTimeError] = useState("");
+  const [slotDurationError, setSlotDurationError] = useState("");
+
   // Validate time in hh:mm format
   const validateTimeFormat = (time) => {
     const timePattern = /^([01]\d|2[0-3]):([0-5]\d)$/;
@@ -32,29 +38,35 @@ const ModalCreateScheduleByDoctor = ({
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    // Reset error messages
+    setDateError("");
+    setStartTimeError("");
+    setEndTimeError("");
+    setSlotDurationError("");
+
     // Validate date
     if (!date) {
-      toast.error("Ngày không được để trống!");
+      setDateError("Ngày không được để trống!");
       return;
     }
     if (!validateDateFormat(date)) {
-      toast.error("Ngày phải theo định dạng dd-mm-yyyy!");
+      setDateError("Ngày phải theo định dạng dd-mm-yyyy!");
       return;
     }
 
     // Validate time
     if (!startTime || !validateTimeFormat(startTime)) {
-      toast.error("Thời gian bắt đầu phải theo định dạng hh:mm và nằm trong khung 24 giờ!");
+      setStartTimeError("Thời gian bắt đầu phải theo định dạng hh:mm và nằm trong khung 24 giờ!");
       return;
     }
     if (!endTime || !validateTimeFormat(endTime)) {
-      toast.error("Thời gian kết thúc phải theo định dạng hh:mm và nằm trong khung 24 giờ!");
+      setEndTimeError("Thời gian kết thúc phải theo định dạng hh:mm và nằm trong khung 24 giờ!");
       return;
     }
 
     // Validate slot duration
     if (slotDuration < 10) {
-      toast.error("Thời gian mỗi slot không được nhỏ hơn 10 phút!");
+      setSlotDurationError("Thời gian mỗi slot không được nhỏ hơn 10 phút!");
       return;
     }
 
@@ -113,6 +125,7 @@ const ModalCreateScheduleByDoctor = ({
                 onChange={(e) => setDate(e.target.value)}
                 required
               />
+              {dateError && <small className="text-danger">{dateError}</small>}
               <small className="form-text text-muted">
                 Vui lòng nhập ngày theo định dạng dd-mm-yyyy.
               </small>
@@ -131,6 +144,7 @@ const ModalCreateScheduleByDoctor = ({
                 onChange={(e) => setStartTime(e.target.value)}
                 required
               />
+              {startTimeError && <small className="text-danger">{startTimeError}</small>}
               <small className="form-text text-muted">
                 Vui lòng nhập thời gian theo định dạng 24 giờ (hh:mm).
               </small>
@@ -149,6 +163,7 @@ const ModalCreateScheduleByDoctor = ({
                 onChange={(e) => setEndTime(e.target.value)}
                 required
               />
+              {endTimeError && <small className="text-danger">{endTimeError}</small>}
               <small className="form-text text-muted">
                 Vui lòng nhập thời gian theo định dạng 24 giờ (hh:mm).
               </small>
@@ -167,6 +182,7 @@ const ModalCreateScheduleByDoctor = ({
                 min="10" // Set minimum to 10
                 required
               />
+              {slotDurationError && <small className="text-danger">{slotDurationError}</small>}
             </div>
 
             <div className="d-flex justify-content-end">

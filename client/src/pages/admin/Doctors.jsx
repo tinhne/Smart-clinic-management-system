@@ -123,13 +123,13 @@ const Doctors = (props) => {
                           className="btn btn-edit"
                           onClick={() => handleEditDoctor(doctor)}
                         >
-                          Edit
+                          Sửa
                         </button>
                         <button
                           className="btn btn-delete"
                           onClick={() => handleDeleteDoctor(doctor)}
                         >
-                          Delete
+                          Xóa
                         </button>
                       </td>
                     </tr>

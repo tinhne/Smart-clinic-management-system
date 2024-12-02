@@ -18,7 +18,7 @@ const Footer = () => {
           <h4>Về CAPSTONE</h4>
           <ul>
             <li>
-              <a href="#">Giới thiệu về CAPSTONE 1</a>
+              <a href="/gioi-thieu">Giới thiệu về CAPSTONE 1</a>
             </li>
             <li>
               <a href="#">Thành viên nhóm</a>
@@ -27,7 +27,7 @@ const Footer = () => {
               <a href="#">Thông tin dự án</a>
             </li>
             <li>
-              <a href="#">Liên hệ</a>
+              <a href="tel:+84935038810">Liên hệ</a>
             </li>
           </ul>
         </div>
@@ -35,19 +35,19 @@ const Footer = () => {
           <h4>Dịch vụ</h4>
           <ul>
             <li>
-              <a href="#">Đặt khám Phòng Khám</a>
+              <a href="/tin-tuc">Tin tức y tế</a>
             </li>
             <li>
-              <a href="#">Tư Vấn Trực Tuyến</a>
+              <a href="/dat-kham/bac-si/:doctorId">Tư Vấn Trực Tuyến</a>
             </li>
             <li>
               <a href="#">Đặt khám Chuyên Khoa</a>
             </li>
             <li>
-              <a href="#">Hồ Sơ Bệnh Án</a>
+              <a href="/thong-tin/ho-so-benh-nhan">Hồ Sơ Bệnh Án</a>
             </li>
             <li>
-              <a href="#">Dịch vụ Phòng Khám</a>
+              <a href="/dich-vu-kham">Dịch vụ Phòng Khám</a>
             </li>
           </ul>
         </div>
@@ -67,7 +67,7 @@ const Footer = () => {
               <a href="mailto:cskh@youmed.vn">Hỗ trợ khách hàng</a>
             </li>
             <li>
-              <a href="mailto:cskh@youmed.vn">Tư vấn khách hàng</a>
+              <a href="mailto:tandung03.dev@gmail.com">Tư vấn khách hàng</a>
             </li>
           </ul>
         </div>

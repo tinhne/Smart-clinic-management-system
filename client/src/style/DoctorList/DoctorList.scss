@@ -20,11 +20,12 @@
 
 /* Sidebar Styling */
 .sidebar-list {
-  background-color: #fff;
   border-right: 1px solid #ddd;
   padding: 1rem;
-  height: 593px;
+  height: 585px;
   background-color: #fffefe;
+  overflow-y: auto;
+  border: 1px solid #ddd;
 }
 
 .sidebar-list ul {

@@ -11,29 +11,30 @@ import "bootstrap/dist/css/bootstrap.min.css"; // Đảm bảo bootstrap đượ
 import "../../style/adminStyle/patient.scss";
 import ModalDeletePatient from "../../components/admin/patient/ModalDeletePaitent";
 import ModalEditPatient from "../../components/admin/patient/ModalUpdatePaitent";
-import ModalCreatePatient from "../../components/admin/patient/ModalCreatePatient"; // Import modal tạo bệnh nhân
+import ModalCreatePatient from "../../components/admin/patient/ModalCreatePatient";
 
 function Patients() {
   const [patients, setPatients] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(false); // Hiển thị Spinner khi loading
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [showCreateModal, setShowCreateModal] = useState(false); // Trạng thái modal tạo bệnh nhân
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [totalUser, setTotalUser] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     fetchPatients(currentPage);
-  }, [currentPage]);
+  }, [currentPage, searchQuery]);
 
   const fetchPatients = async (page) => {
-    setLoading(true); // Bắt đầu loading
+    setLoading(true);
     setError(null);
     try {
-      const data = await getAllUserByRole("patient", page, 10);
+      const data = await getAllUserByRole("patient", page, 10, searchQuery);
       const totalUser = await countUserByRole("patient");
       if (data) {
         setTotalUser(totalUser.userCount);
@@ -46,7 +47,7 @@ function Patients() {
     } catch (error) {
       setError("Lỗi khi kết nối tới server.");
     }
-    setLoading(false); // Kết thúc loading
+    setLoading(false);
   };
 
   const handlePageChange = (newPage) => {
@@ -55,19 +56,32 @@ function Patients() {
     }
   };
 
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1);
+  };
+
   return (
     <div className="patient-page">
-      {/* Nút mở modal tạo bệnh nhân */}
-      <div className="add-patient-button">
+      <div className="search-and-add">
+        {/* Thanh tìm kiếm */}
+        <input
+          type="text"
+          className="form-control search-input"
+          placeholder="Tìm kiếm bệnh nhân..."
+          value={searchQuery}
+          onChange={handleSearch}
+        />
         <button
-          className="btn btn-primary"
+          className="btn btn-primary add-patient-button"
           onClick={() => setShowCreateModal(true)}
         >
           Thêm Bệnh Nhân Mới
         </button>
-        <div className="total-patient">
-          <span>Tổng số bệnh nhân: {totalUser}</span>
-        </div>
+      </div>
+
+      <div className="total-patient">
+        <span>Tổng số bệnh nhân: {totalUser}</span>
       </div>
 
       <div className="table-container">
@@ -108,7 +122,7 @@ function Patients() {
                         className="btn btn-edit"
                         onClick={() => {
                           setSelectedUser(patient);
-                          setShowEditModal(true); // Hiển thị modal chỉnh sửa
+                          setShowEditModal(true);
                         }}
                       >
                         Sửa
@@ -116,8 +130,8 @@ function Patients() {
                       <button
                         className="btn btn-delete"
                         onClick={() => {
-                          setSelectedUser(patient); // Đặt người dùng cần xóa
-                          setShowDeleteModal(true); // Hiển thị modal xóa
+                          setSelectedUser(patient);
+                          setShowDeleteModal(true);
                         }}
                       >
                         Xóa
@@ -157,7 +171,6 @@ function Patients() {
         </button>
       </div>
 
-      {/* Modal tạo bệnh nhân */}
       <ModalCreatePatient
         show={showCreateModal}
         handleClose={() => setShowCreateModal(false)}

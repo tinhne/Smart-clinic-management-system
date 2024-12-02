@@ -7,7 +7,7 @@ import { getBlog, updateViewBlog } from "../../utils/BlogManagement/BlogManageme
 
 const BlogList = () => {
   const location = useLocation(); // Sử dụng useLocation để lấy state
-  const selectedCategory = location.state?.selectedCategory || ""; // Ensure state exists
+  const selectedCategory = location.state?.selectedCategory || "Tất cả"; // Ensure state exists
 
   const [blogData, setBlogData] = useState([]);
   const [isLoading, setIsLoading] = useState(true); // Loading state

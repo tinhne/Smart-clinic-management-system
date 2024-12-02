@@ -18,19 +18,26 @@ const Blog = () => {
   };
 
   // Function to fetch the top viewed blogs
-  const fetchTopViewedBlogs = async () => {
-    try {
-      setIsLoading(true); // Start loading
-      const response = await getBlog();
-      if (response && response.blogs) {
-        setTopViewedBlogs(response.blogs);
-      }
-    } catch (error) {
-      console.error("Error fetching top viewed blogs:", error);
-    } finally {
-      setIsLoading(false); // Stop loading
+ // Function to fetch the top viewed blogs
+const fetchTopViewedBlogs = async () => {
+  try {
+    setIsLoading(true); // Start loading
+    const response = await getBlog();
+    if (response && response.blogs) {
+      // Sort blogs by view count in descending order and take the top 5
+      const sortedBlogs = response.blogs
+        .sort((a, b) => (b.views || 0) - (a.views || 0))
+        .slice(0, 5);
+
+      setTopViewedBlogs(sortedBlogs); // Update state with top 5 blogs
     }
-  };
+  } catch (error) {
+    console.error("Error fetching top viewed blogs:", error);
+  } finally {
+    setIsLoading(false); // Stop loading
+  }
+};
+
 
   useEffect(() => {
     fetchTopViewedBlogs();
@@ -66,36 +73,37 @@ const Blog = () => {
           </section>
 
           <section className="most-viewed">
-            <span>Xem nhiều nhất</span>
-            {isLoading ? ( // Display loading spinner if data is loading
-              <div className="loading">Đang tải...</div>
-            ) : (
-              topViewedBlogs.map((blog, index) => (
-                <div
-                  key={index}
-                  className="most-blog"
-                  onClick={() => navigate(`/tin-tuc/bai-viet/${blog._id}`)}
-                >
-                  <div className="most-viewed-img">
-                    <img
-                      src={
-                        blog.content &&
-                        Array.isArray(blog.content) &&
-                        blog.content[0]?.image
-                          ? blog.content[0].image
-                          : "path_to_default_image.png"
-                      }
-                      alt="Most Viewed"
-                    />
-                  </div>
-                  <div className="most-viewed-info">
-                    <p className="title">{blog.title || "Không rõ tiêu đề"}</p>
-                    <p className="view">{blog.views || 0} lượt xem</p>
-                  </div>
-                </div>
-              ))
-            )}
-          </section>
+  <span>Xem nhiều nhất</span>
+  {isLoading ? ( // Display loading spinner if data is loading
+    <div className="loading">Đang tải...</div>
+  ) : (
+    topViewedBlogs.map((blog, index) => (
+      <div
+        key={index}
+        className="most-blog"
+        onClick={() => navigate(`/tin-tuc/bai-viet/${blog._id}`)}
+      >
+        <div className="most-viewed-img">
+          <img
+            src={
+              blog.content &&
+              Array.isArray(blog.content) &&
+              blog.content[0]?.image
+                ? blog.content[0].image
+                : "path_to_default_image.png"
+            }
+            alt="Most Viewed"
+          />
+        </div>
+        <div className="most-viewed-info">
+          <p className="title">{blog.title || "Không rõ tiêu đề"}</p>
+          <p className="view">{blog.views || 0} lượt xem</p>
+        </div>
+      </div>
+    ))
+  )}
+</section>
+
         </aside>
       </main>
 

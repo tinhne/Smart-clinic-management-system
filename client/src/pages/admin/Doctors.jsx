@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import {
   getAllUserByRole,
   createDoctor,
-  countUserByRole
+  countUserByRole,
 } from "../../utils/AuthAPI/AdminService";
 import "../../style/adminStyle/doctors.scss";
 import { toast, ToastContainer } from "react-toastify";
@@ -79,7 +79,10 @@ const Doctors = () => {
       <div className="doctor-page">
         <div className="header-section">
           <div className="add-doctor-button">
-            <button className="btn btn-primary" onClick={() => setShowCreateModal(true)}>
+            <button
+              className="btn btn-primary"
+              onClick={() => setShowCreateModal(true)}
+            >
               Thêm Bác Sĩ Mới
             </button>
             <div className="total-doctor">
@@ -87,7 +90,7 @@ const Doctors = () => {
             </div>
           </div>
           {/* Ô tìm kiếm */}
-          <div className="search-bar">
+          <div className="search-bar-doctor">
             <input
               type="text"
               placeholder="Tìm kiếm bác sĩ..."
@@ -100,7 +103,10 @@ const Doctors = () => {
         {/* Hiển thị danh sách bác sĩ */}
         <div className="table-container">
           {loading ? (
-            <div className="d-flex justify-content-center align-items-center" style={{ height: "200px" }}>
+            <div
+              className="d-flex justify-content-center align-items-center"
+              style={{ height: "200px" }}
+            >
               <Spinner animation="border" role="status" variant="primary">
                 <span className="visually-hidden">Loading...</span>
               </Spinner>
@@ -123,16 +129,24 @@ const Doctors = () => {
                 {filteredDoctors.length > 0 ? (
                   filteredDoctors.map((doctor, index) => (
                     <tr key={index}>
-                      <td>{doctor.first_name} {doctor.last_name}</td>
+                      <td>
+                        {doctor.first_name} {doctor.last_name}
+                      </td>
                       <td>{doctor.email}</td>
                       <td>{doctor.gender}</td>
                       <td>{doctor.phone}</td>
                       <td>{doctor.specialties}</td>
                       <td>
-                        <button className="btn btn-edit" onClick={() => setSelectedUser(doctor)}>
+                        <button
+                          className="btn btn-edit"
+                          onClick={() => setSelectedUser(doctor)}
+                        >
                           Sửa
                         </button>
-                        <button className="btn btn-delete" onClick={() => setSelectedUser(doctor)}>
+                        <button
+                          className="btn btn-delete"
+                          onClick={() => setSelectedUser(doctor)}
+                        >
                           Xóa
                         </button>
                       </td>
@@ -158,7 +172,9 @@ const Doctors = () => {
           >
             Previous
           </button>
-          <span>Page {currentPage} of {totalPages}</span>
+          <span>
+            Page {currentPage} of {totalPages}
+          </span>
           <button
             className="btn"
             onClick={() => handlePageChange(currentPage + 1)}

@@ -27,7 +27,7 @@ const userSchema = new Schema(
     gender: {
       type: String,
       required: true,
-      enum: ["Male", "Female"],
+      enum: ["Nam", "Nữ"],
     },
     role: {
       type: String,
@@ -48,7 +48,7 @@ const userSchema = new Schema(
     },
     experience: { type: String },
     imageUrl: { type: String },
-    title: { 
+    title: {
       type: String,
       required: function () {
         return this.role === "doctor";

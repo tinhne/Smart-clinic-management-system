@@ -96,21 +96,26 @@ function Services() {
   return (
     <div className="service-page">
       <div className="top-bar">
-        <input
-          type="text"
-          className="form-control search-input"
-          placeholder="Tìm kiếm dịch vụ..."
-          value={searchTerm}
-          onChange={(e) => handleSearch(e.target.value)}
-        />
         <button className="btn btn-primary" onClick={handleCreateModalShow}>
           Thêm dịch vụ mới
         </button>
+        <div className="search-bar-service">
+          <input
+            type="text"
+            className="form-control search-input"
+            placeholder="Tìm kiếm dịch vụ..."
+            value={searchTerm}
+            onChange={(e) => handleSearch(e.target.value)}
+          />
+        </div>
       </div>
 
       <div className="table-container">
         {loading ? (
-          <div className="d-flex justify-content-center align-items-center" style={{ height: "200px" }}>
+          <div
+            className="d-flex justify-content-center align-items-center"
+            style={{ height: "200px" }}
+          >
             <Spinner animation="border" role="status" variant="primary">
               <span className="visually-hidden">Loading...</span>
             </Spinner>

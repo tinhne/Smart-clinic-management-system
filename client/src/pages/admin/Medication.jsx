@@ -58,8 +58,8 @@ function Medication() {
   // Xử lý tìm kiếm
   const handleSearch = (term) => {
     setSearchTerm(term);
-    const filtered = medicines.filter((medicine) =>
-      medicine.name.toLowerCase().includes(term.toLowerCase()) // Lọc danh sách theo tên thuốc
+    const filtered = medicines.filter(
+      (medicine) => medicine.name.toLowerCase().includes(term.toLowerCase()) // Lọc danh sách theo tên thuốc
     );
     setFilteredMedicines(filtered);
     setCurrentPage(1); // Reset về trang đầu tiên
@@ -81,21 +81,29 @@ function Medication() {
   return (
     <div className="medicine-page">
       <div className="top-bar">
-        <input
-          type="text"
-          className="form-control search-input"
-          placeholder="Tìm kiếm thuốc..."
-          value={searchTerm}
-          onChange={(e) => handleSearch(e.target.value)}
-        />
-        <button className="btn btn-primary" onClick={() => setShowCreateModal(true)}>
+        <button
+          className="btn btn-primary"
+          onClick={() => setShowCreateModal(true)}
+        >
           Thêm thuốc mới
         </button>
+        <div className="search-bar-medicine">
+          <input
+            type="text"
+            className="form-control search-input"
+            placeholder="Tìm kiếm thuốc..."
+            value={searchTerm}
+            onChange={(e) => handleSearch(e.target.value)}
+          />
+        </div>
       </div>
 
       <div className="table-container">
         {loading ? (
-          <div className="d-flex justify-content-center align-items-center" style={{ height: "200px" }}>
+          <div
+            className="d-flex justify-content-center align-items-center"
+            style={{ height: "200px" }}
+          >
             <Spinner animation="border" role="status" variant="primary">
               <span className="visually-hidden">Loading...</span>
             </Spinner>

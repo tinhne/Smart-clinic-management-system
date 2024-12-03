@@ -112,9 +112,9 @@ const ModalEditDoctor = (props) => {
     try {
       const response = await editUser(selectedUser._id, formData);
       if (response.success) {
+        handleClose();
         toast.success("Cập nhật thành công");
         fetchDoctors(1);
-        handleClose();
       } else {
         toast.error(response.data.message || "Có lỗi xảy ra khi cập nhật.");
       }

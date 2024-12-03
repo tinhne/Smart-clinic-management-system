@@ -137,16 +137,16 @@ const Doctors = () => {
                       <td>{doctor.phone}</td>
                       <td>{doctor.specialties}</td>
                       <td>
-                        <button
-                          className="btn btn-edit"
-                          onClick={() => setSelectedUser(doctor)}
-                        >
+                        <button className="btn btn-edit" onClick={() => {
+                          setShowEditModal(true);
+                          setSelectedUser(doctor)}}>
                           Sửa
                         </button>
-                        <button
-                          className="btn btn-delete"
-                          onClick={() => setSelectedUser(doctor)}
-                        >
+                        <button className="btn btn-delete" onClick={() => 
+                          {
+                            setShowDeleteModal(true);
+                            setSelectedUser(doctor)}
+                            }>
                           Xóa
                         </button>
                       </td>

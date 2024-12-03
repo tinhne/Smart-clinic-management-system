@@ -87,9 +87,9 @@ const ModalEditPatient = (props) => {
     try {
       const response = await editUser(selectedUser._id, formData);
       if (response.success) {
+        handleClose(); // Đóng modal
         toast.success(response.message);
         await fetchPatients(1); // Refresh lại danh sách bệnh nhân
-        handleClose(); // Đóng modal
       } else {
         toast.error(response.message || "Có lỗi xảy ra.");
       }

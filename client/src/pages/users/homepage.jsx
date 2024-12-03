@@ -30,10 +30,25 @@ import chungnhan4 from "../../assets/img/chungnhan4.jpg";
 import axios from "axios";
 import ReactPaginate from "react-paginate";
 import "../../style/Medicines/Medicines.scss";
+import Modal from "./ModalMedicine";
 
 import noithankinh from "../../assets/img/Specialties/noithankinh.jpg";
 // import ngoailongngucmanhmau from "../../assets/img/Specialties/ngoailongngucmanhmau.jpg";
+
 const HomePage = () => {
+  //xem chi tiết thuốc
+  const [selectedMedicine, setSelectedMedicine] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+  const handleViewDetails = (medicine) => {
+    setSelectedMedicine(medicine);
+    setIsModalOpen(true);
+  };
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setSelectedMedicine(null);
+  };
+
   // thuốc
   const [medicines, setMedicines] = useState([]);
   const [totalPages, setTotalPages] = useState(0);
@@ -588,12 +603,18 @@ const HomePage = () => {
                     <p className="product_price">
                       <strong>Giá:</strong> {medicine.price}đ
                     </p>
-                    <a
+                    <button
+                      className="product_link"
+                      onClick={() => handleViewDetails(medicine)}
+                    >
+                      Xem chi tiết
+                    </button>
+                    {/* <a
                       href={`/medicine/${medicine._id}`}
                       className="product_link"
                     >
                       Xem chi tiết
-                    </a>
+                    </a> */}
                   </div>
                 ))}
               </ul>
@@ -620,6 +641,11 @@ const HomePage = () => {
               activeClassName={"active"}
             />
           </div>
+          <Modal
+            isOpen={isModalOpen}
+            onClose={closeModal}
+            medicine={selectedMedicine}
+          />
         </div>
         {/* kết thúc tin y tế */}
 

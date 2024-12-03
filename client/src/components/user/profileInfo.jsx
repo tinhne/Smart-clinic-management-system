@@ -1,6 +1,6 @@
 import "../../style/userProfile/profileInfo.scss";
 import React, { useState, useEffect } from "react";
-import { toast,} from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { getUserById, editUser } from "../../utils/AuthAPI/userService";
 import jwt_decode from "jwt-decode";
@@ -60,6 +60,44 @@ const ContentProfile = () => {
   };
 
   const handleUpdateClick = async () => {
+    const { first_name, last_name, phone, birthdate, email, address } = profile;
+
+    // Basic validations
+    if (
+      !first_name ||
+      !last_name ||
+      !phone ||
+      !birthdate ||
+      !email ||
+      !address
+    ) {
+      toast.error("Vui lòng điền đầy đủ các trường bắt buộc.");
+      return;
+    }
+
+    if (phone.length > 11 || !/^\d+$/.test(phone)) {
+      toast.error("Số điện thoại phải là số và không quá 11 ký tự.");
+      return;
+    }
+
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(birthdate)) {
+      toast.error("Ngày sinh phải có định dạng YYYY-MM-DD.");
+      return;
+    }
+
+    // Validate email format
+    const emailRegex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+    if (!email || !emailRegex.test(email)) {
+      toast.error("Email không hợp lệ.");
+      return;
+    }
+
+    // Additional validation for address
+    if (!address) {
+      toast.error("Vui lòng nhập địa chỉ.");
+      return;
+    }
+
     try {
       const userID = jwt_decode(Cookies.get("access_token"))._id;
       const res = await editUser(userID, profile);
@@ -67,14 +105,26 @@ const ContentProfile = () => {
       setIsEditing(false);
       toast.success("Cập nhật thông tin thành công");
     } catch (error) {
-      console.error("Error fetching users by role:", error);
+      console.error("Error updating user:", error);
       toast.error("Lỗi khi kết nối tới server.");
     }
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+    if (name === "phone" && value.length > 11) {
+      toast.error("Số điện thoại không được quá 11 ký tự.");
+      return;
+    }
+
     setProfile({ ...profile, [name]: value });
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleUpdateClick();
+    }
   };
   const role = Cookies.get("role"); // Lấy vai trò từ cookie
 
@@ -96,6 +146,7 @@ const ContentProfile = () => {
                     name="first_name"
                     value={profile.first_name}
                     onChange={handleChange}
+                    onKeyDown={handleKeyDown} // Thêm sự kiện onKeyDown
                     className="w-full p-2 mb-2 border border-gray-300 rounded"
                   />
                   <input
@@ -104,6 +155,7 @@ const ContentProfile = () => {
                     name="last_name"
                     value={profile.last_name}
                     onChange={handleChange}
+                    onKeyDown={handleKeyDown} // Thêm sự kiện onKeyDown
                     className="w-full p-2 mb-2 border border-gray-300 rounded"
                   />
                 </div>
@@ -115,7 +167,9 @@ const ContentProfile = () => {
                     type="text"
                     name="phone"
                     value={profile.phone}
+                    maxLength="11"
                     onChange={handleChange}
+                    onKeyDown={handleKeyDown} // Thêm sự kiện onKeyDown
                     className="w-full mb-2 p-2 border border-gray-300 rounded"
                   />
                 </div>
@@ -124,10 +178,11 @@ const ContentProfile = () => {
                     Ngày sinh <span className="text-red-500">*</span>
                   </label>
                   <input
-                    type="text"
+                    type="date"
                     name="birthdate"
                     value={profile.birthdate}
                     onChange={handleChange}
+                    onKeyDown={handleKeyDown} // Thêm sự kiện onKeyDown
                     className="w-full p-2 border border-gray-300 rounded"
                   />
                 </div>
@@ -143,6 +198,7 @@ const ContentProfile = () => {
                         value="Male"
                         checked={profile.gender === "Male"}
                         onChange={handleChange}
+                        onKeyDown={handleKeyDown} // Thêm sự kiện onKeyDown
                         className="mr-2"
                       />
                       Nam
@@ -154,6 +210,7 @@ const ContentProfile = () => {
                         value="Female"
                         checked={profile.gender === "Female"}
                         onChange={handleChange}
+                        onKeyDown={handleKeyDown} // Thêm sự kiện onKeyDown
                         className="mr-2"
                       />
                       Nữ
@@ -169,6 +226,7 @@ const ContentProfile = () => {
                     name="address"
                     value={profile.address}
                     onChange={handleChange}
+                    onKeyDown={handleKeyDown} // Thêm sự kiện onKeyDown
                     className="w-full p-2 mb-2 border border-gray-300 rounded"
                   />
                 </div>
@@ -179,6 +237,7 @@ const ContentProfile = () => {
                     name="email"
                     value={profile.email}
                     onChange={handleChange}
+                    onKeyDown={handleKeyDown} // Thêm sự kiện onKeyDown
                     className="w-full p-2 border border-gray-300 rounded"
                   />
                 </div>

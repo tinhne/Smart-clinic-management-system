@@ -33,11 +33,25 @@
     padding: 10px;
     font-weight: bold;
     border-bottom: 2px solid #ddd;
+    text-align: left; // Căn lề trái cho tiêu đề
   }
 
   td {
     padding: 10px;
     border-bottom: 1px solid #ddd;
+
+    &:nth-child(1) {
+      text-align: left; // Căn lề phải cho số thứ tự
+    }
+
+    &:nth-child(2) {
+      text-align: left; // Căn lề trái cho tên dịch vụ
+    }
+
+    &:nth-child(3) {
+      text-align: left; // Căn lề phải cho số tiền
+      text-indent: -20px;
+    }
   }
 
   tr:nth-child(even) {
@@ -46,36 +60,5 @@
 
   tr:hover {
     background-color: #e9ecef; // Hiệu ứng hover
-  }
-}
-
-.pagination {
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
-
-  .page-item {
-    margin: 0 5px;
-
-    .page-link {
-      padding: 8px 12px;
-      background-color: #fff;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      color: #007bff;
-      cursor: pointer;
-      text-decoration: none;
-      font-size: 14px;
-
-      &:hover {
-        background-color: #007bff;
-        color: #fff;
-      }
-    }
-
-    &.active .page-link {
-      background-color: #007bff;
-      color: #fff;
-    }
   }
 }

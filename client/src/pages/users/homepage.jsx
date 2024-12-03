@@ -547,7 +547,7 @@ const HomePage = () => {
 
         {/* tin y tế */}
         <div className="news_section">
-          <h1 className="title">Tin Y tế</h1>
+          <h1 className="title">DANH MỤC THUỐC</h1>
           <p className="subtitle">Chính thống - Minh bạch - Trung lập</p>
           <div className="search_container">
             <div className="filter_buttons">

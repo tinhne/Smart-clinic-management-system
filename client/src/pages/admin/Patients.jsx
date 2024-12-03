@@ -64,7 +64,18 @@ function Patients() {
   return (
     <div className="patient-page">
       <div className="search-and-add">
-        {/* Thanh tìm kiếm */}
+        <button
+          className="btn btn-primary add-patient-button"
+          onClick={() => setShowCreateModal(true)}
+        >
+          Thêm Bệnh Nhân Mới
+        </button>
+        <div className="total-patient">
+          <span>Tổng số bệnh nhân: {totalUser}</span>
+        </div>
+      </div>
+      {/* Thanh tìm kiếm */}
+      <div className="search-bar-patient">
         <input
           type="text"
           className="form-control search-input"
@@ -72,16 +83,6 @@ function Patients() {
           value={searchQuery}
           onChange={handleSearch}
         />
-        <button
-          className="btn btn-primary add-patient-button"
-          onClick={() => setShowCreateModal(true)}
-        >
-          Thêm Bệnh Nhân Mới
-        </button>
-      </div>
-
-      <div className="total-patient">
-        <span>Tổng số bệnh nhân: {totalUser}</span>
       </div>
 
       <div className="table-container">

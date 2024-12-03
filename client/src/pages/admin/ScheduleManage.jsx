@@ -205,9 +205,7 @@ const ScheduleManage = () => {
               <tr key={schedule.schedule_id}>
                 <td>{schedule.doctor_name}</td>
                 <td>{schedule.specialties.join(", ")}</td>
-                <td>
-                  {new Date(schedule.date).toLocaleDateString("vi-VN")}
-                </td>
+                <td>{new Date(schedule.date).toLocaleDateString("vi-VN")}</td>
                 <td>{schedule.start_time}</td>
                 <td>{schedule.end_time}</td>
                 <td>{schedule.slot_duration} phút</td>
@@ -241,8 +239,8 @@ const ScheduleManage = () => {
 
       {/* Phân trang */}
       <ReactPaginate
-        previousLabel={"Previous"}
-        nextLabel={"Next"}
+        previousLabel={"Lùi"}
+        nextLabel={"Tiếp"}
         pageCount={5}
         containerClassName={"pagination"}
         activeClassName={"active"}

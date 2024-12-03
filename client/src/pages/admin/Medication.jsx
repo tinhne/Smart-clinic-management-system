@@ -173,7 +173,7 @@ function Medication() {
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
         >
-          Previous
+          Lùi
         </button>
         <span>
           Page {currentPage} of {totalPages}
@@ -183,7 +183,7 @@ function Medication() {
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
-          Next
+          Tiếp
         </button>
       </div>
 

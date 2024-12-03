@@ -201,8 +201,8 @@ const BlogAdmin = () => {
         </tbody>
       </Table>
       <ReactPaginate
-        previousLabel={"Previous"}
-        nextLabel={"Next"}
+        previousLabel={"Lùi"}
+        nextLabel={"Tiếp"}
         breakLabel={"..."}
         pageCount={5}
         marginPagesDisplayed={2}

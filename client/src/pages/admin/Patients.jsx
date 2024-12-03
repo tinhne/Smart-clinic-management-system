@@ -156,7 +156,7 @@ function Patients() {
           onClick={() => handlePageChange(currentPage - 1)}
           disabled={currentPage === 1}
         >
-          Previous
+          Lùi
         </button>
 
         <span>
@@ -168,7 +168,7 @@ function Patients() {
           onClick={() => handlePageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
         >
-          Next
+          Tiếp
         </button>
       </div>
 

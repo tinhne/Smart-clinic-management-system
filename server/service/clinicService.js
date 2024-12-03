@@ -13,7 +13,7 @@ exports.createService = async (serviceData) => {
 };
 
 // lay tat ca dich vu phong kham
-exports.getAllServices = async (page = 1, limit = 5) => {
+exports.getAllServices = async (page = 1, limit = 10) => {
   try {
     const skip = (page - 1) * limit;
     const services = await Service.find()

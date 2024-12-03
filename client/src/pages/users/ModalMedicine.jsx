@@ -7,7 +7,7 @@ const Modal = ({ isOpen, onClose, medicine }) => {
 
   return (
     <div className="modal-overlay">
-      <div className="modal-content">
+      <div className="modal-content_medicine">
         <h2>{medicine.name}</h2>
         <img src={medicine.medicalImage} alt={medicine.name} />
         <p><strong>Mô tả:</strong> {medicine.description}</p>

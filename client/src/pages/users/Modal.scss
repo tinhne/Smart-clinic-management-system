@@ -11,11 +11,10 @@
     z-index: 1000; /* Add a high z-index to ensure it's on top of everything */
   }
   
-  .modal-content {
+  .modal-content_medicine {
     background: white;
     padding: 20px;
     border-radius: 5px;
-    max-width: 500px;
     width: 100%;
     margin: 40px auto; /* Add some margin to center it horizontally */
   }

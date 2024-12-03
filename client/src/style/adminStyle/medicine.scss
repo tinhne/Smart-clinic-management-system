@@ -122,6 +122,7 @@
   .medicine-table {
     width: 100%;
     border-collapse: collapse;
+    table-layout: fixed; /* Thêm dòng này để đảm bảo bảng có layout cố định */
 
     thead {
       position: sticky;
@@ -147,17 +148,29 @@
     tbody td {
       color: #555;
 
-      &:nth-child(1), // Cột tên thuốc
-      &:nth-child(2), // Cột mô tả
-      &:nth-child(3) { // Cột đơn vị tính
-        text-align: left; // Căn lề trái cho chữ
-        padding-left: 15px; // Thụt lề trái
+      &:nth-child(1) {
+        // Cột đơn vị tính
+        text-align: left;
+        padding-left: 15px;
+      }
+      &:nth-child(3) {
+        padding-left: 105px;
       }
 
       &:nth-child(4), // Cột giá
-      &:nth-child(5) { // Cột số lượng
-        text-align: right; // Căn lề phải cho số
-        padding-right: 15px; // Thụt lề phải
+      &:nth-child(5) {
+        // Cột số lượng
+        text-align: right;
+        padding-right: 100px;
+      }
+
+      &:nth-child(2) {
+        // Cột mô tả
+        width: 500px; /* Chiều rộng cố định cho cột mô tả */
+        white-space: nowrap; /* Ngừng xuống dòng */
+        overflow: hidden; /* Ẩn văn bản bị cắt */
+        text-overflow: ellipsis; /* Thêm dấu ba chấm khi văn bản bị cắt */
+        padding-left: 15px; /* Thụt lề trái */
       }
     }
 
@@ -202,7 +215,6 @@
       gap: 10px;
     }
   }
-
 
   .medicine-image {
     max-width: 250px; // Chiều rộng tối đa

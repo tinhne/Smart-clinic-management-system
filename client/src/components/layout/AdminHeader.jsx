@@ -9,10 +9,7 @@ function AdminHeader() {
     <header className="admin-header">
       <div className="header-left">
       </div>
-      <div className="header-search">
-        <input type="text" className="searchh-input" placeholder="Seach here" />
-        <CiSearch className="search-icon"></CiSearch>
-      </div>
+      
       <div className="header-right">
         <img src={customer} alt="avatar" />
       </div>

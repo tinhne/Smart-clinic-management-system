@@ -1,35 +1,40 @@
 import React, { useState, useEffect } from "react";
 import { Spinner } from "react-bootstrap"; // Import Spinner từ React-Bootstrap
-import { getAllUserByRole, createPatient, countUserByRole } from "../../utils/AuthAPI/AdminService";
+import {
+  getAllUserByRole,
+  createPatient,
+  countUserByRole,
+} from "../../utils/AuthAPI/AdminService";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import "bootstrap/dist/css/bootstrap.min.css"; // Đảm bảo bootstrap được import
 import "../../style/adminStyle/patient.scss";
 import ModalDeletePatient from "../../components/admin/patient/ModalDeletePaitent";
 import ModalEditPatient from "../../components/admin/patient/ModalUpdatePaitent";
-import ModalCreatePatient from "../../components/admin/patient/ModalCreatePatient"; // Import modal tạo bệnh nhân
+import ModalCreatePatient from "../../components/admin/patient/ModalCreatePatient";
 
 function Patients() {
   const [patients, setPatients] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(false); // Hiển thị Spinner khi loading
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [showCreateModal, setShowCreateModal] = useState(false); // Trạng thái modal tạo bệnh nhân
+  const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null);
   const [totalUser, setTotalUser] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     fetchPatients(currentPage);
-  }, [currentPage]);
+  }, [currentPage, searchQuery]);
 
   const fetchPatients = async (page) => {
-    setLoading(true); // Bắt đầu loading
+    setLoading(true);
     setError(null);
     try {
-      const data = await getAllUserByRole("patient", page, 10);
+      const data = await getAllUserByRole("patient", page, 10, searchQuery);
       const totalUser = await countUserByRole("patient");
       if (data) {
         setTotalUser(totalUser.userCount);
@@ -42,7 +47,7 @@ function Patients() {
     } catch (error) {
       setError("Lỗi khi kết nối tới server.");
     }
-    setLoading(false); // Kết thúc loading
+    setLoading(false);
   };
 
   const handlePageChange = (newPage) => {
@@ -51,12 +56,16 @@ function Patients() {
     }
   };
 
+  const handleSearch = (e) => {
+    setSearchQuery(e.target.value);
+    setCurrentPage(1);
+  };
+
   return (
     <div className="patient-page">
-      {/* Nút mở modal tạo bệnh nhân */}
-      <div className="add-patient-button">
+      <div className="search-and-add">
         <button
-          className="btn btn-primary"
+          className="btn btn-primary add-patient-button"
           onClick={() => setShowCreateModal(true)}
         >
           Thêm Bệnh Nhân Mới
@@ -65,14 +74,27 @@ function Patients() {
           <span>Tổng số bệnh nhân: {totalUser}</span>
         </div>
       </div>
+      {/* Thanh tìm kiếm */}
+      <div className="search-bar-patient">
+        <input
+          type="text"
+          className="form-control search-input"
+          placeholder="Tìm kiếm bệnh nhân..."
+          value={searchQuery}
+          onChange={handleSearch}
+        />
+      </div>
 
       <div className="table-container">
         {loading ? (
-          <div className="d-flex justify-content-center align-items-center" style={{ height: "200px" }}>
-          <Spinner animation="border" role="status" variant="primary">
-            <span className="visually-hidden">Loading...</span>
-          </Spinner>
-        </div>
+          <div
+            className="d-flex justify-content-center align-items-center"
+            style={{ height: "200px" }}
+          >
+            <Spinner animation="border" role="status" variant="primary">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          </div>
         ) : error ? (
           <p>{error}</p>
         ) : (
@@ -101,19 +123,19 @@ function Patients() {
                         className="btn btn-edit"
                         onClick={() => {
                           setSelectedUser(patient);
-                          setShowEditModal(true); // Hiển thị modal chỉnh sửa
+                          setShowEditModal(true);
                         }}
                       >
-                        Edit
+                        Sửa
                       </button>
                       <button
                         className="btn btn-delete"
                         onClick={() => {
-                          setSelectedUser(patient); // Đặt người dùng cần xóa
-                          setShowDeleteModal(true); // Hiển thị modal xóa
+                          setSelectedUser(patient);
+                          setShowDeleteModal(true);
                         }}
                       >
-                        Delete
+                        Xóa
                       </button>
                     </td>
                   </tr>
@@ -150,7 +172,6 @@ function Patients() {
         </button>
       </div>
 
-      {/* Modal tạo bệnh nhân */}
       <ModalCreatePatient
         show={showCreateModal}
         handleClose={() => setShowCreateModal(false)}

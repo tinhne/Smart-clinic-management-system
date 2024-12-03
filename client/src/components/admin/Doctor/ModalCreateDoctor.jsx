@@ -108,7 +108,7 @@ const ModalCreateDoctor = ({
     const today = new Date();
     const birthDate = new Date(dob);
     if (birthDate >= today) {
-      toast.error("Ngày sinh phải nhỏ hơn ngày hiện tại.");
+      toast.error("Ngày sinh không hợp lệ");
       return;
     }
 

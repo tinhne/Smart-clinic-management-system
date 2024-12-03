@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Table, Spinner } from "react-bootstrap"; // Import Spinner
+import { Button, Table, Spinner } from "react-bootstrap";
 import ReactPaginate from "react-paginate";
 import AddBlogModal from "../../components/admin/BlogAdmin/AddBlogModal";
 import EditBlogModal from "../../components/admin/BlogAdmin/EditBlogModal";
@@ -10,16 +10,16 @@ import "react-toastify/dist/ReactToastify.css";
 
 const BlogAdmin = () => {
   const [blogs, setBlogs] = useState([]);
+  const [searchTerm, setSearchTerm] = useState(""); // State để lưu từ khóa tìm kiếm
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState(null);
-  const [loading, setLoading] = useState(false);  // Loading state
+  const [loading, setLoading] = useState(false);
 
-  // Fetch blog data from API
   const fetchBlogs = async () => {
-    setLoading(true);  // Set loading to true before fetching
+    setLoading(true);
     try {
       const data = await getBlog();
       if (data?.blogs) {
@@ -31,7 +31,7 @@ const BlogAdmin = () => {
       console.error("Error fetching blogs:", error.message);
       setError("Không thể lấy dữ liệu bài viết.");
     } finally {
-      setLoading(false);  // Set loading to false after fetching
+      setLoading(false);
     }
   };
 
@@ -39,32 +39,27 @@ const BlogAdmin = () => {
     fetchBlogs();
   }, []);
 
-  // Handle Modal Add
   const handleShowModal = () => setShowModal(true);
   const handleCloseModal = () => setShowModal(false);
 
-  // Handle Modal Edit
   const handleShowEditModal = (blog) => {
     setSelectedBlog(blog);
     setShowEditModal(true);
   };
   const handleCloseEditModal = () => setShowEditModal(false);
 
-  // Handle Modal Delete
   const handleShowDeleteModal = (blog) => {
     setSelectedBlog(blog);
     setShowDeleteModal(true);
   };
   const handleCloseDeleteModal = () => setShowDeleteModal(false);
 
-  // Add a new blog
   const handleSave = async (newBlog) => {
     setBlogs((prevBlogs) => [newBlog, ...prevBlogs]);
     await fetchBlogs();
     handleCloseModal();
   };
 
-  // Save edited blog
   const handleSaveEdit = (updatedBlog) => {
     setBlogs((prevBlogs) =>
       prevBlogs.map((blog) =>
@@ -74,12 +69,11 @@ const BlogAdmin = () => {
     handleCloseEditModal();
   };
 
-  // Delete blog
   const handleDelete = async () => {
     const toastId = toast.loading("Đang xóa bài viết...");
     try {
-      console.log("Đang xóa bài viết với ID:", selectedBlog._id); // Kiểm tra ID
-      await deleteBlog(selectedBlog._id); // Xóa bài viết
+      console.log("Đang xóa bài viết với ID:", selectedBlog._id);
+      await deleteBlog(selectedBlog._id);
 
       setBlogs((prevBlogs) =>
         prevBlogs.filter((blog) => blog._id !== selectedBlog._id)
@@ -93,7 +87,7 @@ const BlogAdmin = () => {
       });
       handleCloseDeleteModal();
     } catch (error) {
-      console.error("Error during delete:", error); // Kiểm tra lỗi
+      console.error("Error during delete:", error);
       toast.update(toastId, {
         render: "Không thể xóa bài viết.",
         type: "error",
@@ -103,12 +97,37 @@ const BlogAdmin = () => {
     }
   };
 
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value);
+  };
+
+  // Lọc danh sách blogs dựa trên từ khóa
+  const filteredBlogs = blogs.filter(
+    (blog) =>
+      blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      blog.author_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      blog.content.some((content) =>
+        content.text.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+  );
+
   return (
     <div className="container mt-4">
       <ToastContainer />
-      <Button className="mb-3" variant="primary" onClick={handleShowModal}>
-        Thêm Bài viết
-      </Button>
+      <div className="d-flex justify-content-between align-items-center mb-3">
+        <Button variant="primary" onClick={handleShowModal}>
+          Thêm Bài viết
+        </Button>
+        <div style={{ maxWidth: "300px" }}>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Tìm kiếm bài viết..."
+            value={searchTerm}
+            onChange={handleSearch}
+          />
+        </div>
+      </div>
       {error && <p className="text-danger">{error}</p>}
       <Table striped bordered hover responsive>
         <thead className="thead-light">
@@ -128,52 +147,50 @@ const BlogAdmin = () => {
                 <Spinner animation="border" variant="primary" /> Đang tải dữ liệu...
               </td>
             </tr>
-          ) : blogs.length > 0 ? (
-            blogs
-              .filter((blog) => blog?._id) // Ensure valid blogs
-              .map((blog) => (
-                <tr key={blog._id}>
-                  <td>{blog?.title || "Không xác định"}</td>
-                  <td>
-                    {Array.isArray(blog?.category)
-                      ? blog.category.join(", ")
-                      : "Không xác định"}
-                  </td>
-                  <td
-                    style={{
-                      maxWidth: "300px",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
+          ) : filteredBlogs.length > 0 ? (
+            filteredBlogs.map((blog) => (
+              <tr key={blog._id}>
+                <td>{blog?.title || "Không xác định"}</td>
+                <td>
+                  {Array.isArray(blog?.category)
+                    ? blog.category.join(", ")
+                    : "Không xác định"}
+                </td>
+                <td
+                  style={{
+                    maxWidth: "300px",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {blog?.content[0]?.text || "Không có nội dung"}
+                </td>
+                <td>{blog?.author_name || "Không rõ"}</td>
+                <td>
+                  {blog?.createdAt
+                    ? new Date(blog.createdAt).toLocaleDateString("vi-VN")
+                    : "N/A"}
+                </td>
+                <td>
+                  <Button
+                    variant="warning"
+                    size="sm"
+                    className="mr-2"
+                    onClick={() => handleShowEditModal(blog)}
                   >
-                    {blog?.content[0]?.text || "Không có nội dung"}
-                  </td>
-                  <td>{blog?.author_name || "Không rõ"}</td>
-                  <td>
-                    {blog?.createdAt
-                      ? new Date(blog.createdAt).toLocaleDateString("vi-VN")
-                      : "N/A"}
-                  </td>
-                  <td>
-                    <Button
-                      variant="warning"
-                      size="sm"
-                      className="mr-2"
-                      onClick={() => handleShowEditModal(blog)}
-                    >
-                      Chỉnh sửa
-                    </Button>
-                    <Button
-                      variant="danger"
-                      size="sm"
-                      onClick={() => handleShowDeleteModal(blog)}
-                    >
-                      Xóa
-                    </Button>
-                  </td>
-                </tr>
-              ))
+                    Chỉnh sửa
+                  </Button>
+                  <Button
+                    variant="danger"
+                    size="sm"
+                    onClick={() => handleShowDeleteModal(blog)}
+                  >
+                    Xóa
+                  </Button>
+                </td>
+              </tr>
+            ))
           ) : (
             <tr>
               <td colSpan="6" style={{ textAlign: "center" }}>
@@ -183,7 +200,6 @@ const BlogAdmin = () => {
           )}
         </tbody>
       </Table>
-      {/* Pagination */}
       <ReactPaginate
         previousLabel={"Previous"}
         nextLabel={"Next"}
@@ -204,7 +220,6 @@ const BlogAdmin = () => {
         activeClassName={"active"}
       />
 
-      {/* Modals */}
       <AddBlogModal
         show={showModal}
         onClose={handleCloseModal}

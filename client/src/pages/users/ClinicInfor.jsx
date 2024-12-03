@@ -2,6 +2,10 @@ import React from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../style/ClinicInfor/ClinicInfor.scss";
+const subject = encodeURIComponent("Chào mừng bạn đến với phòng khám");
+const body = encodeURIComponent(
+  "Nếu bạn cần hỗ trợ, vui lòng liên hệ với chúng tôi qua email này hoặc qua số điện thoại: +84 935038810"
+);
 
 const ClinicInfo = () => {
   return (
@@ -95,7 +99,12 @@ const ClinicInfo = () => {
                 với chúng tôi qua thông tin bên dưới. Chúng tôi sẽ phản hồi
                 nhanh chóng và hỗ trợ bạn tốt nhất.
               </Card.Text>
-              <Button href="mailto:lienhe@phongkham.com" variant="primary">
+              <Button
+                onClick={() => {
+                  window.location.href = `mailto:tandung03.dev@gmail.com?subject=${subject}&body=${body}`;
+                }}
+                variant="primary"
+              >
                 Gửi Email
               </Button>
             </Card.Body>

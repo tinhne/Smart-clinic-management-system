@@ -80,7 +80,7 @@ const AppointmentSuccess = () => {
           <div className="info-item">
             <span className="label">Hình thức</span>
             <span>
-              {appointmentType === "in-person" ? "Trực tuyến" : "Online"}
+              {appointmentType === "in-person" ? "Trực tiếp" : "Online"}
             </span>
           </div>
           <div className="info-item">

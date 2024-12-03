@@ -12,7 +12,7 @@ const ModalCreateSchedule = ({ show, handleClose, onScheduleCreated }) => {
 
   const fetchDoctor = async () => {
     setLoading(true); // Set loading to true
-    const data = await getAllUserByRole("doctor", 1, 1000);
+    const data = await getAllUserByRole("doctor", 1, 100);
     if (data.success) {
       setDoctors(data.users); // Assuming data.users contains the list of doctors
     }

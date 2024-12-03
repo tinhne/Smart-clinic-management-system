@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { NavLink, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import "../../style/DoctorList/DoctorList.scss";
 import ReactPaginate from "react-paginate";
 import {
@@ -8,6 +8,7 @@ import {
 } from "../../utils/AuthAPI/AdminService";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
+
 const categories = [
   { name: "Tất cả" },
   { name: "Chuẩn Đoán Hình Ảnh" },
@@ -22,10 +23,10 @@ const categories = [
   { name: "Truyền Nhiễm" },
   { name: "Xét Nghiệm" },
   { name: "Hô Hấp" },
-  { name: "Tâm Thần" }, 
+  { name: "Tâm Thần" },
   { name: "Sản Phụ Khoa" },
   { name: "Tai - Mũi - Họng" },
-  { name: "Nội Thần Kinh" }
+  { name: "Nội Thần Kinh" },
 ];
 
 function DoctorList() {
@@ -33,23 +34,25 @@ function DoctorList() {
   const { specialties } = location.state || {};
   const [doctorList, setDoctorList] = useState([]);
   const [currentCategory, setCurrentCategory] = useState("Tất cả");
-  const [errorShown, setErrorShown] = useState(false); 
+  const [errorShown, setErrorShown] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [pageCount, setPageCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
   const navigate = useNavigate();
 
-  const [loading, setLoading] = useState(false);
-
-  const fetchDoctors = async (specialty = null) => {
+  const fetchDoctors = async (specialty = null, page = 1) => {
     setLoading(true);
     try {
       let data;
       if (specialty === "Tất cả") {
-        data = await getAllUserByRole("doctor", 1, 1000);
+        data = await getAllUserByRole("doctor", page, 10);
       } else {
-        data = await getAllDoctorsBySpecialty({ specialty });
+        data = await getAllDoctorsBySpecialty({ specialty, page, limit: 10 });
       }
-  
+
       if (data && (data.doctors?.length > 0 || data.users?.length > 0)) {
         setDoctorList(data.doctors || data.users);
+        setPageCount(data.totalPages || 1);
         setErrorShown(false);
       } else {
         setDoctorList([]);
@@ -60,7 +63,6 @@ function DoctorList() {
       }
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        // Nếu lỗi 404, đặt doctorList thành mảng rỗng
         setDoctorList([]);
       } else {
         console.error("Error fetching doctors:", error);
@@ -69,21 +71,26 @@ function DoctorList() {
       setLoading(false);
     }
   };
-  
-  
+
   useEffect(() => {
     if (specialties) {
       fetchDoctors(specialties);
     } else {
-      setDoctorList([])
+      setDoctorList([]);
       fetchDoctors(currentCategory);
-      
     }
   }, []);
 
   const handleChange = async (categoryName) => {
     setCurrentCategory(categoryName);
-    await fetchDoctors(categoryName);
+    setCurrentPage(0);
+    await fetchDoctors(categoryName, 1);
+  };
+
+  const handlePageClick = async (data) => {
+    const selectedPage = data.selected + 1;
+    setCurrentPage(selectedPage);
+    await fetchDoctors(currentCategory, selectedPage);
   };
 
   const handleAppointmentClick = (doctorId) => {
@@ -101,13 +108,17 @@ function DoctorList() {
         <nav>
           <ul>
             {categories.map((category, index) => (
-              <li key={index} onClick={() => handleChange(category.name)}>
-                <NavLink
-                  to=""
-                  className={({ isActive }) => (isActive ? "active" : "")}
+              <li key={index}>
+                <a
+                  href="#"
+                  className={currentCategory === category.name ? "active" : ""}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleChange(category.name);
+                  }}
                 >
                   {category.name}
-                </NavLink>
+                </a>
               </li>
             ))}
           </ul>
@@ -123,6 +134,7 @@ function DoctorList() {
               <img
                 src={`data:image/jpeg;base64,${doctor.imageUrl}`}
                 className="doctor-img"
+                alt={`${doctor.first_name} ${doctor.last_name}`}
               />
               <div className="doctor-info">
                 <h3>
@@ -151,10 +163,10 @@ function DoctorList() {
 
         <ReactPaginate
           nextLabel="next >"
-          onPageChange={() => console.log(123)}
+          onPageChange={handlePageClick}
           pageRangeDisplayed={3}
           marginPagesDisplayed={2}
-          pageCount={5}
+          pageCount={pageCount}
           previousLabel="< previous"
           pageClassName="page-item"
           pageLinkClassName="page-link"

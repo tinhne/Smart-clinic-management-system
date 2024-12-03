@@ -134,7 +134,6 @@
     th,
     td {
       padding: 10px;
-      text-align: center;
       border-bottom: 1px solid #ddd;
     }
 
@@ -142,14 +141,28 @@
       background-color: #3498db;
       color: white;
       font-weight: bold;
-    }
-
-    tbody tr:hover {
-      background-color: #f1f1f1;
+      text-align: center;
     }
 
     tbody td {
       color: #555;
+
+      &:nth-child(1), // Cột tên thuốc
+      &:nth-child(2), // Cột mô tả
+      &:nth-child(3) { // Cột đơn vị tính
+        text-align: left; // Căn lề trái cho chữ
+        padding-left: 15px; // Thụt lề trái
+      }
+
+      &:nth-child(4), // Cột giá
+      &:nth-child(5) { // Cột số lượng
+        text-align: right; // Căn lề phải cho số
+        padding-right: 15px; // Thụt lề phải
+      }
+    }
+
+    tbody tr:hover {
+      background-color: #f1f1f1;
     }
 
     .btn {
@@ -189,6 +202,7 @@
       gap: 10px;
     }
   }
+
 
   .medicine-image {
     max-width: 250px; // Chiều rộng tối đa

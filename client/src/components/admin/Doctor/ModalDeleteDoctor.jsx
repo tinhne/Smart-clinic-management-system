@@ -14,9 +14,9 @@ const ModalDeleteUser = (props) => {
   // Hàm xử lý xóa người dùng
   const handleDeleteUser = async(userID) => {
     try{
+      setShowDeleteModal(false);
         await deletedUser(userID);
         await fetchDoctors(1);
-        setShowDeleteModal(false);
         toast.success("Xóa người dùng thành công!");
       } catch (error) {
         console.error("Lỗi khi xóa người dùng:", error);

@@ -33,6 +33,7 @@ import "../../style/Medicines/Medicines.scss";
 import Modal from "./ModalMedicine";
 
 import noithankinh from "../../assets/img/Specialties/noithankinh.jpg";
+import { ToastContainer } from "react-toastify";
 // import ngoailongngucmanhmau from "../../assets/img/Specialties/ngoailongngucmanhmau.jpg";
 
 const HomePage = () => {
@@ -698,6 +699,7 @@ const HomePage = () => {
             sách bảo mật dữ liệu cao nhất trên thế giới.
           </p>
         </div>
+
       </div>
     </>
   );

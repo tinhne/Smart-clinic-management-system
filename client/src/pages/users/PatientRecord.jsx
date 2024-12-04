@@ -6,12 +6,17 @@ import { BookingAppointment } from "../../utils/AppointmentAPI/AppointmentServic
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from "react-router-dom";
+import { sendEmail } from "../../utils/EmailNontification/EmailNontificationService";
+import { ClipLoader } from "react-spinners"; // Hoặc chọn spinner khác từ thư viện
+
 const PatientRecord = () => {
   const { idDoctor, idPatient } = useParams(); // Lấy doctorId và patientId từ URL
   const [doctor, setDoctor] = useState(null);
   const [patient, setPatient] = useState(null);
   const [note, setNote] = useState(""); // Lưu ghi chú từ bệnh nhân
   const location = useLocation();
+  const [loadingButton, setLoadingButton] = useState(null); // 'online' hoặc 'in-person' hoặc null
+
   const { selectedDate, selectedSlot } = location.state || {};
   const navigate = useNavigate(); // Nhận dữ liệu được truyền từ route
   const formatDate = (isoDateString) => {
@@ -26,6 +31,7 @@ const PatientRecord = () => {
       try {
         const doctorData = await getUserById(idDoctor, "doctor");
         setDoctor(doctorData);
+        console.log(doctorData);
       } catch (error) {
         console.error("Lỗi khi lấy thông tin bác sĩ:", error);
       }
@@ -47,7 +53,11 @@ const PatientRecord = () => {
 
   const handleBooking = async (isOnline) => {
     const appointmentType = isOnline ? "online" : "in-person";
-    const videoCallLink = isOnline ? `http://localhost:5173/room/${doctor._id}` : null;
+    const videoCallLink = isOnline
+      ? `http://localhost:5173/room/${doctor.user._id}`
+      : null;
+
+    setLoadingButton(appointmentType); // Đặt trạng thái loading cho nút được nhấn
 
     const appointmentData = {
       appointment_date: selectedDate,
@@ -62,10 +72,6 @@ const PatientRecord = () => {
     try {
       const response = await BookingAppointment(appointmentData);
       toast.success("Đặt lịch thành công!");
-
-      console.log("Video Call Link:", videoCallLink); // Log the video call link
-
-      // Navigate and log state
       navigate("/dat-kham/ho-so/thanh-cong", {
         state: {
           doctor,
@@ -74,16 +80,44 @@ const PatientRecord = () => {
           selectedSlot,
           note,
           appointmentType,
-          videoCallLink
+          videoCallLink,
         },
       });
+      try {
+        const emailMessage = `
+          Xin chào ${patient.user.first_name} ${patient.user.last_name},
+  
+          Bạn đã đặt lịch hẹn thành công với bác sĩ ${doctor.user.first_name} ${
+          doctor.user.last_name
+        }.
+  
+          Thông tin chi tiết:
+          - Ngày: ${formatDate(selectedDate)}
+          - Giờ: ${selectedSlot}
+          - Hình thức khám: ${isOnline ? "Khám online" : "Khám trực tiếp"}
+          ${isOnline ? `- Link video call: ${videoCallLink}` : ""}
+  
+          Ghi chú: ${note || "Không có ghi chú"}
+  
+          Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.
+        `;
+
+        await sendEmail({
+          recipientEmail: patient.user.email,
+          message: emailMessage,
+        });
+        toast.success("Email đã được gửi thành công!");
+      } catch (emailError) {
+        console.error("Lỗi khi gửi email:", emailError);
+        toast.warn("Đặt lịch thành công, nhưng không gửi được email.");
+      }
     } catch (error) {
       console.error("Lỗi khi đặt lịch:", error);
       toast.error("Đặt lịch thất bại.");
+    } finally {
+      setLoadingButton(null); // Reset trạng thái loading sau khi xử lý xong
     }
-};
-
-
+  };
 
   if (!doctor || !patient) {
     return <p>Loading...</p>; // Hiển thị loading khi dữ liệu chưa có
@@ -187,15 +221,24 @@ const PatientRecord = () => {
           <button
             className="booking-button-tt"
             onClick={() => handleBooking(false)}
+            disabled={loadingButton === "in-person"} // Chỉ disable khi nút này đang loading
           >
-            Đặt lịch khám:
-            <span>Trực tiếp</span>
+            {loadingButton === "in-person" ? (
+              <ClipLoader size={20} color="#fff" />
+            ) : (
+              "Đặt lịch khám: Trực tiếp"
+            )}
           </button>
           <button
             className="booking-button-ol"
             onClick={() => handleBooking(true)}
+            disabled={loadingButton === "online"} // Chỉ disable khi nút này đang loading
           >
-            Đặt lịch khám: <span>Online</span>
+            {loadingButton === "online" ? (
+              <ClipLoader size={20} color="#fff" />
+            ) : (
+              "Đặt lịch khám: Online"
+            )}
           </button>
         </div>
       </div>

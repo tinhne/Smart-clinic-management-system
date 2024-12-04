@@ -10,11 +10,11 @@ function App() {
 
   return (
     <>
-    <ToastContainer/>
       <Chatbot></Chatbot>
       <Header></Header>
       <Outlet></Outlet>
       <Footer></Footer>
+    <ToastContainer/>
       
     </>
   );

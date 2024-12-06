@@ -9,6 +9,7 @@ import {
 import { getUserById } from "../../utils/AuthAPI/AdminService";
 import DetailMedicalRecord from "../../components/Doctor/DetailMedicalRecord";
 import AddVisitModal from "../../components/Doctor/AddVisitModel";
+import Cookies from 'js-cookie';
 
 function ViewPatientRecord() {
   const [medicalRecord, setMedicalRecord] = useState([]);
@@ -74,9 +75,20 @@ function ViewPatientRecord() {
   };
 
   const handleShowAddVisitModal = (record) => {
-    const doctorId = record.medical_history.length > 0 ? record.medical_history[0].doctor_id : null;
-    console.log("Doctor ID:", doctorId);
-    setSelectedRecord({ ...record, doctor_id: doctorId });
+    // Lấy ID của bác sĩ hiện tại từ cookies
+    const doctorId = Cookies.get('id');
+    if (!doctorId) {
+      console.error("Doctor ID is missing in cookies.");
+      // Hiển thị thông báo lỗi cho người dùng
+      alert("Doctor ID is missing in cookies.");
+      return;
+    }
+
+    // Gán ID của bác sĩ hiện tại vào record
+    record.doctor_id = doctorId;
+
+    // Cập nhật selectedRecord và hiển thị modal
+    setSelectedRecord(record);
     setShowAddVisitModal(true);
   };
 

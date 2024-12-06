@@ -4,6 +4,7 @@ import { Modal, Button, Form, Row, Col } from "react-bootstrap";
 import { getMedicines } from "../../services/medicineAPI";
 import { addVisitHistory } from "../../utils/MedicalRecord/MedicalRecordService";
 import "./AddVisit.scss";
+import Cookies from 'js-cookie';
 
 const medicationReducer = (state, action) => {
   switch (action.type) {
@@ -58,27 +59,45 @@ const AddVisitModal = ({ show, onClose, selectedRecord }) => {
   };
 
   const handleSave = async () => {
+    // Lấy ID của bác sĩ hiện tại từ cookies
+    const doctorId = Cookies.get('id');
+    if (!doctorId) {
+        console.error("Doctor ID is missing in cookies.");
+        // Hiển thị thông báo lỗi cho người dùng
+        alert("Doctor ID is missing in cookies.");
+        return;
+    }
+
+    // Gán ID của bác sĩ hiện tại vào selectedRecord
+    selectedRecord.doctor_id = doctorId;
+
     const visitData = {
-      doctorId: selectedRecord.doctor_id,
-      symptoms: symptoms,
-      diagnosis: diagnosis,
-      treatmentPlan: treatmentPlan,
-      notes: notes,
-      description: description,
-      medications: medications.map(med => ({
-        medication_name: med.name,
-        quantity: med.quantity,
-        dosage: med.dosage
-      }))
+        doctorId: doctorId,
+        symptoms: symptoms,
+        diagnosis: diagnosis,
+        treatmentPlan: treatmentPlan,
+        notes: notes,
+        description: description,
+        medications: medications.map(med => ({
+            medication_name: med.name,
+            quantity: med.quantity,
+            dosage: med.dosage
+        }))
     };
 
-    console.log("Sending visitData:", visitData);
+    console.log("Sending visitData:", JSON.stringify(visitData, null, 2));
 
-    const response = await addVisitHistory(selectedRecord.patient_id, visitData);
-    if (response.success) {
-      onClose();
-    } else {
-      console.error(response.message);
+    try {
+        const response = await addVisitHistory(selectedRecord.patient_id, visitData);
+        if (response.success) {
+            onClose();
+        } else {
+            console.error("Failed to save visit data:", response.message);
+            alert("Failed to save visit data: " + response.message);
+        }
+    } catch (error) {
+        console.error("An error occurred while saving visit data:", error);
+        alert("An error occurred while saving visit data: " + error.message);
     }
   };
 

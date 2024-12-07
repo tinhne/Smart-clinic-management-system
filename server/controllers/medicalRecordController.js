@@ -22,56 +22,56 @@ exports.getAllMedicalRecords = async (req, res) => {
     }
 };
 
-// Controller lấy hồ sơ bệnh án theo ID bệnh nhân
+// Lấy hồ sơ bệnh án theo ID bệnh nhân
 exports.getMedicalRecordByPatientId = async (req, res) => {
     try {
-      const { patientId } = req.params; // Lấy patientId từ URL params
-  
-      // Gọi service để lấy hồ sơ bệnh án
-      const medicalRecord = await medicalRecordService.getMedicalRecordByPatientId(patientId);
-  
-      if (!medicalRecord) {
-        // Nếu không tìm thấy hồ sơ bệnh án, trả về 404
-        return res.status(404).json({ message: "Không tìm thấy hồ sơ bệnh án cho bệnh nhân này." });
-      }
-  
-      // Trả về hồ sơ bệnh án nếu tìm thấy
-      return res.status(200).json(medicalRecord);
-    } catch (error) {
-      console.error("Lỗi khi lấy hồ sơ bệnh án:", error);
-      // Trả về lỗi nếu có vấn đề
-      return res.status(500).json({ message: "Đã xảy ra lỗi khi lấy hồ sơ bệnh án." });
-    }
-  };
+        const { patientId } = req.params;
+        const result = await medicalRecordService.getMedicalRecordByPatientId(patientId);
 
-// Thêm thông tin khám bệnh mới
-exports.addVisitHistory = async (req, res) => {
-    try {
-        const patientId = req.params.patientId;
-        const visitData = {
-            doctorId: req.body.doctorId,
-            symptoms: req.body.symptoms,
-            diagnosis: req.body.diagnosis,
-            treatmentPlan: req.body.treatmentPlan,
-            notes: req.body.notes,
-            prescriptionId: req.body.prescriptionId,
-            medications: req.body.medications
-        };
-
-        const result = await medicalRecordService.addVisitHistory(patientId, visitData);
-        
         if (!result.success) {
             return res.status(400).json(result);
         }
-        
+
         res.status(200).json(result);
     } catch (error) {
-        console.error("Lỗi controller - addVisitHistory:", error);
+        console.error("Lỗi controller - getMedicalRecordByPatientId:", error);
         res.status(500).json({
             success: false,
-            message: "Lỗi server khi thêm thông tin khám bệnh"
+            message: "Lỗi server khi lấy hồ sơ bệnh án"
         });
     }
+};
+
+// Thêm thông tin khám bệnh mới
+exports.addVisitHistory = async (req, res) => {
+  try {
+    const patientId = req.params.patientId;
+    const visitData = {
+      doctorId: req.body.doctorId,
+      symptoms: req.body.symptoms,
+      diagnosis: req.body.diagnosis,
+      treatmentPlan: req.body.treatmentPlan,
+      notes: req.body.notes,
+      medications: req.body.medications
+    };
+
+    console.log("Received visitData:", visitData);
+
+    const result = await medicalRecordService.addVisitHistory(patientId, visitData);
+
+    if (!result.success) {
+      console.error("Error adding visit:", result.message);
+      return res.status(400).json(result);
+    }
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Lỗi controller - addVisitHistory:", error);
+    res.status(500).json({
+      success: false,
+      message: "Lỗi server khi thêm thông tin khám bệnh"
+    });
+  }
 };
 
 // Tạo hồ sơ bệnh án mới (thường được gọi tự động khi đặt lịch)

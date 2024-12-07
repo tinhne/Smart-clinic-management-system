@@ -30,6 +30,10 @@ const visitSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Prescription"
   }],
+  total_price: {
+    type: Number,
+    default: 0,
+  },
 });
 
 const medicalRecordSchema = new Schema(

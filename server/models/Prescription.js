@@ -36,6 +36,11 @@ const prescriptionSchema = new Schema({
       required: true,
       ref: "User",
    },
+   visit_id: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "MedicalRecord.medical_history",
+    },
    total_price: {
       type: Number,
       required: true,

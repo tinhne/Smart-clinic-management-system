@@ -2,9 +2,10 @@ import React, { useEffect, useState } from "react";
 import "../../style/DoctorProfile/DoctorProfile.scss";
 import { getUserById } from "../../utils/AuthAPI/AdminService";
 import { NavLink, useParams } from "react-router-dom";
-import {getScheduleDoctorById} from "../../utils/SchedualAPI/SchedualService";
+import { getScheduleDoctorById } from "../../utils/SchedualAPI/SchedualService";
 import { checkDoctorSchedule } from "../../utils/AppointmentAPI/AppointmentService";
 import Cookies from "js-cookie";
+import Spinner from "react-bootstrap/Spinner";
 
 const DoctorProfile = () => {
   const { doctorId } = useParams();
@@ -18,6 +19,7 @@ const DoctorProfile = () => {
   const [morningSlots, setMorningSlots] = useState([]);
   const [afternoonSlots, setAfternoonSlots] = useState([]);
   const [formattedToday, setFormattedToday] = useState("");
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchDoctorData = async () => {
@@ -74,9 +76,16 @@ const DoctorProfile = () => {
       }
     };
 
-    fetchDoctorData();
-    fetchScheduleData();
-    fetchBookedDatesData();
+    const fetchData = async () => {
+      await Promise.all([
+        fetchDoctorData(),
+        fetchScheduleData(),
+        fetchBookedDatesData(),
+      ]);
+      setLoading(false); // Tắt loading sau khi tải xong
+    };
+
+    fetchData();
   }, [doctorId, patientId]);
 
   const handleDateClick = (date) => {
@@ -129,6 +138,18 @@ const DoctorProfile = () => {
   const isSlotBooked = (date, slot) => {
     return bookedDates.includes(date) && bookedSlots.includes(slot);
   };
+  if (loading) {
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "100vh" }}
+      >
+        <Spinner animation="border" role="status" variant="primary">
+          <span className="visually-hidden">Loading...</span>
+        </Spinner>
+      </div>
+    );
+  }
 
   if (!doctor) {
     return <p>Loading...</p>;
@@ -176,14 +197,10 @@ const DoctorProfile = () => {
         </div>
         <p className="note-content">
           * Nếu bệnh nhân bận việc không đến khám được, vui lòng hủy lịch khám
-          đã đặt và đặt lại ngày khác. 
+          đã đặt và đặt lại ngày khác.
         </p>
-        <p className="note-content">
-          * Vui lòng đặt lịch khám trước 4h. 
-        </p>
-        <p className="note-content">
-          * Xin cảm ơn! 
-        </p>
+        <p className="note-content">* Vui lòng đặt lịch khám trước 4h.</p>
+        <p className="note-content">* Xin cảm ơn!</p>
       </div>
       <div className="quick-booking">
         <h3 className="section-title">Đặt khám nhanh</h3>

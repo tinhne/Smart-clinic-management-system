@@ -8,6 +8,7 @@ import {
 } from "../../utils/AuthAPI/AdminService";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
+import { Spinner } from "react-bootstrap";
 
 const categories = [
   { name: "Tất cả" },
@@ -34,7 +35,6 @@ function DoctorList() {
   const { specialties } = location.state || {};
   const [doctorList, setDoctorList] = useState([]);
   const [currentCategory, setCurrentCategory] = useState("Tất cả");
-  const [errorShown, setErrorShown] = useState(false);
   const [loading, setLoading] = useState(false);
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
@@ -53,20 +53,13 @@ function DoctorList() {
       if (data && (data.doctors?.length > 0 || data.users?.length > 0)) {
         setDoctorList(data.doctors || data.users);
         setPageCount(data.totalPages || 1);
-        setErrorShown(false);
       } else {
         setDoctorList([]);
-        if (!errorShown) {
-          toast.error("Không tìm thấy bác sĩ nào.");
-          setErrorShown(true);
-        }
+        toast.error("Không tìm thấy bác sĩ nào.");
       }
     } catch (error) {
-      if (error.response && error.response.status === 404) {
-        setDoctorList([]);
-      } else {
-        console.error("Error fetching doctors:", error);
-      }
+      toast.error("Error fetching doctors.");
+      console.error("Error fetching doctors:", error);
     } finally {
       setLoading(false);
     }
@@ -76,7 +69,6 @@ function DoctorList() {
     if (specialties) {
       fetchDoctors(specialties);
     } else {
-      setDoctorList([]);
       fetchDoctors(currentCategory);
     }
   }, []);
@@ -127,7 +119,14 @@ function DoctorList() {
 
       <main className="doctor-list">
         {loading ? (
-          <p>Đang tải...</p>
+          <div
+            className="d-flex justify-content-center align-items-center"
+            style={{ height: "200px" }}
+          >
+            <Spinner animation="border" role="status" variant="primary">
+              <span className="visually-hidden">Loading...</span>
+            </Spinner>
+          </div>
         ) : doctorList.length > 0 ? (
           doctorList.map((doctor) => (
             <div key={doctor._id} className="doctor-item">

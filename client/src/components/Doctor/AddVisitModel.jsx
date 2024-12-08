@@ -91,6 +91,7 @@ const AddVisitModel = ({ show, onClose, selectedRecord }) => {
         const response = await addVisitHistory(selectedRecord.patient_id, visitData);
         if (response.success) {
             onClose();
+            window.location.reload();
         } else {
             console.error("Failed to save visit data:", response.message);
             alert("Failed to save visit data: " + response.message);

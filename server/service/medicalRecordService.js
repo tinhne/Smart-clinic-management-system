@@ -55,6 +55,41 @@ exports.getMedicalRecordByPatientId = async (patientId) => {
   }
 };
 
+const getMedicalRecordById = async (patientId) => {
+  try {
+    // Fetch the medical record from the database
+    let medicalRecord = await MedicalRecord.findOne({ patient_id: patientId });
+
+    if (!medicalRecord) {
+      throw new Error('Medical record not found');
+    }
+
+    // Fetch all valid doctor and drug IDs from the database
+    const validDoctorIds = await Doctor.find().select('_id').lean();
+    const validDrugIds = await Drug.find().select('_id').lean();
+
+    const validDoctorIdSet = new Set(validDoctorIds.map(doc => doc._id.toString()));
+    const validDrugIdSet = new Set(validDrugIds.map(drug => drug._id.toString()));
+
+    // Filter out invalid doctor and drug IDs from medical history
+    medicalRecord.medical_history = medicalRecord.medical_history.filter(history => {
+      const isValidDoctor = validDoctorIdSet.has(history.doctor_id.toString());
+      const isValidDrug = validDrugIdSet.has(history.drug_id.toString());
+      return isValidDoctor && isValidDrug;
+    });
+
+    // Filter out invalid prescriptions
+    medicalRecord.prescriptions = medicalRecord.prescriptions.filter(prescription => {
+      return validDrugIdSet.has(prescription.drug_id.toString());
+    });
+
+    return medicalRecord;
+  } catch (error) {
+    console.error(error);
+    throw new Error('Error fetching medical record');
+  }
+};
+
 // tạo hồ sơ bệnh án
 exports.createMedicalRecord = async (patientid) => {
     try {
@@ -103,54 +138,49 @@ exports.addVisitHistory = async (patientId, visitData) => {
       treatment_plan: visitData.treatmentPlan,
       notes: visitData.notes,
       prescriptions: [],
-      total_price: 0
+      total_price: visitData.totalPrice
     };
 
     // Add visit to medical history and save to get visit_id
     medicalRecord.medical_history.push(visit);
     await medicalRecord.save();
 
+    // Ensure medications is an array
+    if (!Array.isArray(visitData.medications)) {
+      throw new Error('Medications should be an array');
+    }
+
+    // Update medication quantities and add prescriptions to visit
+    for (const medicationData of visitData.medications) {
+      const medication = await Medication.findOne({ name: medicationData.medication_name });
+      if (medication) {
+        medication.quantity_available -= medicationData.quantity;
+        if (medication.quantity_available < 0) {
+          throw new Error(`Not enough quantity for medication: ${medication.name}`);
+        }
+        await medication.save();
+
+        // Add prescription to visit
+        visit.prescriptions.push({
+          drug_id: medication._id,
+          quantity: medicationData.quantity,
+          dosage: medicationData.dosage,
+          instructions: medicationData.instructions || ''
+        });
+      } else {
+        throw new Error(`Medication not found: ${medicationData.medication_name}`);
+      }
+    }
+
+    // Save the updated visit with prescriptions
+    await medicalRecord.save();
+
     // Get the newly added visit's ID
     const newVisit = medicalRecord.medical_history[medicalRecord.medical_history.length - 1];
 
-    // Fetch medication details from the database
-    const medications = await Promise.all(visitData.medications.map(async (med) => {
-      const medication = await Medication.findOne({ name: med.medication_name });
-      if (!medication) {
-        throw new Error(`Medication not found: ${med.medication_name}`);
-      }
-      return {
-        medication_id: medication._id,
-        medication_name: med.medication_name,
-        quantity: med.quantity,
-        dosage: med.dosage,
-        price: medication.price, // Assuming the Medication schema has a price field
-        total_price: med.quantity * medication.price
-      };
-    }));
-
-    // Create a single prescription for the visit
-    const prescription = new Prescription({
-      visit_id: newVisit._id,
-      doctor_id: visitData.doctorId,
-      patient_id: patientId,
-      medications: medications,
-      total_price: medications.reduce((total, med) => total + med.total_price, 0)
-    });
-
-    const savedPrescription = await prescription.save();
-    newVisit.prescriptions.push(savedPrescription._id);
-
-    // Calculate total price
-    newVisit.total_price = savedPrescription.total_price;
-
-    // Save the updated medical record with the new visit and prescription
-    await medicalRecord.save();
-
-    console.log("Visit added successfully:", newVisit);
     return { success: true, visit: newVisit };
   } catch (error) {
-    console.error("Lỗi khi thêm thông tin khám bệnh:", error);
-    return { success: false, message: "Lỗi khi thêm thông tin khám bệnh" };
+    console.error(error);
+    return { success: false, message: 'Error adding visit history', error: error.message };
   }
 };

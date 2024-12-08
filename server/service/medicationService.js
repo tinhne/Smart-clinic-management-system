@@ -1,50 +1,98 @@
-const Prescription = require('../models/Prescription');
-const Medication = require('../models/Medication');
+const Prescription = require("../models/Prescription");
 
-exports.getMedicationSalesReport = async () => {
-  try {
-    const now = new Date();
-    const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-
-    const salesReport = await Prescription.aggregate([
-      { $unwind: "$medications" },
-      {
-        $lookup: {
-          from: "medications",
-          localField: "medications.medication_id",
-          foreignField: "_id",
-          as: "medicationDetails"
-        }
-      },
-      { $unwind: "$medicationDetails" },
-      {
-        $match: {
-          "medications.date": { $gte: firstDayOfMonth }
-        }
-      },
-      {
-        $group: {
-          _id: "$medications.medication_name",
-          totalQuantity: { $sum: "$medications.quantity" },
-          totalRevenue: { $sum: "$medications.total_price" }
-        }
-      },
-      {
-        $sort: {
-          totalRevenue: -1
-        }
+exports.getTotalSales = async () => {
+  return await Prescription.aggregate([
+    { $unwind: "$medications" },
+    {
+      $group: {
+        _id: "$medications.medication_id",
+        totalQuantity: { $sum: "$medications.quantity" },
+        totalRevenue: { $sum: "$medications.price" }
       }
-    ]);
+    },
+    {
+      $sort: {
+        totalRevenue: -1
+      }
+    }
+  ]);
+};
 
-    const highestRevenueMedication = salesReport[0];
-    const highestQuantityMedication = salesReport.reduce((max, med) => med.totalQuantity > max.totalQuantity ? med : max, salesReport[0]);
+exports.getBestSellingMedication = async () => {
+  const salesReport = await Prescription.aggregate([
+    { $unwind: "$medications" },
+    {
+      $group: {
+        _id: "$medications.medication_id",
+        totalQuantity: { $sum: "$medications.quantity" },
+        totalRevenue: { $sum: "$medications.price" }
+      }
+    },
+    {
+      $sort: {
+        totalQuantity: -1
+      }
+    }
+  ]);
 
-    return {
-      totalSales: salesReport,
-      highestRevenueMedication,
-      highestQuantityMedication
-    };
-  } catch (error) {
-    throw new Error("Error generating medication sales report: " + error.message);
-  }
+  return salesReport[0];
+};
+
+exports.getTotalSalesToday = async () => {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return await Prescription.aggregate([
+    { $match: { createdAt: { $gte: today } } },
+    { $unwind: "$medications" },
+    {
+      $group: {
+        _id: "$medications.medication_id",
+        totalQuantity: { $sum: "$medications.quantity" },
+        totalRevenue: { $sum: "$medications.price" }
+      }
+    }
+  ]);
+};
+
+exports.getMonthlySales = async () => {
+  return await Prescription.aggregate([
+    { $unwind: "$medications" },
+    {
+      $group: {
+        _id: {
+          month: { $month: "$createdAt" },
+          year: { $year: "$createdAt" },
+          medication_id: "$medications.medication_id"
+        },
+        totalQuantity: { $sum: "$medications.quantity" },
+        totalRevenue: { $sum: "$medications.price" }
+      }
+    },
+    {
+      $sort: {
+        "_id.year": 1,
+        "_id.month": 1
+      }
+    }
+  ]);
+};
+
+exports.getDailySales = async (medicationId) => {
+  const medicationObjectId = mongoose.Types.ObjectId(medicationId);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return await Prescription.aggregate([
+    { $match: { createdAt: { $gte: today }, "medications.medication_id": medicationObjectId } },
+    { $unwind: "$medications" },
+    { $match: { "medications.medication_id": medicationObjectId } },
+    {
+      $group: {
+        _id: "$medications.medication_id",
+        totalQuantity: { $sum: "$medications.quantity" },
+        totalRevenue: { $sum: "$medications.price" }
+      }
+    }
+  ]);
 };

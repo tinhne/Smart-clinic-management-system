@@ -1,10 +1,11 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const medicationController = require('../controllers/medicationController');
-const { authenticate } = require('../middlewares/authenticate');
-const { authorize } = require('../middlewares/authorize');
+const medicationController = require("../controllers/medicationController");
 
-// Define the route for getting the medication sales report
-router.get('/medication-sales-report', authenticate, authorize(['admin']), medicationController.getMedicationSalesReport);
+router.get("/total-sales", medicationController.getTotalSales);
+router.get("/best-selling-medication", medicationController.getBestSellingMedication);
+router.get("/total-sales-today", medicationController.getTotalSalesToday);
+router.get("/monthly-sales", medicationController.getMonthlySales);
+router.get("/daily-sales/:medicationId", medicationController.getDailySales);
 
 module.exports = router;

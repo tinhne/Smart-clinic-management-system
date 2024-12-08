@@ -54,7 +54,7 @@ exports.BookingAppointment = async (appointmentData) => {
   let medicalRecord = await medicalRecordService.getMedicalRecordByPatientId(
     patient_id
   );
-  if (!medicalRecord) {
+  if (!medicalRecord.success) {
     // Nếu chưa có, tạo hồ sơ bệnh án mới cho bệnh nhân
     medicalRecord = await medicalRecordService.createMedicalRecord(patient_id);
   }

@@ -1,56 +1,179 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import React, { useEffect, useState } from "react";
+import { Table, Statistic, Row, Col } from "antd";
+import {
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+} from "recharts";
+import {
+  getTotalSales,
+  getBestSellingMedication,
+  getTotalSalesToday,
+  getMonthlySales,
+  getDailySales,
+} from "../../utils/StaticsAPI/medicationService";
+import "../../style/Statics/StatisticsByDoctor.scss"; // Import file SCSS
 
 const StatisticsByMedication = () => {
-  const [medicationStats, setMedicationStats] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [totalSalesData, setTotalSalesData] = useState([]);
+  const [bestSellingMedicationData, setBestSellingMedicationData] = useState(null);
+  const [totalSalesTodayData, setTotalSalesTodayData] = useState([]);
+  const [monthlySalesData, setMonthlySalesData] = useState([]);
+  const [dailySalesData, setDailySalesData] = useState([]);
+
+  const fetchData = async () => {
+    try {
+      const totalSalesResponse = await getTotalSales();
+      if (totalSalesResponse) {
+        setTotalSalesData(totalSalesResponse);
+      }
+
+      const bestSellingResponse = await getBestSellingMedication();
+      if (bestSellingResponse) {
+        setBestSellingMedicationData(bestSellingResponse);
+      }
+
+      const totalSalesTodayResponse = await getTotalSalesToday();
+      if (totalSalesTodayResponse) {
+        setTotalSalesTodayData(totalSalesTodayResponse);
+      }
+
+      const monthlySalesResponse = await getMonthlySales();
+      if (monthlySalesResponse) {
+        setMonthlySalesData(monthlySalesResponse);
+      }
+
+      const dailySalesResponse = await getDailySales("67556857ede5c936a28b04bc"); 
+      if (dailySalesResponse) {
+        setDailySalesData(dailySalesResponse);
+      }
+    } catch (err) {
+      console.error("Error fetching data:", err);
+    }
+  };
 
   useEffect(() => {
-    const fetchMedicationStats = async () => {
-      try {
-        const response = await axios.get('/api/medications/medication-sales-report');
-        setMedicationStats(response.data.report.totalSales);
-        setLoading(false);
-      } catch (error) {
-        console.error('There was an error fetching the medication statistics!', error);
-        setError(error);
-        setLoading(false);
-      }
-    };
-
-    fetchMedicationStats();
+    fetchData();
   }, []);
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
+  const totalMonthlySales = monthlySalesData.reduce(
+    (acc, curr) => acc + curr.totalQuantity, 0
+  );
 
-  if (error) {
-    return <div>There was an error fetching the medication statistics!</div>;
-  }
+//   const totalDailySales = dailySalesData.reduce(
+//     (acc, curr) => acc + curr.totalQuantity, 0
+//   );
+  const totalDailySales = totalSalesTodayData.reduce(
+    (acc, curr) => acc + curr.totalQuantity, 0
+  );
+
+  const monthlyColumns = [
+    {
+      title: "Month",
+      dataIndex: "_id",
+      key: "month",
+      render: (_id) => `${_id.month}/${_id.year}`,
+    },
+    {
+      title: "Medication Name",
+      dataIndex: "medicationName",
+      key: "medicationName",
+    },
+    {
+      title: "Total Quantity",
+      dataIndex: "totalQuantity",
+      key: "totalQuantity",
+    },
+    {
+      title: "Total Revenue",
+      dataIndex: "totalRevenue",
+      key: "totalRevenue",
+    },
+  ];
+
+  const dailyColumns = [
+    {
+      title: "Medication Name",
+      dataIndex: "medicationName",
+      key: "medicationName",
+    },
+    {
+      title: "Total Quantity",
+      dataIndex: "totalQuantity",
+      key: "totalQuantity",
+    },
+    {
+      title: "Total Revenue",
+      dataIndex: "totalRevenue",
+      key: "totalRevenue",
+    },
+  ];
 
   return (
-    <div>
-      <h2>Statistics By Medication</h2>
-      <table>
-        <thead>
-          <tr>
-            <th>Medication Name</th>
-            <th>Total Quantity</th>
-            <th>Total Revenue</th>
-          </tr>
-        </thead>
-        <tbody>
-          {medicationStats.map((medication) => (
-            <tr key={medication._id}>
-              <td>{medication._id}</td>
-              <td>{medication.totalQuantity}</td>
-              <td>{medication.totalRevenue}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="statistics-container">
+      {/* Bảng Tóm tắt */}
+      <div className="summary">
+        <h2>Bảng Tóm tắt</h2>
+        <Row gutter={16}>
+          <Col span={8}>
+            <Statistic title="Tổng số thuốc bán tháng này" value={totalMonthlySales} />
+          </Col>
+          <Col span={8}>
+            <Statistic title="Tổng số thuốc bán hôm nay" value={totalDailySales} />
+          </Col>
+          <Col span={8}>
+            <Statistic title="Thuốc bán chạy nhất" value={bestSellingMedicationData ? bestSellingMedicationData.medicationName : "N/A"} />
+          </Col>
+        </Row>
+      </div>
+
+      <div className="table">
+        <h2>Thống kê số lượng thuốc bán theo tháng</h2>
+        <Table
+          columns={monthlyColumns}
+          dataSource={monthlySalesData}
+          rowKey={(record) => `${record._id.year}-${record._id.month}-${record._id.medication_id}`}
+          pagination={{ pageSize: 5 }}
+        />
+      </div>
+
+      <div className="daily-table">
+        <h2>Số lượng thuốc bán hôm nay</h2>
+        <Table
+          columns={dailyColumns}
+          dataSource={totalSalesTodayData}
+          rowKey={(record) => record._id}
+          pagination={{ pageSize: 5 }}
+        />
+      </div>
+
+      {/* Biểu đồ cho Số lượng thuốc bán hôm nay */}
+      <div className="daily-chart">
+        <h2>Biểu đồ số lượng thuốc bán hôm nay</h2>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={totalSalesTodayData}>
+            <XAxis dataKey="medicationName" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="totalQuantity" fill="#3357FF" barSize={40} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
+
+      <div className="chart">
+        <h2>Biểu đồ doanh thu thuốc bán theo tháng</h2>
+        <ResponsiveContainer width="100%" height={300}>
+          <BarChart data={monthlySalesData}>
+            <XAxis dataKey="medicationName" />
+            <YAxis />
+            <Tooltip />
+            <Bar dataKey="totalRevenue" fill="#3357FF" barSize={40} />
+          </BarChart>
+        </ResponsiveContainer>
+      </div>
     </div>
   );
 };

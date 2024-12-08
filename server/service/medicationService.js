@@ -7,7 +7,24 @@ exports.getTotalSales = async () => {
       $group: {
         _id: "$medications.medication_id",
         totalQuantity: { $sum: "$medications.quantity" },
-        totalRevenue: { $sum: "$medications.price" }
+        totalRevenue: { $sum: { $multiply: ["$medications.quantity", "$medications.price"] } }
+      }
+    },
+    {
+      $lookup: {
+        from: "medications",
+        localField: "_id",
+        foreignField: "_id",
+        as: "medication"
+      }
+    },
+    { $unwind: "$medication" },
+    {
+      $project: {
+        _id: 1,
+        totalQuantity: 1,
+        totalRevenue: 1,
+        medicationName: "$medication.name"
       }
     },
     {
@@ -25,7 +42,24 @@ exports.getBestSellingMedication = async () => {
       $group: {
         _id: "$medications.medication_id",
         totalQuantity: { $sum: "$medications.quantity" },
-        totalRevenue: { $sum: "$medications.price" }
+        totalRevenue: { $sum: { $multiply: ["$medications.quantity", "$medications.price"] } }
+      }
+    },
+    {
+      $lookup: {
+        from: "medications",
+        localField: "_id",
+        foreignField: "_id",
+        as: "medication"
+      }
+    },
+    { $unwind: "$medication" },
+    {
+      $project: {
+        _id: 1,
+        totalQuantity: 1,
+        totalRevenue: 1,
+        medicationName: "$medication.name"
       }
     },
     {
@@ -49,7 +83,24 @@ exports.getTotalSalesToday = async () => {
       $group: {
         _id: "$medications.medication_id",
         totalQuantity: { $sum: "$medications.quantity" },
-        totalRevenue: { $sum: "$medications.price" }
+        totalRevenue: { $sum: { $multiply: ["$medications.quantity", "$medications.price"] } }
+      }
+    },
+    {
+      $lookup: {
+        from: "medications",
+        localField: "_id",
+        foreignField: "_id",
+        as: "medication"
+      }
+    },
+    { $unwind: "$medication" },
+    {
+      $project: {
+        _id: 1,
+        totalQuantity: 1,
+        totalRevenue: 1,
+        medicationName: "$medication.name"
       }
     }
   ]);
@@ -66,7 +117,24 @@ exports.getMonthlySales = async () => {
           medication_id: "$medications.medication_id"
         },
         totalQuantity: { $sum: "$medications.quantity" },
-        totalRevenue: { $sum: "$medications.price" }
+        totalRevenue: { $sum: { $multiply: ["$medications.quantity", "$medications.price"] } }
+      }
+    },
+    {
+      $lookup: {
+        from: "medications",
+        localField: "_id.medication_id",
+        foreignField: "_id",
+        as: "medication"
+      }
+    },
+    { $unwind: "$medication" },
+    {
+      $project: {
+        _id: 1,
+        totalQuantity: 1,
+        totalRevenue: 1,
+        medicationName: "$medication.name"
       }
     },
     {
@@ -91,7 +159,73 @@ exports.getDailySales = async (medicationId) => {
       $group: {
         _id: "$medications.medication_id",
         totalQuantity: { $sum: "$medications.quantity" },
-        totalRevenue: { $sum: "$medications.price" }
+        totalRevenue: { $sum: { $multiply: ["$medications.quantity", "$medications.price"] } }
+      }
+    },
+    {
+      $lookup: {
+        from: "medications",
+        localField: "_id",
+        foreignField: "_id",
+        as: "medication"
+      }
+    },
+    { $unwind: "$medication" },
+    {
+      $project: {
+        _id: 1,
+        totalQuantity: 1,
+        totalRevenue: 1,
+        medicationName: "$medication.name"
+      }
+    }
+  ]);
+};
+
+exports.getYearlySales = async (year) => {
+  return await Prescription.aggregate([
+    { $unwind: "$medications" },
+    {
+      $match: {
+        $expr: {
+          $eq: [{ $year: "$createdAt" }, year]
+        }
+      }
+    },
+    {
+      $group: {
+        _id: { month: { $month: "$createdAt" } },
+        totalQuantity: { $sum: "$medications.quantity" },
+        totalRevenue: { $sum: { $multiply: ["$medications.quantity", "$medications.price"] } }
+      }
+    },
+    {
+      $sort: {
+        "_id.month": 1
+      }
+    }
+  ]);
+};
+
+exports.getMonthlyRevenue = async (year) => {
+  return await Prescription.aggregate([
+    { $unwind: "$medications" },
+    {
+      $match: {
+        $expr: {
+          $eq: [{ $year: "$createdAt" }, year]
+        }
+      }
+    },
+    {
+      $group: {
+        _id: { month: { $month: "$createdAt" } },
+        totalRevenue: { $sum: { $multiply: ["$medications.quantity", "$medications.price"] } }
+      }
+    },
+    {
+      $sort: {
+        "_id.month": 1
       }
     }
   ]);

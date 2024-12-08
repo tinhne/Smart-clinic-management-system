@@ -40,4 +40,20 @@ const getDailySales = async (medicationId) => {
   });
 };
 
-export { getTotalSales, getBestSellingMedication, getTotalSalesToday, getMonthlySales, getDailySales };
+const getYearlySales = async (year) => {
+  return axios.get(`/api/medications/year-sales/${year}`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+const getMonthlyRevenue = async (year) => {
+  return axios.get(`/api/medications/monthly-revenue/${year}`, {
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+};
+
+export { getTotalSales, getBestSellingMedication, getTotalSalesToday, getMonthlySales, getDailySales, getYearlySales, getMonthlyRevenue };

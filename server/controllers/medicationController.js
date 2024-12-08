@@ -45,3 +45,23 @@ exports.getDailySales = async (req, res) => {
     res.status(500).json({ message: "Error generating daily sales report: " + error.message });
   }
 };
+
+exports.getYearlySales = async (req, res) => {
+  try {
+    const year = parseInt(req.params.year, 10);
+    const salesReport = await medicationService.getYearlySales(year);
+    res.json(salesReport);
+  } catch (error) {
+    res.status(500).json({ message: "Error generating yearly sales report: " + error.message });
+  }
+};
+
+exports.getMonthlyRevenue = async (req, res) => {
+  try {
+    const year = parseInt(req.params.year, 10);
+    const revenueReport = await medicationService.getMonthlyRevenue(year);
+    res.json(revenueReport);
+  } catch (error) {
+    res.status(500).json({ message: "Error generating monthly revenue report: " + error.message });
+  }
+};

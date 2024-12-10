@@ -23,7 +23,7 @@ const medicationReducer = (state, action) => {
   }
 };
 
-const AddVisitModal = ({ show, onClose, selectedRecord }) => {
+const AddVisitModel = ({ show, onClose, selectedRecord }) => {
   const [medicines, setMedicines] = useState([]);
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -33,7 +33,7 @@ const AddVisitModal = ({ show, onClose, selectedRecord }) => {
   const [diagnosis, setDiagnosis] = useState("");
   const [treatmentPlan, setTreatmentPlan] = useState("");
   const [notes, setNotes] = useState("");
-  const [description, setDescription] = useState("Đơn thuốc cho bệnh nhân");
+  const [description, setDescription] = useState("");
 
   const fetchMedicines = async () => {
     setLoading(true);
@@ -58,7 +58,7 @@ const AddVisitModal = ({ show, onClose, selectedRecord }) => {
     }
   };
 
-  const handleSave = async () => {
+  const handleAddVisit = async () => {
     // Lấy ID của bác sĩ hiện tại từ cookies
     const doctorId = Cookies.get('id');
     if (!doctorId) {
@@ -91,6 +91,7 @@ const AddVisitModal = ({ show, onClose, selectedRecord }) => {
         const response = await addVisitHistory(selectedRecord.patient_id, visitData);
         if (response.success) {
             onClose();
+            window.location.reload();
         } else {
             console.error("Failed to save visit data:", response.message);
             alert("Failed to save visit data: " + response.message);
@@ -198,7 +199,7 @@ const AddVisitModal = ({ show, onClose, selectedRecord }) => {
         <Button variant="secondary" onClick={onClose}>
           Close
         </Button>
-        <Button variant="primary" onClick={handleSave}>
+        <Button variant="primary" onClick={handleAddVisit}>
           Save Visit
         </Button>
       </Modal.Footer>
@@ -206,10 +207,10 @@ const AddVisitModal = ({ show, onClose, selectedRecord }) => {
   );
 };
 
-AddVisitModal.propTypes = {
+AddVisitModel.propTypes = {
   show: PropTypes.bool.isRequired,
   onClose: PropTypes.func.isRequired,
   selectedRecord: PropTypes.object.isRequired,
 };
 
-export default AddVisitModal;
+export default AddVisitModel;

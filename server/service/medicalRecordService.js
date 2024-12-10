@@ -1,6 +1,6 @@
-const MedicalRecord = require("../models/MedicalRecord")
-const Medication = require("../models/Medication")
-const Prescription = require("../models/Prescription")
+const MedicalRecord = require("../models/MedicalRecord");
+const Medication = require("../models/Medication");
+const Prescription = require("../models/Prescription");
 
 //lấy tất cả hồ sơ bệnh án
 exports.getMedicalRecord = async (page = 1, limit = 5) => {
@@ -25,18 +25,35 @@ exports.getMedicalRecord = async (page = 1, limit = 5) => {
         return { success: false, message: "Lỗi khi lấy danh sách thuốc" }
     }
 }
+
 // Lấy hồ sơ bệnh án theo ID bệnh nhân
 exports.getMedicalRecordByPatientId = async (patientId) => {
-    try {
-      // Tìm hồ sơ bệnh án dựa vào patientId
-      const medicalRecord = await MedicalRecord.findOne({ patient_id: patientId })
-        .populate('patient_id', 'first_name last_name'); // Lấy thêm thông tin bệnh nhân nếu cần
-  
-      return medicalRecord;
-    } catch (error) {
-      throw new Error("Không thể lấy hồ sơ bệnh án");
+  try {
+    const medicalRecord = await MedicalRecord.findOne({ patient_id: patientId })
+      .populate({
+        path: 'medical_history.prescriptions',
+        populate: {
+          path: 'medications.medication_id',
+          model: 'Medication'
+        }
+      })
+      .populate('patient_id', 'first_name last_name birthdate gender address')
+      .populate('medical_history.doctor_id', 'first_name last_name email phone'); // Populate doctor details
+
+    if (!medicalRecord) {
+      return { success: false, message: "Không tìm thấy hồ sơ bệnh án" };
     }
-  };
+
+    medicalRecord.medical_history.forEach(visit => {
+      visit.total_price = visit.prescriptions.reduce((total, prescription) => total + prescription.total_price, 0);
+    });
+
+    return { success: true, medicalRecord };
+  } catch (error) {
+    console.error("Lỗi khi lấy hồ sơ bệnh án:", error);
+    return { success: false, message: "Lỗi khi lấy hồ sơ bệnh án" };
+  }
+};
 
 // tạo hồ sơ bệnh án
 exports.createMedicalRecord = async (patientid) => {
@@ -71,85 +88,77 @@ exports.createMedicalRecord = async (patientid) => {
 
 // Bác sĩ thêm thông tin sau mỗi lần khám
 exports.addVisitHistory = async (patientId, visitData) => {
-    try {
-        console.log("Received visitData:", visitData);
+  try {
+    const medicalRecord = await MedicalRecord.findOne({ patient_id: patientId });
 
-        // Kiểm tra các tham số cần thiết
-        if (!visitData.doctorId || !visitData.symptoms || !visitData.diagnosis || !visitData.treatmentPlan || !visitData.notes) {
-            return { success: false, message: "Thiếu tham số cần thiết." };
-        }
-
-        // Kiểm tra medications
-        if (!Array.isArray(visitData.medications) || visitData.medications.length === 0) {
-            return { success: false, message: "medications không phải là mảng hoặc rỗng." };
-        }
-
-        const medicalRecord = await MedicalRecord.findOne({ patient_id: patientId });
-
-        if (!medicalRecord) {
-            return { success: false, message: "Không tìm thấy hồ sơ bệnh án cho bệnh nhân." };
-        }
-
-        const newVisit = {
-            doctor_id: visitData.doctorId,
-            visit_date: new Date(),
-            symptoms: visitData.symptoms,
-            diagnosis: visitData.diagnosis,
-            treatment_plan: visitData.treatmentPlan,
-            notes: visitData.notes,
-            prescriptions: []
-        };
-
-        const medications = [];
-        let totalPrice = 0;
-
-        for (const medication of visitData.medications) {
-            const med = await Medication.findOne({ name: medication.medication_name });
-
-            if (med) {
-                if (med.quantity_available < medication.quantity) {
-                    console.error(`Không đủ số lượng thuốc ${med.name}`);
-                    return { success: false, message: `Không đủ số lượng thuốc ${med.name}` };
-                }
-                med.quantity_available -= medication.quantity;
-                await med.save();
-
-                medications.push({
-                    medication_id: med._id,
-                    quantity: medication.quantity,
-                    dosage: medication.dosage,
-                    price: med.price
-                });
-
-                totalPrice += med.price * medication.quantity;
-            } else {
-                console.error(`Không tìm thấy thuốc với tên ${medication.medication_name}`);
-                return { success: false, message: `Không tìm thấy thuốc với tên ${medication.medication_name}` };
-            }
-        }
-
-        if (medications.length > 0) {
-            const newPrescription = new Prescription({
-                description: visitData.description || "Đơn thuốc cho bệnh nhân",
-                medications: medications,
-                patient_id: patientId,
-                doctor_id: visitData.doctorId,
-                total_price: totalPrice
-            });
-
-            await newPrescription.save();
-
-            newVisit.prescriptions.push(newPrescription._id);
-            medicalRecord.medical_history.push(newVisit);
-            await medicalRecord.save();
-        } else {
-            console.error("Không có thuốc nào được thêm vào.");
-            return { success: false, message: "Không có thuốc nào được thêm vào." };
-        }
-
-        return { success: true, data: medicalRecord };
-    } catch (error) {
-        console.error("Lỗi khi thêm thông tin khám bệnh:", error);
-        return { success: false, message: "Lỗi khi thêm thông tin khám bệnh" };
+    if (!medicalRecord) {
+      return { success: false, message: "Không tìm thấy hồ sơ bệnh án" };
     }
+
+    const visit = {
+      doctor_id: visitData.doctorId,
+      visit_date: new Date(),
+      symptoms: visitData.symptoms,
+      diagnosis: visitData.diagnosis,
+      treatment_plan: visitData.treatmentPlan,
+      notes: visitData.notes,
+      prescriptions: [],
+      total_price: 0
+    };
+
+    // Add visit to medical history and save to get visit_id
+    medicalRecord.medical_history.push(visit);
+    await medicalRecord.save();
+
+    // Get the newly added visit's ID
+    const newVisit = medicalRecord.medical_history[medicalRecord.medical_history.length - 1];
+
+    // Fetch medication details from the database
+    const medications = await Promise.all(visitData.medications.map(async (med) => {
+      const medication = await Medication.findOne({ name: med.medication_name });
+      if (!medication) {
+        throw new Error(`Medication not found: ${med.medication_name}`);
+      }
+      return {
+        medication_id: medication._id,
+        medication_name: med.medication_name,
+        quantity: med.quantity,
+        dosage: med.dosage,
+        price: medication.price, // Assuming the Medication schema has a price field
+        total_price: med.quantity * medication.price
+      };
+    }));
+
+    // Create a single prescription for the visit
+    const prescription = new Prescription({
+      visit_id: newVisit._id,
+      doctor_id: visitData.doctorId,
+      patient_id: patientId,
+      medications: medications,
+      total_price: medications.reduce((total, med) => total + med.total_price, 0)
+    });
+
+    const savedPrescription = await prescription.save();
+    newVisit.prescriptions.push(savedPrescription._id);
+
+    // Calculate total price
+    newVisit.total_price = savedPrescription.total_price;
+
+    // Save the updated medical record with the new visit and prescription
+    await medicalRecord.save();
+
+    // Update the quantity available for each medication
+    await Promise.all(medications.map(async (med) => {
+      await Medication.updateOne(
+        { _id: med.medication_id },
+        { $inc: { quantity_available: -med.quantity } }
+      );
+    }));
+
+    console.log("Visit added successfully:", newVisit);
+    return { success: true, visit: newVisit };
+  } catch (error) {
+    console.error("Lỗi khi thêm thông tin khám bệnh:", error);
+    return { success: false, message: "Lỗi khi thêm thông tin khám bệnh" };
+  }
 };

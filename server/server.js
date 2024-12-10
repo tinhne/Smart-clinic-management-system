@@ -14,6 +14,9 @@ const userRoutes = require("./routes/userRoutes");
 const AppointmentRoutes = require("./routes/appointmentRoutes");
 const StaticsRoutes = require("./routes/statics");
 const MedicalRecordRoutes = require("./routes/medicalRecordRoutes");
+const medicationRoutes = require('./routes/medicationRoutes'); 
+
+
 const EmailRouter = require("./routes/emailRouters");
 const app = express();
 
@@ -47,6 +50,8 @@ app.use("/api/user", userRoutes);
 app.use("/api/appointment", AppointmentRoutes);
 app.use("/api/statics", StaticsRoutes);
 app.use("/api/medicalRecord", MedicalRecordRoutes);
+app.use('/api/medications', medicationRoutes);
+
 app.use("/api/email", EmailRouter);
 // Khởi tạo server
 const PORT = process.env.PORT || 8000;

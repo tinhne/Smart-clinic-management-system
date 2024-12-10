@@ -1,7 +1,6 @@
 const Appointment = require("../models/Appointment");
 const Schedule = require("../models/Schedule");
 const User = require("../models/User");
-const { sendSMS } = require("./smsService"); // Adjust the path if needed
 const medicalRecordService = require("./medicalRecordService"); // Thêm dòng này
 
 // Bệnh nhân đặt lịch hẹn

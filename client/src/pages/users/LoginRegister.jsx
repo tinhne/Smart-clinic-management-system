@@ -33,68 +33,47 @@ function LoginRegister() {
       }
       return;
     }
-
+  
     try {
       const res = await LoginApi(email, password);
-
+    
       if (res && res.EC === 0) {
-        // Điều hướng dựa trên role
         if (res.role === "admin") {
           toast.error("Admin không được phép đăng nhập ở đây");
-          return; // Ngăn không cho tiếp tục lưu thông tin
-        } else if (res.role === "doctor") {
-          // Lưu token và role vào cookies
-          Cookies.set("access_token", res.token, {
-            secure: true,
-            sameSite: "Strict",
-          });
-          const usernameSafe = res.username.replace(/ /g, "_");
-          Cookies.set("username", usernameSafe, {
-            secure: true,
-            sameSite: "Strict",
-          });
-          Cookies.set("role", res.role, { secure: true, sameSite: "Strict" });
-          Cookies.set("id", res._id, {
-            secure: true,
-            sameSite: "Strict",
-          });
-          localStorage.setItem("username", res.username);
-          navigate("/thong-tin/ho-so");
-          window.location.reload();
-          toast.success(res.EM);
-        } else if (res.role === "patient") {
-          // Lưu token và role vào cookies
-          Cookies.set("access_token", res.token, {
-            secure: true,
-            sameSite: "Strict",
-          });
-          const usernameSafe = res.username.replace(/ /g, "_");
-          Cookies.set("username", usernameSafe, {
-            secure: true,
-            sameSite: "Strict",
-          });
-          Cookies.set("role", res.role, { secure: true, sameSite: "Strict" });
-          Cookies.set("id", res._id, {
-            secure: true,
-            sameSite: "Strict",
-          });
-          localStorage.setItem("username", res.username);
-          toast.success("Đăng nhập thành công");
-          navigate("/"); // Điều hướng đến trang chính cho patient/doctor
-        } else {
-          toast.error("Role không xác định!");
+          return;
         }
+    
+        // Lưu thông tin vào cookies
+        Cookies.set("access_token", res.token, {
+          secure: true,
+          sameSite: "Strict",
+        });
+        const usernameSafe = res.username.replace(/ /g, "_");
+        Cookies.set("username", usernameSafe, {
+          secure: true,
+          sameSite: "Strict",
+        });
+        Cookies.set("role", res.role, { secure: true, sameSite: "Strict" });
+        Cookies.set("id", res._id, { secure: true, sameSite: "Strict" });
+        localStorage.setItem("username", res.username);
+    
+        // Hiển thị toast
+        
+        // Điều hướng ngay lập tức
+        navigate(res.role === "doctor" ? "/thong-tin/ho-so" : "/");
+        toast.success(res.EM || "Đăng nhập thành công!");
       } else {
         toast.error(res.EM || "Đăng nhập không thành công!");
       }
     } catch (error) {
       console.error("Login failed:", error);
       toast.error(
-        error.response?.data?.message ||
-          "Có lỗi xảy ra trong quá trình đăng nhập!"
+        error.response?.data?.message || "Có lỗi xảy ra trong quá trình đăng nhập!"
       );
     }
+    
   };
+  
 
   // Xử lý đăng ký
   const handleRegister = async (e) => {
@@ -169,6 +148,7 @@ function LoginRegister() {
   };
 
   return (
+    <>
     <div className="login">
       <div className="login__container">
         <div className="login__form-left">
@@ -280,9 +260,9 @@ function LoginRegister() {
           )}
         </div>
       </div>
-      <ToastContainer></ToastContainer>
     </div>
-    
+      <ToastContainer></ToastContainer>
+    </>
   );
 }
 

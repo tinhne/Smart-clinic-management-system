@@ -184,6 +184,12 @@
 
     .btn-booking-clinic {
       display: flex;
+      .loading-spinner {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%; // Chiều cao phù hợp
+      }
     }
     .booking-button-tt {
       width: 45%;
@@ -196,6 +202,7 @@
       font-weight: bold;
       margin-top: 50px;
       margin-right: 38px;
+      height: 60px;
 
       span {
         display: block;
@@ -218,6 +225,8 @@
       font-weight: bold;
       margin-top: 50px;
       margin-right: 38px;
+      height: 60px;
+
 
       span {
         display: block;

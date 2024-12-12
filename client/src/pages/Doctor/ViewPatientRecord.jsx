@@ -104,12 +104,12 @@ function ViewPatientRecord() {
 
   return (
     <div className="patient-record">
-      <h1>Danh sách bệnh án</h1>
+      <p className="list-medical-record">Danh sách bệnh án</p>
       <table className="record-table">
         <thead>
           <tr>
-            <th>ID Bệnh án</th>
-            <th>Tên Bệnh nhân</th>
+            <th>Mã bệnh án</th>
+            <th>Tên bệnh nhân</th>
             <th>Số điện thoại</th>
             <th>Ngày tạo</th>
             <th>Hành động</th>

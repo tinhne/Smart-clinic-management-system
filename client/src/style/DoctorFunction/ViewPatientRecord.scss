@@ -6,11 +6,13 @@
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   font-family: Arial, sans-serif;
   position: relative;
-
-  h1 {
+  .list-medical-record{
     text-align: left;
     color: #007bff;
     margin-bottom: 20px;
+    font-size: 24px;
+    font-style: italic;
+    font-weight: bold;
   }
 
   .search-bar {

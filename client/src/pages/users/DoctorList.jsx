@@ -34,57 +34,62 @@ function DoctorList() {
   const location = useLocation();
   const { specialties } = location.state || {};
   const [doctorList, setDoctorList] = useState([]);
-  const [currentCategory, setCurrentCategory] = useState("Tất cả");
+  const [currentCategory, setCurrentCategory] = useState(
+    specialties || "Tất cả"
+  );
   const [loading, setLoading] = useState(false);
   const [pageCount, setPageCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
   const navigate = useNavigate();
 
-  const fetchDoctors = async (specialty = null, page = 1) => {
+  // Hàm fetch dữ liệu bác sĩ theo chuyên khoa và trang
+  const fetchDoctors = async (specialty = "Tất cả", page = 1) => {
     setLoading(true);
     try {
       let data;
       if (specialty === "Tất cả") {
-        data = await getAllUserByRole("doctor", page, 10);
+        data = await getAllUserByRole("doctor", page, 10); // Lấy tất cả bác sĩ
       } else {
-        data = await getAllDoctorsBySpecialty({ specialty, page, limit: 10 });
+        data = await getAllDoctorsBySpecialty({ specialty, page, limit: 10 }); // Lấy bác sĩ theo chuyên khoa
       }
 
+      // Nếu không có bác sĩ, cập nhật danh sách rỗng và hiển thị thông báo
       if (data && (data.doctors?.length > 0 || data.users?.length > 0)) {
         setDoctorList(data.doctors || data.users);
         setPageCount(data.totalPages || 1);
       } else {
-        setDoctorList([]);
-        toast.error("Không tìm thấy bác sĩ nào.");
+        setDoctorList([]); // Đặt danh sách bác sĩ là mảng rỗng khi không có bác sĩ
+        setPageCount(0); // Đảm bảo không có trang khi không có bác sĩ
       }
     } catch (error) {
-      toast.error("Error fetching doctors.");
       console.error("Error fetching doctors:", error);
+      setDoctorList([]); // Đặt danh sách bác sĩ là mảng rỗng khi có lỗi
+      setPageCount(0); // Đảm bảo không có trang khi có lỗi
     } finally {
       setLoading(false);
     }
   };
 
+  // Gọi hàm fetchDoctors khi component mount hoặc khi thay đổi danh mục hoặc trang
   useEffect(() => {
-    if (specialties) {
-      fetchDoctors(specialties);
-    } else {
-      fetchDoctors(currentCategory);
-    }
-  }, []);
+    fetchDoctors(currentCategory, currentPage + 1);
+  }, [currentCategory, currentPage]);
 
+  // Hàm thay đổi danh mục
   const handleChange = async (categoryName) => {
-    setCurrentCategory(categoryName);
-    setCurrentPage(0);
-    await fetchDoctors(categoryName, 1);
+    setCurrentCategory(categoryName); // Cập nhật danh mục
+    setCurrentPage(0); // Đặt lại trang về 0 (trang đầu tiên)
+    await fetchDoctors(categoryName, 1); // Fetch lại bác sĩ cho danh mục mới và trang đầu tiên
   };
 
+  // Hàm xử lý khi thay đổi trang
   const handlePageClick = async (data) => {
     const selectedPage = data.selected + 1;
     setCurrentPage(selectedPage);
     await fetchDoctors(currentCategory, selectedPage);
   };
 
+  // Hàm xử lý khi click vào "Đặt khám"
   const handleAppointmentClick = (doctorId) => {
     const isLoggedIn = Cookies.get("access_token");
     if (!isLoggedIn) {
@@ -157,7 +162,7 @@ function DoctorList() {
             </div>
           ))
         ) : (
-          <p>Không tìm thấy bác sĩ nào.</p>
+          <p>Không có bác sĩ trong khoa này.</p> // Thông báo khi không có bác sĩ
         )}
 
         <ReactPaginate

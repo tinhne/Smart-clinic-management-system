@@ -148,6 +148,12 @@ const HomePage = () => {
       console.log(error); // Log lỗi nếu có
     }
   };
+  const formatPrice = (price) => {
+    return price.toLocaleString("vi-VN", {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  };
   return (
     <>
       <div className="body-homepage">
@@ -602,7 +608,7 @@ const HomePage = () => {
                       ...
                     </p>
                     <p className="product_price">
-                      <strong>Giá:</strong> {medicine.price}đ
+                      <strong>Giá:</strong> {formatPrice(medicine.price)}đ
                     </p>
                     <button
                       className="product_link"
@@ -699,7 +705,6 @@ const HomePage = () => {
             sách bảo mật dữ liệu cao nhất trên thế giới.
           </p>
         </div>
-
       </div>
     </>
   );

@@ -4,7 +4,9 @@ import "./Modal.scss";
 
 const Modal = ({ isOpen, onClose, medicine }) => {
   if (!isOpen) return null;
-
+  const formatPrice = (price) => {
+    return price.toLocaleString('vi-VN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  };
   return (
     <div className="modal-overlay">
       <div className="modal-content_medicine">
@@ -14,7 +16,7 @@ const Modal = ({ isOpen, onClose, medicine }) => {
           <strong>Mô tả:</strong> {medicine.description}
         </p>
         <p>
-          <strong>Giá:</strong> {medicine.price}đ
+          <strong>Giá:</strong> {formatPrice(medicine.price)}đ
         </p>
         <button onClick={onClose}>Đóng</button>
       </div>

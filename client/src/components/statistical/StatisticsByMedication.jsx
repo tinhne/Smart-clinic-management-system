@@ -72,23 +72,23 @@ const StatisticsByMedication = () => {
 
   const monthlyColumns = [
     {
-      title: "Month",
+      title: "Tháng",
       dataIndex: "_id",
       key: "month",
       render: (_id) => `${_id.month}/${_id.year}`,
     },
     {
-      title: "Medication Name",
+      title: "Tên thuốc",
       dataIndex: "medicationName",
       key: "medicationName",
     },
     {
-      title: "Total Quantity",
+      title: "Tổng số lượng ",
       dataIndex: "totalQuantity",
       key: "totalQuantity",
     },
     {
-      title: "Total Revenue",
+      title: "Tổng lợi nhuận",
       dataIndex: "totalRevenue",
       key: "totalRevenue",
     },
@@ -96,17 +96,17 @@ const StatisticsByMedication = () => {
 
   const dailyColumns = [
     {
-      title: "Medication Name",
+      title: "Tên thuốc",
       dataIndex: "medicationName",
       key: "medicationName",
     },
     {
-      title: "Total Quantity",
+      title: "Tổng số lượng",
       dataIndex: "totalQuantity",
       key: "totalQuantity",
     },
     {
-      title: "Total Revenue",
+      title: "Tổng lợi nhuận",
       dataIndex: "totalRevenue",
       key: "totalRevenue",
     },

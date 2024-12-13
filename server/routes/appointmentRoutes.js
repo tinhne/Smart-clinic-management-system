@@ -15,7 +15,7 @@ router.put("/confirm/:id", authenticate, authorize(["admin"]), appointmentContro
 router.delete("/cancel/:id", authenticate, appointmentController.cancelAppointment);
 
 // Lấy lịch hẹn cho bác sĩ
-router.get("/doctor/:doctorId", authenticate, authorize(["doctor"]), appointmentController.getDoctorAppointments);
+router.get("/doctor/:doctorId", authenticate, appointmentController.getDoctorAppointments);
 
 // Lấy lịch hẹn của bệnh nhân
 router.get("/patient/:patientId", authenticate, appointmentController.getPatientAppointments);

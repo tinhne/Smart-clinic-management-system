@@ -7,6 +7,7 @@ import DeleteBlogModal from "../../components/admin/BlogAdmin/DeleteBlogModal";
 import { getBlog, deleteBlog } from "../../utils/BlogManagement/BlogManagement";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { NavLink } from "react-router-dom";
 
 const BlogAdmin = () => {
   const [blogs, setBlogs] = useState([]);
@@ -144,13 +145,23 @@ const BlogAdmin = () => {
           {loading ? (
             <tr>
               <td colSpan="6" className="text-center">
-                <Spinner animation="border" variant="primary" /> Đang tải dữ liệu...
+                <Spinner animation="border" variant="primary" /> Đang tải dữ
+                liệu...
               </td>
             </tr>
           ) : filteredBlogs.length > 0 ? (
             filteredBlogs.map((blog) => (
               <tr key={blog._id}>
-                <td>{blog?.title || "Không xác định"}</td>
+                <td>
+                  <a
+                    href={`/tin-tuc/bai-viet/${blog._id}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    {blog?.title || "Không xác định"}
+                  </a>
+                </td>
+
                 <td>
                   {Array.isArray(blog?.category)
                     ? blog.category.join(", ")

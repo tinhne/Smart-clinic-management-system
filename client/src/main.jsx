@@ -154,10 +154,10 @@ const router = createBrowserRouter([
     element: <Blog />,
     children: [
       { index: true, element: <BlogList /> },
-      { path: "", element: <BlogList /> },
       { path: "bai-viet/:id", element: <BlogDetails /> },
     ],
   },
+  
 ]);
 
 ReactDOM.createRoot(document.getElementById("root")).render(

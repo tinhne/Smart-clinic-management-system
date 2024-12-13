@@ -122,30 +122,34 @@ const getAppointmentCountBySpecialties = async (req, res) => {
             {
                 $addFields: {
                     start_time: {
-                        $concat: [
-                            { $dateToString: { format: "%Y-%m-%d", date: "$appointment_date" } },
-                            "T",
-                            "$schedule.working_hours.start_time"
-                        ]
+                        $dateFromParts: {
+                            year: { $year: "$appointment_date" },
+                            month: { $month: "$appointment_date" },
+                            day: { $dayOfMonth: "$appointment_date" },
+                            hour: { $toInt: { $substr: ["$schedule.working_hours.start_time", 0, 2] } },
+                            minute: { $toInt: { $substr: ["$schedule.working_hours.start_time", 3, 2] } }
+                        }
                     },
                     end_time: {
-                        $concat: [
-                            { $dateToString: { format: "%Y-%m-%d", date: "$appointment_date" } },
-                            "T",
-                            "$schedule.working_hours.end_time"
-                        ]
+                        $dateFromParts: {
+                            year: { $year: "$appointment_date" },
+                            month: { $month: "$appointment_date" },
+                            day: { $dayOfMonth: "$appointment_date" },
+                            hour: { $toInt: { $substr: ["$schedule.working_hours.end_time", 0, 2] } },
+                            minute: { $toInt: { $substr: ["$schedule.working_hours.end_time", 3, 2] } }
+                        }
                     }
-                },
+                }
             },
             {
                 $addFields: {
                     duration: {
-                        $subtract: [
-                            { $hour: { $dateFromString: { dateString: "$end_time" } } },
-                            { $hour: { $dateFromString: { dateString: "$start_time" } } },
-                        ],
-                    },
-                },
+                        $divide: [
+                            { $subtract: ["$end_time", "$start_time"] },
+                            1000 * 60 // Convert milliseconds to minutes
+                        ]
+                    }
+                }
             },
             { $group: { _id: "$doctor_id", avg_consultation_time: { $avg: "$duration" } } },
             {
@@ -164,7 +168,7 @@ const getAppointmentCountBySpecialties = async (req, res) => {
                     doctor_name: { $concat: ["$doctor.first_name", " ", "$doctor.last_name"] },
                     avg_consultation_time: 1,
                 },
-            },
+            }
         ]);
 
         res.json({ success: true, data: appointments });
@@ -172,6 +176,7 @@ const getAppointmentCountBySpecialties = async (req, res) => {
         res.status(500).json({ success: false, message: "Error calculating average consultation time.", error });
     }
 };
+
 
 module.exports = {
   getAppointmentCountBySpecialties,

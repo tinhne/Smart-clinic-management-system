@@ -46,10 +46,10 @@ const StatisticsByMedication = () => {
         setMonthlySalesData(monthlySalesResponse);
       }
 
-      const dailySalesResponse = await getDailySales("67556857ede5c936a28b04bc"); 
-      if (dailySalesResponse) {
-        setDailySalesData(dailySalesResponse);
-      }
+      // const dailySalesResponse = await getDailySales("67556857ede5c936a28b04bc"); 
+      // if (dailySalesResponse) {
+      //   setDailySalesData(dailySalesResponse);
+      // }
     } catch (err) {
       console.error("Error fetching data:", err);
     }

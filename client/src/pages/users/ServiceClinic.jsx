@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
 import "../../style/ServiceClinic/ServiceClinic.scss";
 import { getAllServices } from "../../services/serviceAPI";
+import Cookies from "js-cookie";
 
 const ServiceClinic = () => {
   const [services, setServices] = useState([]); // All services fetched from the server
@@ -11,7 +12,20 @@ const ServiceClinic = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState(""); // Search term
+  const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
   const itemsPerPage = 10;
+
+  // Kiểm tra đăng nhập khi component mount
+  useEffect(() => {
+    const accessToken = Cookies.get("access_token");
+    if (!accessToken) {
+      setError("Bạn cần đăng nhập để xem thông tin.");
+      setIsLoggedIn(false);
+    } else {
+      setIsLoggedIn(true);
+      fetchServices(currentPage);
+    }
+  }, [currentPage]);
 
   // Fetch services from the server
   const fetchServices = async (page) => {
@@ -28,15 +42,11 @@ const ServiceClinic = () => {
       }
     } catch (error) {
       console.error("Error fetching services:", error);
-      setError("Lỗi khi kết nối tới server.");
+      setError("Đã xảy ra lỗi. Vui lòng thử lại.");
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchServices(currentPage); // Fetch services when component mounts
-  }, [currentPage]);
 
   // Pagination handler
   const handlePageClick = (data) => {
@@ -59,80 +69,99 @@ const ServiceClinic = () => {
     }
   };
 
+  // Chuyển hướng tới trang đăng nhập
+
   return (
     <div className="container">
       <h2 className="text-center my-4 service-clinic">BẢNG GIÁ DỊCH VỤ</h2>
 
-      <div className="d-flex justify-content-between mb-3">
-        <input
-          type="text"
-          className="form-controll"
-          placeholder="Nhập tên dịch vụ cần tìm..."
-          value={searchTerm}
-          onChange={handleSearch} // Call the search handler
-        />
-      </div>
+      {/* Nếu chưa đăng nhập, hiển thị nút đăng nhập */}
+      {!isLoggedIn && (
+        <div className="text-center_error">
+          <p className="error-message ">{error}</p>
+        </div>
+      )}
 
-      {loading ? (
-        <p>Loading...</p>
-      ) : error ? (
-        <p className="text-danger">{error}</p>
-      ) : (
+      {/* Nếu đã đăng nhập, hiển thị dịch vụ */}
+      {isLoggedIn && (
         <>
-          <table className="table-service">
-            <thead className="thead-light">
-              <tr>
-                <th>STT</th> {/* Số thứ tự */}
-                <th>Tên dịch vụ</th>
-                <th>Giá</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredServices.length > 0 ? (
-                filteredServices.map((service, index) => (
-                  <tr key={service.id || index}>
-                    {/* Ensure key is unique */}
-                    <td>{(currentPage - 1) * itemsPerPage + index + 1}</td>{" "}
-                    {/* Calculate STT */}
-                    <td>{service.name}</td>
-                    <td>
-                      {new Intl.NumberFormat("vi-VN", {
-                        style: "currency",
-                        currency: "VND",
-                      }).format(service.price)}
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan="3" className="text-center">
-                    Không tìm thấy dịch vụ nào.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+          <div
+            className="d-flex justify-content-start align-items-center mb-3"
+            style={{ width: "400px", marginLeft: "185px" }}
+          >
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Nhập tên dịch vụ cần tìm..."
+              value={searchTerm}
+              onChange={handleSearch} // Call the search handler
+            />
+          </div>
 
-          <ReactPaginate
-            previousLabel={"Previous"}
-            nextLabel={"Next"}
-            breakLabel={"..."}
-            pageCount={totalPages}
-            marginPagesDisplayed={2}
-            pageRangeDisplayed={3}
-            onPageChange={handlePageClick}
-            forcePage={currentPage - 1}
-            containerClassName={"pagination justify-content-center"}
-            pageClassName={"page-item"}
-            pageLinkClassName={"page-link"}
-            previousClassName={"page-item"}
-            previousLinkClassName={"page-link"}
-            nextClassName={"page-item"}
-            nextLinkClassName={"page-link"}
-            breakClassName={"page-item"}
-            breakLinkClassName={"page-link"}
-            activeClassName={"active"}
-          />
+          {loading ? (
+            <p>Loading...</p>
+          ) : error ? (
+            <p className="text-danger">{error}</p>
+          ) : (
+            <>
+              <table className="table-service">
+                <thead className="thead-light">
+                  <tr>
+                    <th>STT</th> {/* Số thứ tự */}
+                    <th>Tên dịch vụ</th>
+                    <th>Giá</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {filteredServices.length > 0 ? (
+                    filteredServices.map((service, index) => (
+                      <tr key={service.id || index}>
+                        {/* Ensure key is unique */}
+                        <td>
+                          {(currentPage - 1) * itemsPerPage + index + 1}
+                        </td>{" "}
+                        {/* Calculate STT */}
+                        <td>{service.name}</td>
+                        <td>
+                          {new Intl.NumberFormat("vi-VN", {
+                            style: "currency",
+                            currency: "VND",
+                          }).format(service.price)}
+                        </td>
+                      </tr>
+                    ))
+                  ) : (
+                    <tr>
+                      <td colSpan="3" className="text-center">
+                        Không tìm thấy dịch vụ nào.
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
+              </table>
+
+              <ReactPaginate
+                previousLabel={"Previous"}
+                nextLabel={"Next"}
+                breakLabel={"..."}
+                pageCount={totalPages}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={3}
+                onPageChange={handlePageClick}
+                forcePage={currentPage - 1}
+                containerClassName={"pagination justify-content-center"}
+                pageClassName={"page-item"}
+                pageLinkClassName={"page-link"}
+                previousClassName={"page-item"}
+                previousLinkClassName={"page-link"}
+                nextClassName={"page-item"}
+                nextLinkClassName={"page-link"}
+                breakClassName={"page-item"}
+                breakLinkClassName={"page-link"}
+                activeClassName={"active"}
+              />
+            </>
+          )}
         </>
       )}
     </div>

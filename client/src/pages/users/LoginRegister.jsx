@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "../../style/LoginRegister/LoginRegister.scss";
 import { LoginApi, ResgisterApi } from "../../utils/AuthAPI/LoginRegisterAPI";
 import { useNavigate } from "react-router-dom";
-import { toast,ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import Cookies from "js-cookie"; // Thư viện quản lý Cookies
 
 function LoginRegister() {
@@ -33,32 +33,42 @@ function LoginRegister() {
       }
       return;
     }
-  
+
     try {
       const res = await LoginApi(email, password);
-    
+
       if (res && res.EC === 0) {
         if (res.role === "admin") {
           toast.error("Admin không được phép đăng nhập ở đây");
           return;
         }
-    
+
         // Lưu thông tin vào cookies
         Cookies.set("access_token", res.token, {
-          secure: true,
-          sameSite: "Strict",
+          secure: false,
+          sameSite: "Lax", // Hoặc Strict tùy theo tình huống
+          expires: 1, // Thời gian hết hạn 7 ngày
+          path: "/",
         });
         const usernameSafe = res.username.replace(/ /g, "_");
         Cookies.set("username", usernameSafe, {
-          secure: true,
-          sameSite: "Strict",
+          secure: false,
+          sameSite: "Lax", // Hoặc Strict tùy theo tình huống
+          expires: 1, // Thời gian hết hạn 7 ngày
+          path: "/",
         });
-        Cookies.set("role", res.role, { secure: true, sameSite: "Strict" });
-        Cookies.set("id", res._id, { secure: true, sameSite: "Strict" });
+        Cookies.set("role", res.role, {secure: false,
+          sameSite: "Lax",  // Hoặc Strict tùy theo tình huống
+          expires: 1,  // Thời gian hết hạn 7 ngày
+          path: "/", });
+        Cookies.set("id", res._id, { secure: false,
+          sameSite: "Lax",  // Hoặc Strict tùy theo tình huống
+          expires: 1,  // Thời gian hết hạn 7 ngày
+          path: "/", });
         localStorage.setItem("username", res.username);
-    
+
         // Hiển thị toast
-        
+
         // Điều hướng ngay lập tức
         navigate(res.role === "doctor" ? "/thong-tin/ho-so" : "/");
         toast.success(res.EM || "Đăng nhập thành công!");
@@ -68,12 +78,11 @@ function LoginRegister() {
     } catch (error) {
       console.error("Login failed:", error);
       toast.error(
-        error.response?.data?.message || "Có lỗi xảy ra trong quá trình đăng nhập!"
+        error.response?.data?.message ||
+          "Có lỗi xảy ra trong quá trình đăng nhập!"
       );
     }
-    
   };
-  
 
   // Xử lý đăng ký
   const handleRegister = async (e) => {
@@ -149,118 +158,118 @@ function LoginRegister() {
 
   return (
     <>
-    <div className="login">
-      <div className="login__container">
-        <div className="login__form-left">
-          <h2>Welcome back</h2>
-          <p>Chào mừng bạn đến với phòng khám của chúng tôi</p>
-          <button className="login__button" onClick={toggleForm}>
-            {isRegistering ? "Sign in" : "Sign up"}
-          </button>
-        </div>
-        <div className="login__form-right">
-          <h2>{isRegistering ? "Sign up" : "Sign in"}</h2>
-          <div className="login__social-icons">
-            {/* Biểu tượng đăng nhập mạng xã hội */}
+      <div className="login">
+        <div className="login__container">
+          <div className="login__form-left">
+            <h2>Welcome back</h2>
+            <p>Chào mừng bạn đến với phòng khám của chúng tôi</p>
+            <button className="login__button" onClick={toggleForm}>
+              {isRegistering ? "Sign in" : "Sign up"}
+            </button>
           </div>
-          {isRegistering ? (
-            <form onSubmit={handleRegister}>
-              <div className="login__input-group">
-                <input
-                  type="text"
-                  placeholder="Họ và tên đệm"
-                  value={firstName}
-                  onChange={(e) => setFirstName(e.target.value)}
-                />
-                <input
-                  type="text"
-                  placeholder="Tên"
-                  value={lastName}
-                  onChange={(e) => setLastName(e.target.value)}
-                />
-              </div>
-              <div className="login__input-group">
-                <input
-                  type="email"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-                <input
-                  type="text"
-                  placeholder="Số điện thoại"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                />
-              </div>
-              <div className="login__input-group">
-                <input
-                  type="text"
-                  placeholder="Địa chỉ"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                />
-                <select
-                  value={gender}
-                  onChange={(e) => setGender(e.target.value)}
-                >
-                  <option value="" disabled>
-                    Gioi tinh
-                  </option>
-                  <option value="Male">Nam</option>
-                  <option value="Female">Nữ</option>
-                </select>
-              </div>
-              <div className="login__input-group">
-                <input
-                  type="password"
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
-                <input
-                  type="date"
-                  value={birthdate}
-                  onChange={(e) => setBirthdate(e.target.value)}
-                />
-              </div>
-              <button type="submit" className="login__button sign-up-btn">
-                Sign up
-              </button>
-            </form>
-          ) : (
-            <form onSubmit={handleLogin}>
-              <div className="login__input-group">
-                <input
-                  type="email"
-                  className="login_email"
-                  placeholder="Email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                />
-              </div>
-              <div className="login__input-group">
-                <input
-                  type="password"
-                  className="login_password"
-                  placeholder="Password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-              </div>
-              <button type="submit" className="login__button sign-in-btn ">
-                Sign in
-              </button>
-              <p className="login__forgot-password">
-                <a href="#">Forgot Password?</a>
-              </p>
-            </form>
-          )}
+          <div className="login__form-right">
+            <h2>{isRegistering ? "Sign up" : "Sign in"}</h2>
+            <div className="login__social-icons">
+              {/* Biểu tượng đăng nhập mạng xã hội */}
+            </div>
+            {isRegistering ? (
+              <form onSubmit={handleRegister}>
+                <div className="login__input-group">
+                  <input
+                    type="text"
+                    placeholder="Họ và tên đệm"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Tên"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
+                  />
+                </div>
+                <div className="login__input-group">
+                  <input
+                    type="email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                  />
+                  <input
+                    type="text"
+                    placeholder="Số điện thoại"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                  />
+                </div>
+                <div className="login__input-group">
+                  <input
+                    type="text"
+                    placeholder="Địa chỉ"
+                    value={address}
+                    onChange={(e) => setAddress(e.target.value)}
+                  />
+                  <select
+                    value={gender}
+                    onChange={(e) => setGender(e.target.value)}
+                  >
+                    <option value="" disabled>
+                      Gioi tinh
+                    </option>
+                    <option value="Male">Nam</option>
+                    <option value="Female">Nữ</option>
+                  </select>
+                </div>
+                <div className="login__input-group">
+                  <input
+                    type="password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                  />
+                  <input
+                    type="date"
+                    value={birthdate}
+                    onChange={(e) => setBirthdate(e.target.value)}
+                  />
+                </div>
+                <button type="submit" className="login__button sign-up-btn">
+                  Sign up
+                </button>
+              </form>
+            ) : (
+              <form onSubmit={handleLogin}>
+                <div className="login__input-group">
+                  <input
+                    type="email"
+                    className="login_email"
+                    placeholder="Email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    required
+                  />
+                </div>
+                <div className="login__input-group">
+                  <input
+                    type="password"
+                    className="login_password"
+                    placeholder="Password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    required
+                  />
+                </div>
+                <button type="submit" className="login__button sign-in-btn ">
+                  Sign in
+                </button>
+                <p className="login__forgot-password">
+                  <a href="#">Forgot Password?</a>
+                </p>
+              </form>
+            )}
+          </div>
         </div>
       </div>
-    </div>
       <ToastContainer></ToastContainer>
     </>
   );

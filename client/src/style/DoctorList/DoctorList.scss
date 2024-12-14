@@ -17,6 +17,26 @@
   background-color: #ffffff;
   border-radius: 8px;
 }
+.login-message {
+  height: 240px;
+  text-align: center;
+  margin-top: 200px;
+  font-size: 24px;
+}
+.login-btn_error {
+  background-color: #007bff;
+  color: white;
+  border-radius: 10px;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 20px;
+}
+
+.login-btn_error:hover {
+  background-color: #0056b3;
+}
 
 /* Sidebar Styling */
 .sidebar-list {

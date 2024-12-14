@@ -42,6 +42,21 @@ function DoctorList() {
   const [currentPage, setCurrentPage] = useState(0);
   const navigate = useNavigate();
 
+  const access_token = Cookies.get("access_token");
+  if (!access_token) {
+    return (
+      <div className="login-message">
+        <h1>Bạn cần đăng nhập để xem thông tin.</h1>
+        <button
+          className="login-btn_error"
+          onClick={() => navigate("/login-register")}
+        >
+          Đăng nhập
+        </button>
+      </div>
+    );
+  }
+
   // Hàm fetch dữ liệu bác sĩ theo chuyên khoa và trang
   const fetchDoctors = async (specialty = "Tất cả", page = 1) => {
     setLoading(true);
@@ -71,6 +86,7 @@ function DoctorList() {
   };
 
   // Gọi hàm fetchDoctors khi component mount hoặc khi thay đổi danh mục hoặc trang
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   useEffect(() => {
     fetchDoctors(currentCategory, currentPage + 1);
   }, [currentCategory, currentPage]);

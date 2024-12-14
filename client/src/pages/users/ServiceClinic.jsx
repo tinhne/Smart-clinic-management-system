@@ -3,6 +3,7 @@ import ReactPaginate from "react-paginate";
 import "../../style/ServiceClinic/ServiceClinic.scss";
 import { getAllServices } from "../../services/serviceAPI";
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 const ServiceClinic = () => {
   const [services, setServices] = useState([]); // All services fetched from the server
@@ -14,6 +15,7 @@ const ServiceClinic = () => {
   const [searchTerm, setSearchTerm] = useState(""); // Search term
   const [isLoggedIn, setIsLoggedIn] = useState(false); // Track login status
   const itemsPerPage = 10;
+  const navigate = useNavigate();
 
   // Kiểm tra đăng nhập khi component mount
   useEffect(() => {
@@ -73,18 +75,23 @@ const ServiceClinic = () => {
 
   return (
     <div className="container">
-      <h2 className="text-center my-4 service-clinic">BẢNG GIÁ DỊCH VỤ</h2>
-
       {/* Nếu chưa đăng nhập, hiển thị nút đăng nhập */}
       {!isLoggedIn && (
         <div className="text-center_error">
-          <p className="error-message ">{error}</p>
+          <p className="error-message">{error}</p>
+          <button
+            className="login-btn_service"
+            onClick={() => navigate("/login-register")}
+          >
+            Đăng nhập
+          </button>
         </div>
       )}
 
       {/* Nếu đã đăng nhập, hiển thị dịch vụ */}
       {isLoggedIn && (
         <>
+          <h2 className="text-center my-4 service-clinic">BẢNG GIÁ DỊCH VỤ</h2>
           <div
             className="d-flex justify-content-start align-items-center mb-3"
             style={{ width: "400px", marginLeft: "185px" }}

@@ -33,7 +33,7 @@ function LoginAdmin() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-
+  
     // Validate form before submitting
     const errors = validateForm();
     if (Object.keys(errors).length > 0) {
@@ -42,48 +42,56 @@ function LoginAdmin() {
     } else {
       setValidationErrors({});
     }
-
+  
     try {
       const response = await loginAdmin(email, password);
       console.log("Login response:", response);
-
+  
       if (response && response.EC === 0) {
+        // Lưu token vào cookies
         Cookies.set("access_token", response.token, {
-          secure: true,
-          sameSite: "Strict",
+          secure: false,
+          sameSite: "Lax",  // Hoặc Strict tùy theo tình huống
+          expires: 1,  // Thời gian hết hạn 7 ngày
+          path: "/admin",
         });
+        
+        // Lưu token vào localStorage để duy trì đăng nhập lâu hơn
+        localStorage.setItem("access_token", response.token);
         const usernameSafe = response.username.replace(/ /g, "_");
         Cookies.set("username", usernameSafe, {
-          secure: true,
-          sameSite: "Strict",
+          secure: false,
+          sameSite: "Lax",  // Hoặc Strict tùy theo tình huống
+          expires: 1,  // Thời gian hết hạn 7 ngày
+          path: "/admin",
         });
         Cookies.set("role", response.role, {
-          secure: true,
-          sameSite: "Strict",
+          secure: false,
+          sameSite: "Lax",  // Hoặc Strict tùy theo tình huống
+          expires: 1,  // Thời gian hết hạn 7 ngày
+          path: "/admin",
         });
         Cookies.set("id", response._id, {
-          secure: true,
-          sameSite: "Strict",
+          secure: false,
+          sameSite: "Lax",  // fHoặc Strict tùy theo tình huống
+          expires: 1,  // Thời gian hết hạn 7 ngày
+          path: "/admin",
         });
-        // const role = Cookies.get("role");
-        // console.log("Role:", role);
-        console.log(response);
-
+  
         if (response.role === "admin") {
           navigate("/admin/dashboard");
         } else {
           setErrorMessage("Bạn không có quyền truy cập vào trang này.");
         }
       } else {
-        setErrorMessage(
-          response?.EM || "Đăng nhập thất bại. Vui lòng thử lại."
-        );
+        setErrorMessage(response?.EM || "Đăng nhập thất bại. Vui lòng thử lại.");
       }
     } catch (error) {
       console.error("Login error:", error);
       setErrorMessage("Đã xảy ra lỗi. Vui lòng thử lại.");
     }
   };
+  
 
   return (
     <div className="login-page">

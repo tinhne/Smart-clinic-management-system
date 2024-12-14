@@ -32,7 +32,7 @@ Modal.propTypes = {
     medicalImage: PropTypes.string.isRequired,
     description: PropTypes.string.isRequired,
     price: PropTypes.number.isRequired,
-  }).isRequired,
+  }),
 };
 
 export default Modal;

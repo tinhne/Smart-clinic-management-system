@@ -143,6 +143,8 @@ const AddBlogModal = ({ show, onClose, onSave }) => {
                 <option value="Dinh dưỡng">Dinh dưỡng</option>
                 <option value="Tập luyện">Tập luyện</option>
                 <option value="Tin tức">Tin tức</option>
+                <option value="Hỗ trợ">Hỗ trợ</option>
+
               </Form.Control>
             </Form.Group>
             <Form.Group controlId="formSummary">

@@ -22,6 +22,13 @@ import taimuihong from "../../assets/img/Specialties/taimuihong.jpg";
 import tamthan from "../../assets/img/Specialties/tamthan.jpg";
 import truyennhiem from "../../assets/img/Specialties/truyennhiem.jpg";
 import xetnghiem from "../../assets/img/Specialties/xetnghiem.jpg";
+import huyethoc from "../../assets/img/Specialties/huyet-hoc.jpg";
+import yhoccotruyen from "../../assets/img/Specialties/Yhoccotruyen.jpg";
+import yhocthethao from "../../assets/img/Specialties/yhocthethao.jpg";
+import phauthuatthammy from "../../assets/img/Specialties/37_phauthuattaohinhthammy.jpg";
+import ngoaithankinh from "../../assets/img/Specialties/Ngoaithankinh.jpg";
+import noitonquat from "../../assets/img/Specialties/Noitongquat.jpg";
+import dinhduong from "../../assets/img/Specialties/Dinhduong.jpg"
 // import Chatbot from "../../components/chatbot/Chatbot";
 import chungnhan1 from "../../assets/img/chungnhan1.jpg";
 import chungnhan2 from "../../assets/img/chungnhan2.jpg";
@@ -282,7 +289,7 @@ const HomePage = () => {
               {" "}
               {/* <div className="specialty-card"> */}
               <div className="specialty-image">
-                <img src={avatar} />
+                <img src={yhoccotruyen} />
               </div>
               <div className="specialty-info"></div>
               <div className="specialty-action">
@@ -391,6 +398,82 @@ const HomePage = () => {
                 <span>Nhi khoa</span>
               </div>
             </div>
+            <div
+              className="specialty-card"
+              value="Huyết Học"
+              onClick={(e) => {
+                handleBookingBySpecialties("Huyết Học");
+              }}
+            >
+              <div className="specialty-image">
+                <img src={huyethoc} />
+              </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Huyết Học</span>
+              </div>
+            </div>
+            <div
+              className="specialty-card"
+              value="Phẫu Thuật Thẩm Mỹ"
+              onClick={(e) => {
+                handleBookingBySpecialties("Phẫu Thuật Thẩm Mỹ");
+              }}
+            >
+              <div className="specialty-image">
+                <img src={phauthuatthammy} />
+              </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Phẫu Thuật Thẩm Mỹ</span>
+              </div>
+            </div>
+            <div
+              className="specialty-card"
+              value="Ngoại Thần Kinh"
+              onClick={(e) => {
+                handleBookingBySpecialties("Ngoại Thần Kinh");
+              }}
+            >
+              <div className="specialty-image">
+                <img src={ngoaithankinh} />
+              </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Ngoại Thần Kinh</span>
+              </div>
+            </div>
+            <div
+              className="specialty-card"
+              value="Y Học Thể Thao"
+              onClick={(e) => {
+                handleBookingBySpecialties("Y Học Thể Thao");
+              }}
+            >
+              <div className="specialty-image">
+                <img src={yhocthethao} />
+              </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Y Học Thể Thao</span>
+              </div>
+            </div>
+            <div
+              className="specialty-card"
+              value="Dinh Dưỡng"
+              onClick={(e) => {
+                handleBookingBySpecialties("Dinh Dưỡng");
+              }}
+            >
+              <div className="specialty-image">
+                <img src={dinhduong} />
+              </div>
+              <div className="specialty-info"></div>
+              <div className="specialty-action">
+                <span>Dinh Dưỡng</span>
+              </div>
+            </div>
+
             <div
               className="specialty-card"
               value="Truyền Nhiễm"
@@ -537,7 +620,7 @@ const HomePage = () => {
           <div className="information_doctor_container">
             <div className="doctor_list">
               {doctors.length > 0 ? (
-                doctors.slice(0, 5).map((doctor, index) => (
+                doctors.slice(0, 6).map((doctor, index) => (
                   <div key={index} className="doctor_card">
                     <img
                       src={`data:image/jpeg;base64,${doctor.imageUrl}`}

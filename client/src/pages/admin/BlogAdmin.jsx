@@ -105,9 +105,9 @@ const BlogAdmin = () => {
   // Lọc danh sách blogs dựa trên từ khóa
   const filteredBlogs = blogs.filter(
     (blog) =>
-      blog.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      blog.author_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      blog.content.some((content) =>
+      blog?.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      blog?.author_name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      blog?.content.some((content) =>
         content.text.toLowerCase().includes(searchTerm.toLowerCase())
       )
   );

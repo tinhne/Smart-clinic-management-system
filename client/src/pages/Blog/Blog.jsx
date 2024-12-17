@@ -59,7 +59,7 @@ const fetchTopViewedBlogs = async () => {
             <p>Danh Mục</p>
             <ul>
               {/* Category buttons */}
-              {["Tất cả", "Sức khỏe", "Dinh dưỡng", "Tập luyện", "Tin tức"].map((category) => (
+              {["Tất cả", "Sức khỏe", "Dinh dưỡng", "Tập luyện", "Tin tức", "Hỗ trợ"].map((category) => (
                 <li key={category}>
                   <button
                     onClick={() => handleCategoryClick(category)}

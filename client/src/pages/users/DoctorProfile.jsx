@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from "react";
 import "../../style/DoctorProfile/DoctorProfile.scss";
 import { getUserById } from "../../utils/AuthAPI/AdminService";
-import { NavLink, useParams } from "react-router-dom";
+import { NavLink, useNavigate, useParams } from "react-router-dom";
 import { getScheduleDoctorById } from "../../utils/SchedualAPI/SchedualService";
 import { checkDoctorSchedule } from "../../utils/AppointmentAPI/AppointmentService";
 import Cookies from "js-cookie";
 import Spinner from "react-bootstrap/Spinner";
 
 const DoctorProfile = () => {
+  const navigate = useNavigate();
   const { doctorId } = useParams();
   const [doctor, setDoctor] = useState(null);
   const [schedule, setSchedule] = useState([]);
@@ -20,6 +21,17 @@ const DoctorProfile = () => {
   const [afternoonSlots, setAfternoonSlots] = useState([]);
   const [formattedToday, setFormattedToday] = useState("");
   const [loading, setLoading] = useState(true);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // check status login
+  useEffect(() => {
+    const accessToken = Cookies.get("access_token");
+    if (!accessToken) {
+      setIsLoggedIn(false);
+    } else {
+      setIsLoggedIn(true);
+    }
+  }, []);
 
   useEffect(() => {
     const fetchDoctorData = async () => {
@@ -138,6 +150,22 @@ const DoctorProfile = () => {
   const isSlotBooked = (date, slot) => {
     return bookedDates.includes(date) && bookedSlots.includes(slot);
   };
+
+  if (!isLoggedIn) {
+    return (
+      <div className="login-prompt">
+        <p className="login-message_prompt">
+          Vui lòng đăng nhập để xem lịch khám.
+        </p>
+        <button
+          onClick={() => navigate("/login-register")}
+          className="login-button_prompt"
+        >
+          Đăng nhập
+        </button>
+      </div>
+    );
+  }
   if (loading) {
     return (
       <div

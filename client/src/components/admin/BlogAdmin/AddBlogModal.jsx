@@ -13,7 +13,7 @@ const convertToBase64 = (file) => {
     reader.onload = () => {
       resolve(reader.result);
     };
-    reader.onerror = (error) => {
+    reader.onerror = (error) => { 
       reject(error);
     };
   });
@@ -87,7 +87,7 @@ const AddBlogModal = ({ show, onClose, onSave }) => {
       console.log("API response:", createdBlog);
 
       if (createdBlog) {
-        onSave(createdBlog.blog);
+        onSave(createdBlog  .blog);
         toast.success("Bài viết đã được tạo thành công!");
         onClose();
         setNewBlog({
@@ -143,6 +143,8 @@ const AddBlogModal = ({ show, onClose, onSave }) => {
                 <option value="Dinh dưỡng">Dinh dưỡng</option>
                 <option value="Tập luyện">Tập luyện</option>
                 <option value="Tin tức">Tin tức</option>
+                <option value="Hỗ trợ">Hỗ trợ</option>
+
               </Form.Control>
             </Form.Group>
             <Form.Group controlId="formSummary">

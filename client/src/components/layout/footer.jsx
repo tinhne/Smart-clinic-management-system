@@ -55,13 +55,13 @@ const Footer = () => {
           <h4>Hỗ trợ</h4>
           <ul>
             <li>
-              <a href="#">Điều Khoản Sử Dụng</a>
+              <a href="http://localhost:5173/tin-tuc/bai-viet/67615cd15d747b6b87a5ef6a">Điều Khoản Sử Dụng</a>
             </li>
             <li>
-              <a href="#">Chính Sách Bảo Mật</a>
+              <a href="http://localhost:5173/tin-tuc/bai-viet/6761620a2c96719f3f1bc0b8">Chính Sách Bảo Mật</a>
             </li>
             <li>
-              <a href="#">Chính sách giải quyết khiếu nại</a>
+              <a href="http://localhost:5173/tin-tuc/bai-viet/6761626c2c96719f3f1bc0da">Chính sách giải quyết khiếu nại</a>
             </li>
             <li>
               <a href="mailto:cskh@youmed.vn">Hỗ trợ khách hàng</a>

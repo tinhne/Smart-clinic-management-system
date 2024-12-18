@@ -182,12 +182,12 @@ function DoctorList() {
         )}
 
         <ReactPaginate
-          nextLabel="next >"
+          nextLabel="Tiếp>"
           onPageChange={handlePageClick}
           pageRangeDisplayed={3}
           marginPagesDisplayed={2}
           pageCount={pageCount}
-          previousLabel="< previous"
+          previousLabel="<Lùi"
           pageClassName="page-item"
           pageLinkClassName="page-link"
           previousClassName="page-item"

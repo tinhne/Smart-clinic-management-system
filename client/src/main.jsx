@@ -32,6 +32,7 @@ import ScheduleManage from "../src/pages/admin/ScheduleManage.jsx";
 import BlogAdmin from "../src/pages/admin/BlogAdmin.jsx";
 import BlogDetails from "./pages/Blog/BlogDetails.jsx";
 import BlogList from "./pages/Blog/BLogList.jsx";
+import DoctorDetail from "./pages/users/DoctorDetail.jsx";
 const router = createBrowserRouter([
   {
     path: "/login-register",
@@ -68,6 +69,10 @@ const router = createBrowserRouter([
       {
         path: "/dat-kham/ho-so/thanh-cong",
         element: <AppointmentSuccess />,
+      },
+      {
+        path: "/doctor-list",
+        element:<DoctorDetail/>,
       },
       {
         path: "",

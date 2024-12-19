@@ -64,7 +64,7 @@ const ModalEditDoctor = (props) => {
     const nameRegex = /^[a-zA-ZÀ-ỹ\s]+$/;
     const phoneRegex = /^[0-9]{10,11}$/; // Chỉ cho phép 10-11 số
     const today = new Date();
-  
+
     if (!formData.first_name || !nameRegex.test(formData.first_name.trim())) {
       newErrors.first_name = "First name không hợp lệ.";
     }
@@ -99,7 +99,7 @@ const ModalEditDoctor = (props) => {
     if (!formData.experience) {
       newErrors.experience = "Kinh nghiệm không được để trống.";
     }
-  
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -156,7 +156,6 @@ const ModalEditDoctor = (props) => {
             </Form.Group>
           </Row>
 
-          {/* Các trường còn lại tương tự */}
           <Row className="mb-3">
             <Form.Group as={Col} md="6" controlId="email">
               <Form.Label>Email</Form.Label>
@@ -183,7 +182,6 @@ const ModalEditDoctor = (props) => {
             </Form.Group>
           </Row>
 
-          {/* Các trường cho địa chỉ, ngày sinh, giới tính */}
           <Row className="mb-3">
             <Form.Group as={Col} md="6" controlId="address">
               <Form.Label>Address</Form.Label>
@@ -209,9 +207,42 @@ const ModalEditDoctor = (props) => {
             </Form.Group>
           </Row>
 
-          {/* Các trường chuyên môn, chức danh, kinh nghiệm */}
           <Row className="mb-3">
-            <Form.Group as={Col} md="12" controlId="specialties">
+            <Form.Group as={Col} md="6" controlId="gender">
+              <Form.Label>Gender</Form.Label>
+              <Form.Control
+                as="select"
+                value={formData.gender}
+                onChange={handleChange}
+                isInvalid={!!errors.gender}
+              >
+                <option value="">Chọn giới tính</option>
+                <option value="Male">Nam</option>
+                <option value="Female">Nữ</option>
+              </Form.Control>
+              <Form.Control.Feedback type="invalid">{errors.gender}</Form.Control.Feedback>
+            </Form.Group>
+
+            <Form.Group as={Col} md="6" controlId="title">
+              <Form.Label>Title</Form.Label>
+              <Form.Control
+                as="select"
+                value={formData.title}
+                onChange={handleChange}
+                isInvalid={!!errors.title}
+              >
+                <option value="">Chọn chức danh</option>
+                <option value="GS">GS</option>
+                <option value="PGS">PGS</option>
+                <option value="TS">TS</option>
+                <option value="ThS">ThS</option>
+              </Form.Control>
+              <Form.Control.Feedback type="invalid">{errors.title}</Form.Control.Feedback>
+            </Form.Group>
+          </Row>
+
+          <Row className="mb-3">
+            <Form.Group as={Col} md="6" controlId="specialties">
               <Form.Label>Specialties</Form.Label>
               <Form.Control
                 type="text"
@@ -221,20 +252,6 @@ const ModalEditDoctor = (props) => {
                 isInvalid={!!errors.specialties}
               />
               <Form.Control.Feedback type="invalid">{errors.specialties}</Form.Control.Feedback>
-            </Form.Group>
-          </Row>
-
-          <Row className="mb-3">
-            <Form.Group as={Col} md="6" controlId="title">
-              <Form.Label>Title</Form.Label>
-              <Form.Control
-                type="text"
-                placeholder="Title"
-                value={formData.title}
-                onChange={handleChange}
-                isInvalid={!!errors.title}
-              />
-              <Form.Control.Feedback type="invalid">{errors.title}</Form.Control.Feedback>
             </Form.Group>
 
             <Form.Group as={Col} md="6" controlId="experience">

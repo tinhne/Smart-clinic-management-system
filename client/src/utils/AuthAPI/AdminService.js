@@ -29,3 +29,6 @@ export const getUserById = async (userID,role) => {
 export const countUserByRole = async (role) => {
   return axios.get(`/api/admin/count-userbyRole?role=${role}`);
 }
+export const getDoctorsBySearch = async (search, page, limit) => {
+  return axios.get(`/api/admin/search-doctor?search=${search}&page=${page}&limit=${limit}`);
+};

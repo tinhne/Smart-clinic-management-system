@@ -222,3 +222,61 @@ exports.deleteUser = async (userId) => {
     return { success: false, message: "Lỗi khi xóa người dùng" };
   }
 };
+
+// Tìm kiếm bác sĩ theo tên hoặc chuyên khoa
+exports.searchDoctors = async (search, page, limit) => {
+  try {
+    const skip = (page - 1) * limit;
+
+    console.log("Query search:", search || "No search query provided");
+    console.log("Page:", page);
+    console.log("Limit:", limit);
+
+    const matchStage = {
+      role: "doctor", // Chỉ lấy bác sĩ
+      ...(search && {
+        $or: [
+          { full_name: { $regex: search, $options: "i" } },
+          { specialties: { $regex: search, $options: "i" } },
+        ],
+      }),
+    };
+
+    const doctors = await User.aggregate([
+      {
+        $addFields: {
+          full_name: { $concat: ["$first_name", " ", "$last_name"] },
+        },
+      },
+      {
+        $match: matchStage, // Lọc theo vai trò và từ khóa
+      },
+      { $skip: skip },
+      { $limit: Number(limit) },
+    ]);
+
+    console.log("Doctors found:", doctors);
+
+    const total = await User.aggregate([
+      {
+        $addFields: {
+          full_name: { $concat: ["$first_name", " ", "$last_name"] },
+        },
+      },
+      {
+        $match: matchStage,
+      },
+      { $count: "total" },
+    ]);
+
+    const totalCount = total[0]?.total || 0;
+
+    return { doctors, totalCount };
+  } catch (error) {
+    console.error("Error in searchDoctors:", error);
+    throw error;
+  }
+};
+
+
+

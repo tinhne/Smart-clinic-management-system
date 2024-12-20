@@ -7,6 +7,7 @@ const {
   updateUser,
   deleteUser,
   getAllDoctorsBySpecialty,
+  searchDoctors,
 } = require("../service/adminService");
 const User = require("../models/User");
 // Tạo tài khoản bác sĩ
@@ -194,30 +195,6 @@ exports.getAllUserByRole = async (req, res) => {
       .json({ message: `Lỗi server khi lấy danh sách ${role}`, error });
   }
 };
-// exports.getAllUserByRole = async (req, res) => {
-//   const { role } = req.query;
-//   const page = parseInt(req.query.page) || 1; // Mặc định là trang 1
-//   const limit = parseInt(req.query.limit) || 5; // Mặc định là 10 user mỗi trang
-
-//   try {
-//     const response = await getAllUsersByRole(role, page, limit);
-
-//     if (response.success) {
-//       return res.status(200).json({
-//         users: response.users,
-//         totalUsers: response.totalUsers,
-//         totalPages: response.totalPages,
-//         currentPage: response.currentPage,
-//       });
-//     } else {
-//       return res.status(404).json({ message: response.message });
-//     }
-//   } catch (error) {
-//     return res
-//       .status(500)
-//       .json({ message: `Lỗi server khi lấy danh sách ${role}`, error });
-//   }
-// };
 
 // lay thong tin nguoi dung theo id va role
 exports.getUserById = async (req, res) => {
@@ -291,14 +268,39 @@ exports.countUsersByRole = async (req, res) => {
     const { role } = req.query;
 
     const userCount = await User.countDocuments({ role });
-    
-    return res.status(200).json({  userCount });
+
+    return res.status(200).json({ userCount });
   } catch (error) {
     console.error("Error counting users by role:", error);
 
-    return res.status(500).json({ 
-      message: "Server error when counting users by role", 
-      error: error.message || error 
+    return res.status(500).json({
+      message: "Server error when counting users by role",
+      error: error.message || error,
     });
   }
 };
+exports.getDoctorsBySearch = async (req, res) => {
+  try {
+    const { search = "", page = 1, limit = 10 } = req.query;
+
+    console.log("Search query:", search || "No search query provided");
+    console.log("Page:", page);
+    console.log("Limit:", limit);
+
+    // Gọi service với search, page, và limit
+    const { doctors, totalCount } = await searchDoctors(search, Number(page), Number(limit));
+
+    return res.status(200).json({
+      success: true,
+      doctors,
+      totalPages: Math.ceil(totalCount / limit),
+      currentPage: Number(page),
+    });
+  } catch (error) {
+    console.error("Error in getDoctorsBySearch:", error);
+    return res.status(500).json({ success: false, message: "Internal server error." });
+  }
+};
+
+
+

@@ -1,8 +1,8 @@
 import { FaSearch } from "react-icons/fa";
 import "../../style/DoctorDetail/DoctorDetail.scss";
-import { getAllUserByRole, getUserById } from "../../utils/AuthAPI/AdminService";
+import { getDoctorsBySearch,getUserById } from "../../utils/AuthAPI/AdminService";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import ViewDoctorDetail from "../../components/Doctor/ViewDoctorDetails";
 
 const DoctorDetail = () => {
@@ -12,15 +12,28 @@ const DoctorDetail = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [showModal, setShowModal] = useState(false); // Quản lý trạng thái hiển thị modal
+  const [tempQuery, setTempQuery] = useState(""); // Tạm lưu query khi gõ
+  const location = useLocation();
   const navigate = useNavigate();
 
-  const fetchDoctor = async (page) => {
+  // Fetch data khi component load hoặc khi query thay đổi
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const searchQuery = params.get("search") || "";
+    const page = parseInt(params.get("page")) || 1;
+
+    setTempQuery(searchQuery); // Đặt giá trị tìm kiếm hiện tại vào input
+    fetchDoctor(page, searchQuery);
+  }, [location]);
+
+  const fetchDoctor = async (page, query = "") => {
     setIsLoading(true); // Bắt đầu loading
     try {
-      const response = await getAllUserByRole("doctor", page, 15); // Gọi API lấy dữ liệu
+      const response = await getDoctorsBySearch(query, page, 10); // Gọi API tìm kiếm
       if (response?.success) {
-        setDoctors(response.users); // Gắn danh sách bác sĩ vào state
-        setTotalPages(response.totalPages || 1); // Lấy tổng số trang từ API
+        setDoctors(response.doctors);
+        setTotalPages(response.totalPages);
+        setCurrentPage(page);
       }
     } catch (error) {
       console.error("Error fetching doctors:", error);
@@ -29,23 +42,25 @@ const DoctorDetail = () => {
     }
   };
 
-  useEffect(() => {
-    fetchDoctor(currentPage); // Gọi API khi component được load
-  }, [currentPage]);
+  const handleSearch = () => {
+    navigate(`/doctor-list?search=${encodeURIComponent(tempQuery)}`);
+  };
 
   const handleAppointment = (doctorID) => {
     navigate(`/dat-kham/bac-si/${doctorID}`);
   };
 
   const handleViewInfo = async (doctorID) => {
+    setShowModal(true); // Hiển thị modal ngay lập tức
+    setSelectedDoctor(null); // Reset thông tin bác sĩ
     try {
-      setShowModal(true); // Hiển thị modal
       const response = await getUserById(doctorID, "doctor");
-      setSelectedDoctor(response.user); // Cập nhật thông tin bác sĩ được chọn
+      setSelectedDoctor(response.user); // Cập nhật thông tin bác sĩ
     } catch (error) {
       console.error("Error fetching doctor details:", error);
     }
   };
+  
 
   const handleCloseModal = () => {
     setShowModal(false);
@@ -54,7 +69,7 @@ const DoctorDetail = () => {
 
   const handlePageChange = (page) => {
     if (page >= 1 && page <= totalPages) {
-      setCurrentPage(page);
+      navigate(`/doctor-list?search=${encodeURIComponent(tempQuery)}&page=${page}`);
     }
   };
 
@@ -66,8 +81,15 @@ const DoctorDetail = () => {
           type="text"
           placeholder="Tìm kiếm bác sĩ theo tên hoặc chuyên khoa..."
           className="search-input"
+          value={tempQuery}
+          onChange={(e) => setTempQuery(e.target.value)} // Cập nhật giá trị tạm khi gõ
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleSearch(); // Gọi hàm tìm kiếm khi nhấn Enter
+            }
+          }}
         />
-        <FaSearch className="search-icon" />
+        <FaSearch className="search-icon" onClick={handleSearch} />
       </div>
 
       {/* Danh sách bác sĩ hoặc spinner */}
@@ -75,7 +97,7 @@ const DoctorDetail = () => {
         <div className="spinner-container">
           <div className="spinner"></div>
         </div>
-      ) : (
+      ) : doctors.length > 0 ? (
         <>
           {doctors.map((doctor) => (
             <div className="doctor-detail" key={doctor._id}>
@@ -112,10 +134,12 @@ const DoctorDetail = () => {
             </div>
           ))}
         </>
+      ) : (
+        <p>Không tìm thấy bác sĩ phù hợp.</p>
       )}
 
       {/* Paginate */}
-      {!isLoading && (
+      {!isLoading && totalPages > 1 && (
         <div className="paginate">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
@@ -152,7 +176,4 @@ const DoctorDetail = () => {
   );
 };
 
-
-
 export default DoctorDetail;
-  

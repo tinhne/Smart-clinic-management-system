@@ -171,13 +171,13 @@
 
     // Individual doctor card
     .doctor-card {
-      min-width: 276px;
+      min-width: 330px;
       background-color: #fff;
       border-radius: 12px;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
       text-align: center;
       padding: 20px;
-      width: 270px;
+
       transition: transform 0.3s ease-in-out;
       display: inline-block;
       border: 1px solid gray;
@@ -287,15 +287,15 @@
         transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
         display: inline-block;
         cursor: pointer; // Thêm hiệu ứng click
-      
+
         &:hover {
           transform: translateY(-10px); // Thẻ nhô lên khi hover
           box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15); // Tăng độ mờ
         }
-      
+
         .specialty-image {
           margin-bottom: 15px; // Thêm khoảng cách dưới hình ảnh
-      
+
           img {
             width: 80px;
             height: 80px;
@@ -304,7 +304,7 @@
             background-color: #f0f0f0; // Màu nền xám nhạt nếu ảnh không tải
           }
         }
-      
+
         .specialty-info {
           h3 {
             font-size: 16px;
@@ -312,31 +312,30 @@
             font-weight: bold;
             margin: 0;
           }
-      
+
           p {
             font-size: 14px;
             color: #7f8c8d; // Xám nhạt
             margin: 5px 0 0 0;
           }
         }
-      
+
         .specialty-action {
           margin-top: 10px;
-      
+
           span {
             font-size: 16px;
             color: #34495e; // Xanh đậm
             font-weight: 500;
             cursor: pointer;
             transition: color 0.3s ease-in-out;
-      
+
             &:hover {
               color: #3498db; // Đổi thành xanh sáng hơn khi hover
             }
           }
         }
       }
-      
     }
 
     // Individual doctor card

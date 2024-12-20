@@ -28,7 +28,7 @@ import yhocthethao from "../../assets/img/Specialties/yhocthethao.jpg";
 import phauthuatthammy from "../../assets/img/Specialties/37_phauthuattaohinhthammy.jpg";
 import ngoaithankinh from "../../assets/img/Specialties/Ngoaithankinh.jpg";
 import noitonquat from "../../assets/img/Specialties/Noitongquat.jpg";
-import dinhduong from "../../assets/img/Specialties/Dinhduong.jpg"
+import dinhduong from "../../assets/img/Specialties/Dinhduong.jpg";
 // import Chatbot from "../../components/chatbot/Chatbot";
 import chungnhan1 from "../../assets/img/chungnhan1.jpg";
 import chungnhan2 from "../../assets/img/chungnhan2.jpg";
@@ -62,7 +62,7 @@ const HomePage = () => {
   const [totalPages, setTotalPages] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchKeyword, setSearchKeyword] = useState("");
-
+  const [searchQuery, setSearchQuery] = useState(""); // State lưu giá trị tìm kiếm
   const limit = 7;
 
   // Fetch medicines function
@@ -161,6 +161,13 @@ const HomePage = () => {
       maximumFractionDigits: 2,
     });
   };
+  const handleSearchDoctorDetails = () => {
+    if (searchQuery.trim()) {
+      navigate(`/doctor-list?search=${encodeURIComponent(searchQuery)}`); // Điều hướng đến /doctor-list với query
+    } else {
+      navigate(`/doctor-list`); // Nếu không có query, chỉ chuyển đến /doctor-list
+    }
+  };
   return (
     <>
       <div className="body-homepage">
@@ -174,9 +181,17 @@ const HomePage = () => {
             <input
               type="text"
               className="search-input"
-              placeholder="Triệu chứng, bác sĩ, phòng khám,..."
+              placeholder="Nhập bác sĩ và khoa muốn tìm kiếm... "
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)} // Cập nhật giá trị state
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSearchDoctorDetails(); // Gọi hàm khi nhấn Enter
+                }
+              }}
             />
-            <CiSearch className="search-icon" />
+            <CiSearch className="search-icon" onClick={handleSearchDoctorDetails} />{" "}
+            {/* Gọi hàm khi click icon */}
           </div>
         </div>
 
@@ -473,7 +488,6 @@ const HomePage = () => {
                 <span>Dinh Dưỡng</span>
               </div>
             </div>
-
             <div
               className="specialty-card"
               value="Truyền Nhiễm"

@@ -190,7 +190,10 @@ const HomePage = () => {
                 }
               }}
             />
-            <CiSearch className="search-icon" onClick={handleSearchDoctorDetails} />{" "}
+            <CiSearch
+              className="search-icon"
+              onClick={handleSearchDoctorDetails}
+            />{" "}
             {/* Gọi hàm khi click icon */}
           </div>
         </div>
@@ -659,7 +662,14 @@ const HomePage = () => {
                 dược sĩ đảm bảo nội dung chúng tôi cung cấp chính xác về mặt y
                 khoa và cập nhập những thông tin chính xác nhất
               </p>
-              <button className="expert_button">Đội ngũ chuyên gia &gt;</button>
+              <button
+                className="expert_button"
+                onClick={() => {
+                  navigate("/doctor-list");
+                }}
+              >
+                Đội ngũ chuyên gia &gt;
+              </button>
             </div>
           </div>
         </div>

@@ -1975,26 +1975,131 @@ function analyzeInput(input) {
       "Khó thở khi nằm có thể do vấn đề tim mạch hoặc hô hấp. Nếu kéo dài, hãy đi khám ngay.",
     "Đau tai":
       "Đau tai có thể do nhiễm trùng hoặc áp lực. Nếu cơn đau kéo dài, hãy đi khám bác sĩ.",
-    "Đau dạ dày":
-      "Đau dạ dày có thể do viêm loét hoặc trào ngược dạ dày thực quản. Nếu kéo dài, hãy đi khám.",
-    "Rối loạn ăn uống":
-      "Rối loạn ăn uống có thể do căng thẳng hoặc vấn đề tâm lý. Cần tìm kiếm sự hỗ trợ từ chuyên gia.",
-    "Khó khăn trong việc đi lại":
-      "Khó khăn trong việc đi lại có thể do chấn thương hoặc vấn đề về khớp. Nghỉ ngơi và tham khảo ý kiến bác sĩ.",
-    "Nổi mụn nước":
-      "Nổi mụn nước có thể do dị ứng hoặc nhiễm virus. Tránh gãi và theo dõi tình trạng.",
+    "dạ dày":
+      "Dạ, đau dạ dày là một triệu chứng khá phổ biến và có thể do nhiều nguyên nhân khác nhau, bao gồm viêm dạ dày, loét dạ dày, trào ngược dạ dày thực quản, hoặc các vấn đề tiêu hóa khác.\n\n" +
+      "Triệu chứng:\n\n" +
+      "- Đau thượng vị: Cảm giác đau hoặc khó chịu ở vùng bụng trên, thường xuất hiện sau khi ăn.\n" +
+      "- Buồn nôn và nôn.\n" +
+      "- Chán ăn.\n" +
+      "- Cảm giác đầy hơi, ợ hơi hoặc ợ chua.\n" +
+      "- Đau âm ỉ hoặc dữ dội có thể lan ra sau lưng hoặc vùng ngực.\n\n" +
+      "Nguyên nhân:\n\n" +
+      "- Nhiễm khuẩn: Vi khuẩn Helicobacter pylori là nguyên nhân phổ biến gây loét dạ dày.\n" +
+      "- Sử dụng thuốc: Các thuốc chống viêm không steroid (NSAID) và corticoid có thể làm tăng nguy cơ loét dạ dày.\n" +
+      "- Căng thẳng: Tình trạng căng thẳng kéo dài có thể ảnh hưởng đến dạ dày.\n" +
+      "- Chế độ ăn uống không hợp lý: Tiêu thụ thực phẩm cay, chua, hoặc có nhiều gia vị.\n\n" +
+      "Chẩn đoán:\n\n" +
+      "- Khám lâm sàng: Bác sĩ sẽ hỏi về triệu chứng và tiền sử bệnh của bạn.\n" +
+      "- Nội soi dạ dày: Đây là phương pháp chính trong chẩn đoán loét dạ dày và các bệnh lý liên quan.\n\n" +
+      "Điều trị:\n\n" +
+      "- Sử dụng thuốc: Gồm thuốc ức chế bơm proton (PPI), thuốc kháng axit hoặc thuốc kháng sinh để điều trị nhiễm H. pylori.\n" +
+      "- Thay đổi lối sống: Tránh các thực phẩm gây kích thích dạ dày, bỏ thuốc lá và giảm căng thẳng.\n" +
+      "- Kiểm tra sức khỏe định kỳ: Điều này giúp theo dõi tình trạng và điều chỉnh điều trị nếu cần.\n\n" +
+      "Nếu bạn gặp triệu chứng nghiêm trọng như nôn ra máu, đau bụng dữ dội, hoặc có dấu hiệu chảy máu, hãy đến bệnh viện ngay lập tức để được khám và điều trị kịp thời.",
+    "rối loạn ăn uống":
+      "Dạ, rối loạn ăn uống là một nhóm các tình trạng sức khỏe tâm thần ảnh hưởng đến hành vi ăn uống của cá nhân, dẫn đến các vấn đề về sức khỏe thể chất và tâm lý. Những loại rối loạn ăn uống phổ biến bao gồm:\n\n" +
+      "1. Anorexia nervosa (chứng chán ăn tâm lý):\n\n" +
+      "- Đặc điểm: Người bị anorexia nervosa thường có hình ảnh cơ thể méo mó, lo sợ tăng cân, và thường ăn rất ít hoặc không ăn.\n" +
+      "- Triệu chứng: Giảm cân đáng kể, sợ ăn, hoạt động thể chất quá mức, và cảm giác không hài lòng với trọng lượng cơ thể.\n\n" +
+      "2. Bulimia nervosa (chứng ăn uống vô độ):\n\n" +
+      "- Đặc điểm: Người mắc bulimia thường ăn một lượng lớn thức ăn trong thời gian ngắn và sau đó tìm cách để giảm cân bằng cách nôn ói, dùng thuốc nhuận tràng hoặc tập thể dục quá mức.\n" +
+      "- Triệu chứng: Thường xuyên ăn uống không bình thường, tự cảm thấy tội lỗi hoặc xấu hổ về hành vi ăn uống, và có thể gặp các vấn đề sức khỏe như mất cân bằng điện giải.\n\n" +
+      "3. Eating disorders không xác định (OSFED):\n\n" +
+      "- Đặc điểm: Các rối loạn ăn uống khác mà không đủ tiêu chí để chẩn đoán anorexia hoặc bulimia nhưng vẫn có ảnh hưởng tiêu cực đến sức khỏe.\n" +
+      "- Triệu chứng: Có thể bao gồm sự thay đổi trong hành vi ăn uống hoặc hình ảnh cơ thể mà không đủ nghiêm trọng để đưa vào hai nhóm trên.\n\n" +
+      "Nguyên nhân:\n\n" +
+      "Rối loạn ăn uống có thể xuất phát từ nhiều yếu tố, bao gồm:\n" +
+      "- Áp lực xã hội và văn hóa về hình ảnh cơ thể.\n" +
+      "- Yếu tố di truyền và sinh học.\n" +
+      "- Căng thẳng tâm lý, trầm cảm hoặc lo âu.\n" +
+      "- Kinh nghiệm khó khăn trong quá khứ.\n\n" +
+      "Điều trị:\n\n" +
+      "Phương pháp điều trị cho rối loạn ăn uống thường bao gồm:\n" +
+      "- Tư vấn tâm lý: Giúp người bệnh hiểu về cảm xúc và hành vi của mình, đồng thời cải thiện hình ảnh bản thân.\n" +
+      "- Chăm sóc dinh dưỡng: Đánh giá và lập kế hoạch dinh dưỡng nhằm đạt được và duy trì cân nặng khỏe mạnh.\n" +
+      "- Sử dụng thuốc: Đối với một số trường hợp, thuốc có thể được chỉ định để điều trị triệu chứng đi kèm như lo âu hoặc trầm cảm.\n\n" +
+      "Nếu bạn hoặc ai đó có dấu hiệu rối loạn ăn uống, hãy liên hệ với bác sĩ hoặc chuyên gia sức khỏe tâm thần để được hỗ trợ và điều trị kịp thời. Việc chăm sóc sức khỏe tâm thần cũng quan trọng không kém chăm sóc sức khỏe thể chất.",
+    "khó khăn đi lại":
+      "Dạ, khó khăn trong việc đi lại có thể xuất phát từ nhiều nguyên nhân khác nhau, từ các vấn đề thể chất đến các yếu tố tâm lý. Một số nguyên nhân và tình huống phổ biến gây khó khăn trong việc di chuyển bao gồm:\n\n" +
+      "1. Vấn đề về cơ xương khớp:\n\n" +
+      "- Viêm khớp: Các tình trạng như viêm khớp gối hoặc hông có thể gây đau và cứng khớp, làm giảm khả năng di chuyển.\n" +
+      "- Chấn thương: Chấn thương như gãy xương, bong gân hay chấn thương dây chằng có thể ảnh hưởng đến khả năng đi lại.\n\n" +
+      "2. Vấn đề về thần kinh:\n\n" +
+      "- Đột quỵ: Có thể ảnh hưởng đến khả năng vận động, gây khó khăn khi đi lại.\n" +
+      "- Bệnh Parkinson: Gây rối loạn vận động, ảnh hưởng đến khả năng di chuyển của người bệnh.\n\n" +
+      "3. Khó khăn về sức khỏe chung:\n\n" +
+      "- Bệnh tim mạch: Những người bị bệnh tim có thể cảm thấy mệt mỏi khi di chuyển và gặp khó khăn trong việc duy trì hoạt động.\n" +
+      "- Bệnh phổi: Các bệnh lý như COPD có thể hạn chế sức bền và khả năng di chuyển.\n\n" +
+      "4. Yếu tố tâm lý:\n\n" +
+      "- Lo âu và trầm cảm: Những yếu tố tâm lý có thể ảnh hưởng đến động lực và khả năng di chuyển của người bệnh.\n\n" +
+      "5. Tuổi tác:\n\n" +
+      "- Lão hóa: Khi tuổi tác tăng lên, sức mạnh cơ bắp và tính linh hoạt thường giảm, dẫn đến khó khăn trong việc đi lại.\n\n" +
+      "Giải pháp:\n\n" +
+      "- Khám sức khỏe: Đi khám bác sĩ để xác định nguyên nhân cụ thể gây khó khăn trong việc di chuyển.\n" +
+      "- Vật lý trị liệu: Tham gia các chương trình vật lý trị liệu để cải thiện khả năng vận động và tăng cường sức mạnh cơ bắp.\n" +
+      "- Sử dụng thiết bị hỗ trợ: Nên sử dụng gậy, khung tập đi hoặc các thiết bị hỗ trợ khác để giúp việc di chuyển dễ dàng hơn.\n" +
+      "- Luyện tập thể dục đều đặn: Tập luyện nhẹ nhàng có thể giúp duy trì sức khỏe và tăng cường tính linh hoạt.\n\n" +
+      "Nếu vấn đề kéo dài hoặc nghiêm trọng, hãy liên hệ với bác sĩ chuyên khoa để được tư vấn và điều trị phù hợp.\n\n",
+    "mụn nước":
+      "Dạ, mụn nước có thể là triệu chứng của nhiều tình trạng khác nhau và việc xác định nguyên nhân chính xác cần dựa trên các yếu tố như vị trí, kích thước, màu sắc, và các triệu chứng kèm theo. Một số nguyên nhân phổ biến dẫn đến mụn nước bao gồm:\n\n" +
+      "1. Mụn nước do dị ứng:\n\n" +
+      "- Nguyên nhân: Tiếp xúc với chất kích thích hoặc dị nguyên như xà phòng, hóa chất, hoặc một số loại thực phẩm.\n" +
+      "- Triệu chứng: Xuất hiện mụn nước ngứa, có thể kèm theo đỏ da và sưng.\n\n" +
+      "2. Mụn nước do nhiễm virus:\n\n" +
+      "- Herpes simplex: Virus này có thể gây ra các mụn nước ở vùng môi hoặc bộ phận sinh dục.\n" +
+      "- Varicella (thủy đậu): Gây ra các mụn nước toàn thân.\n\n" +
+      "3. Mụn nước do nhiễm trùng:\n\n" +
+      "- Nguyên nhân: Nhiễm trùng bề mặt da hoặc các vi khuẩn như tụ cầu khuẩn.\n" +
+      "- Triệu chứng: Mụn nước kèm sưng đỏ, đau hoặc chứa mủ.\n\n" +
+      "4. Mụn nước do bỏng:\n\n" +
+      "- Nguyên nhân: Bỏng cấp độ nhẹ đến trung bình gây tổn thương vùng da.\n\n" +
+      "5. Mụn nước do ký sinh trùng:\n\n" +
+      "- Nguyên nhân: Một số tình trạng do ký sinh trùng như bệnh nấm.\n" +
+      "- Triệu chứng: Hình thành mụn nước nhỏ, ngứa, thường xuất hiện ở bàn chân hoặc tay.\n\n" +
+      "6. Mụn nước do tổn thương da:\n\n" +
+      "- Nguyên nhân: Cọ xát quá mức, như đi giày chật hoặc quần áo không vừa.\n\n" +
+      "Cách xử lý:\n\n" +
+      "- Tránh gãi: Không gãi hay làm vỡ mụn nước để tránh nhiễm trùng.\n" +
+      "- Vệ sinh sạch sẽ: Giữ vùng da sạch và khô.\n" +
+      "- Sử dụng kem chống ngứa: Nếu mụn nước ngứa, có thể sử dụng các loại kem hoặc thuốc chống ngứa theo chỉ định.\n\n" +
+      "Nếu mụn nước không giảm, có dấu hiệu nhiễm trùng (sưng, đau, mủ) hoặc có triệu chứng khác như sốt, hãy đến ngay cơ sở y tế để được thăm khám và điều trị kịp thời.\n\n",
     "Cảm giác nặng nề ở chân":
       "Cảm giác nặng nề ở chân có thể do tuần hoàn kém. Nghỉ ngơi và nâng cao chân có thể giúp cải thiện.",
-    "Mất cân bằng":
-      "Mất cân bằng có thể do vấn đề thần kinh hoặc tai trong. Nếu kéo dài, hãy đi khám bác sĩ.",
-    "Đau lưng dưới":
+    "mất cân bằng":
+      "Dạ, 'mất cân bằng' có thể hiểu theo nhiều phương diện khác nhau, bao gồm cả về thể chất, tâm lý và sinh lý. Dưới đây là một số khía cạnh liên quan đến tình trạng mất cân bằng:\n\n" +
+      "1. Mất cân bằng cơ thể:\n\n" +
+      "- Mất cân bằng về thể chất: Có thể xảy ra khi một bên cơ thể yếu hơn bên còn lại, dẫn đến khó khăn trong việc duy trì tư thế đứng hoặc di chuyển. Điều này có thể xuất phát từ chấn thương, nhiễm trùng, hoặc các vấn đề về thần kinh như đột quỵ hoặc bệnh Parkinson.\n" +
+      "- Mất cân bằng nội tiết: Nhiều vấn đề sức khỏe có thể gây ra sự mất cân bằng nội tiết, chẳng hạn như rối loạn tuyến giáp, khiến cơ thể không sản sinh hormone đúng cách.\n\n" +
+      "2. Mất cân bằng tinh thần:\n\n" +
+      "- Mất cân bằng tâm lý: Những trạng thái như lo âu, trầm cảm hoặc stress có thể dẫn đến cảm giác mất kiểm soát trong cuộc sống và ảnh hưởng đến khả năng đưa ra quyết định và đối phó với tình huống hàng ngày.\n\n" +
+      "3. Mất cân bằng dinh dưỡng:\n\n" +
+      "- Chế độ ăn uống không cân bằng: Thiếu hụt hoặc thừa dinh dưỡng cũng có thể gây ra nhiều vấn đề sức khỏe. Ví dụ, thiếu vitamin hoặc khoáng chất có thể dẫn đến các bệnh lý như thiếu máu hoặc các bệnh lý về xương khớp.\n\n" +
+      "Hướng dẫn:\n\n" +
+      "- Khám sức khỏe định kỳ: Đi khám bác sĩ để kiểm tra tổng quát và xác định nguyên nhân cụ thể gây ra tình trạng mất cân bằng.\n" +
+      "- Tập thể dục thường xuyên: Tập luyện thể dục có thể giúp cải thiện sức mạnh cơ và khả năng cân bằng.\n" +
+      "- Kỹ năng thư giãn: Thực hành các kỹ thuật thư giãn như yoga hoặc thiền để giảm căng thẳng và cải thiện tâm lý.\n" +
+      "- Chế độ ăn uống hợp lý: Cân bằng dinh dưỡng có thể được thiết lập bằng cách ăn đủ các nhóm thực phẩm cần thiết, bao gồm trái cây, rau củ, protein và tinh bột.\n\n" +
+      "Nếu tình trạng này kéo dài hoặc nghiêm trọng, hãy liên hệ với bác sĩ để được tư vấn và điều trị phù hợp.\n\n",
+    "đau lưng dưới":
       "Đau lưng dưới có thể do chấn thương hoặc căng cơ. Nghỉ ngơi và tránh nâng vật nặng có thể giúp giảm đau.",
     "Đau bụng bên trái":
       "Đau bụng bên trái có thể liên quan đến lách hoặc ruột. Nếu kéo dài, hãy đi khám.",
     "Cảm giác nóng rát ở da":
       "Cảm giác nóng rát ở da có thể do dị ứng hoặc viêm nhiễm. Tránh tiếp xúc với các tác nhân gây dị ứng.",
-    "Đau ngực trái":
-      "Đau ngực trái có thể liên quan đến tim hoặc phổi. Nếu đau dữ dội, hãy đi khám ngay lập tức.",
+    "đau ngực trái":
+      "Dạ, đau ngực trái có thể là dấu hiệu của nhiều tình trạng khác nhau, từ các vấn đề liên quan đến tim mạch đến các nguyên nhân không phải tim. Dưới đây là một số nguyên nhân phổ biến và hướng xử lý:\n\n" +
+      "1. Nguyên nhân tim mạch:\n\n" +
+      "- Cơn đau thắt ngực: Đây là tình trạng do thiếu máu cục bộ cơ tim. Cơn đau thắt ngực thường xảy ra khi có gắng sức, căng thẳng hoặc sau khi ăn. Cảm giác đau có thể lan lên cổ, vai, tay và lưng.\n" +
+      "- Nhồi máu cơ tim: Là tình trạng cấp cứu nghiêm trọng, có thể gây đau ngực dữ dội, khó thở, vã mồ hôi, buồn nôn và triệu chứng có thể kéo dài hơn 30 phút.\n\n" +
+      "2. Nguyên nhân không phải tim:\n\n" +
+      "- Cơn đau từ phổi: Các tình trạng như viêm phổi, viêm màng phổi có thể gây đau ngực trái.\n" +
+      "- Rối loạn tiêu hóa: Đau do trào ngược dạ dày thực quản hoặc loét dạ dày cũng có thể gây cảm giác đau tại khu vực ngực trái.\n" +
+      "- Cơn đau từ cơ xương: Đau cơ bắp hoặc gân có thể gây cảm giác giống như đau ngực. Chấn thương hoặc sự căng thẳng cũng có thể là nguyên nhân.\n\n" +
+      "Hướng xử lý:\n\n" +
+      "1. Khám sức khỏe: Nếu cơn đau ngực trái là dữ dội, đột ngột hoặc đi kèm với triệu chứng như khó thở, vã mồ hôi, nôn, hãy ngay lập tức đến bệnh viện để được chẩn đoán và điều trị kịp thời.\n" +
+      "2. Tầm soát sức khỏe tim mạch: Kiểm tra huyết áp, cholesterol và các yếu tố nguy cơ khác liên quan đến bệnh tim.\n" +
+      "3. Đánh giá chế độ ăn uống và lối sống: Điều chỉnh chế độ ăn và vận động thể chất thường xuyên để cải thiện sức khỏe tim mạch.\n\n" +
+      "Nếu bạn có bất kỳ triệu chứng nào nghi ngờ liên quan đến tim hoặc tình trạng sức khỏe, xin hãy đến bệnh viện để được khám và tư vấn thêm.\n\n",
     "mỏi lưng":
       "Dạ, mỏi lưng là một triệu chứng thường gặp và có thể do nhiều nguyên nhân khác nhau. Dưới đây là một số nguyên nhân phổ biến gây ra tình trạng mỏi lưng và các biện pháp phòng ngừa, điều trị mà bạn có thể áp dụng:\n\n" +
       "Nguyên nhân gây mỏi lưng:\n\n" +
@@ -2410,7 +2515,7 @@ function analyzeInput(input) {
       "Dạ, nếu bạn có thêm câu hỏi nào hoặc muốn tìm hiểu sâu hơn về suy thận, hãy cho tôi biết!",
     "dấu hiệu nhận biết của bệnh loãng xương":
       "Dạ, nếu bạn bị loãng xương, có thể nhận biết qua các triệu chứng như: đau xương, đau lưng, gãy xương dễ dàng, và giảm chiều cao.\n\n",
-    "Thông tin về loãng xương":
+    "loãng xương":
       "Dạ, loãng xương (osteoporosis) là một bệnh lý xương mạn tính, đặc trưng bởi sự giảm mật độ khoáng xương, làm tăng nguy cơ gãy xương. Bệnh thường phổ biến hơn ở phụ nữ sau mãn kinh và người cao tuổi, nhưng cũng có thể xảy ra ở đàn ông và các nhóm tuổi trẻ hơn trong một số trường hợp nhất định.\n\n" +
       "Nguyên nhân:\n\n" +
       "- Yếu tố nội tiết: Mất cân bằng hormone, đặc biệt là estrogen ở phụ nữ sau mãn kinh, và testosterone ở nam giới.\n" +

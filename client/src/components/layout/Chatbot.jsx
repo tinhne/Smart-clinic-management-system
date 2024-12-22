@@ -5,8 +5,9 @@ import { useNavigate } from "react-router-dom";
 import analyzeInput from "./AnalyzeChatbot";
 
 const theme = {
+  botName: "tư vấn bệnh",
   background: "#f5f8fb",
-  fontFamily: "Helvetica Neue",
+  fontFamily: "Time New Roman",
   headerBgColor: "#0866FF",
   headerFontColor: "#fff",
   headerFontSize: "20px",
@@ -16,13 +17,13 @@ const theme = {
   userFontColor: "#4CAF50",
 };
 
-function OpenLink() {
-  React.useEffect(() => {
-    window.open("https://forms.gle/MZtdJ7ToHZriTJvN9", "_blank");
-  }, []);
+// function OpenLink() {
+//   React.useEffect(() => {
+//     window.open("https://forms.gle/MZtdJ7ToHZriTJvN9", "_blank");
+//   }, []);
 
-  return <span>Đang chuyển hướng tới trang đặt lịch khám nhanh...</span>;
-}
+//   return <span>Đang chuyển hướng tới trang đặt lịch khám nhanh...</span>;
+// }
 
 function ChooseDoctor() {
   const navigate = useNavigate();
@@ -61,8 +62,7 @@ function NewChatBot() {
         steps={[
           {
             id: "1",
-            message:
-              "Chào bạn, tôi là trợ lý ảo của Phòng khám❤️❤️. Tên bạn là gì ạ?",
+            message: `Chào bạn, tôi là trợ lý ảo ${theme.botName}❤️❤️. Tên bạn là gì ạ?`,
             trigger: "2",
           },
           { id: "2", user: true, trigger: "3" },
@@ -88,11 +88,11 @@ function NewChatBot() {
                 label: "Chọn bác sĩ",
                 trigger: "7",
               },
-              {
-                value: "Đặt lịch khám nhanh",
-                label: "Đặt lịch khám nhanh",
-                trigger: "8",
-              },
+              // {
+              //   value: "Đặt lịch khám nhanh",
+              //   label: "Đặt lịch khám nhanh",
+              //   trigger: "8",
+              // },
               {
                 value: "Giới thiệu về phòng khám",
                 label: "Giới thiệu về phòng khám",
@@ -116,7 +116,7 @@ function NewChatBot() {
             asMessage: true,
             trigger: "4",
           },
-          { id: "8", component: <OpenLink />, asMessage: true, trigger: "9" },
+          // { id: "8", component: <OpenLink />, asMessage: true, trigger: "9" },
           {
             id: "9",
             message: "Cảm ơn bạn đã chọn đặt lịch khám nhanh.",
@@ -136,6 +136,7 @@ function NewChatBot() {
           },
         ]}
         floating={true}
+        headerTitle="Trợ lý tư vấn khám bệnh"
       />
     </ThemeProvider>
   );

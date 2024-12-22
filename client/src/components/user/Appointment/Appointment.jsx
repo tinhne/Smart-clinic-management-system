@@ -267,7 +267,6 @@ const Appointment = () => {
                       </button>
                     </div>
                   </div>
-                  <span className="stt">STT: {appointment._id.slice(-2)}</span>
                 </li>
               ))
             ) : (

@@ -62,8 +62,8 @@ const ModalCreatePatient = ({
     } = formData;
 
     // Kiểm tra hợp lệ
-    const nameRegex = /^[a-zA-Z\s]+$/; // Chỉ cho phép ký tự chữ cái và khoảng trắng
-    const phoneRegex = /^[0-9]+$/; // Chỉ cho phép số
+    const nameRegex = /^[\p{L}\s]+$/u; // Hỗ trợ ký tự Unicode
+    const phoneRegex = /^[0-9]{10,11}$/; // Chỉ chấp nhận số có 10 hoặc 11 ký tự
     const today = new Date();
 
     if (!firstName || !nameRegex.test(firstName.trim())) {
@@ -88,7 +88,7 @@ const ModalCreatePatient = ({
     }
 
     if (!phone || !phoneRegex.test(phone.trim())) {
-      toast.error("Số điện thoại không hợp lệ. Vui lòng chỉ nhập số.");
+      toast.error("Số điện thoại không hợp lệ.");
       return;
     }
 

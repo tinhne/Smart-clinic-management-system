@@ -79,7 +79,7 @@ const ModalCreateDoctor = ({
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     const {
       title,
       firstName,
@@ -96,22 +96,29 @@ const ModalCreateDoctor = ({
       certifications,
       password,
     } = formData;
-
+  
     // Name validation: Ensure no numbers
     const nameRegex = /^[a-zA-ZÀ-ỹ\s]+$/;
     if (!nameRegex.test(firstName) || !nameRegex.test(lastName)) {
       toast.error("Họ và tên không được chứa số hoặc ký tự không hợp lệ.");
       return;
     }
-
+  
     // Date of birth validation: Ensure date is in the past
     const today = new Date();
     const birthDate = new Date(dob);
     if (birthDate >= today) {
-      toast.error("Ngày sinh không hợp lệ");
+      toast.error("Ngày sinh không hợp lệ.");
       return;
     }
-
+  
+    // Phone number validation: Must be 10-11 digits
+    const phoneRegex = /^[0-9]{10,11}$/;
+    if (!phoneRegex.test(phone)) {
+      toast.error("Số điện thoại phải chứa 10-11 chữ số.");
+      return;
+    }
+  
     // General validation for required fields
     if (
       !title ||
@@ -131,7 +138,7 @@ const ModalCreateDoctor = ({
       toast.error("Vui lòng điền đầy đủ thông tin.");
       return;
     }
-
+  
     try {
       const response = await createDoctor({
         title,
@@ -149,7 +156,7 @@ const ModalCreateDoctor = ({
         certifications,
         password,
       });
-
+  
       if (response.EC === 1) {
         fetchDoctors(1);
         toast.success(response.EM);
@@ -173,13 +180,14 @@ const ModalCreateDoctor = ({
         setImagePreview(null);
         setCertificatePreview([]);
       } else {
-        toast.error(response.EM || "Lỗi khi tạo bác sĩ");
+        toast.error(response.EM || "Lỗi khi tạo bác sĩ.");
       }
     } catch (error) {
       console.error("API Error:", error);
-      toast.error(error.response.data.EM);
+      toast.error(error.response?.data?.EM || "Lỗi khi tạo bác sĩ.");
     }
   };
+  
 
   return (
     <>
@@ -201,10 +209,10 @@ const ModalCreateDoctor = ({
                     required
                   >
                     <option value="">Chọn chức danh</option>
-                    <option value="Bác sĩ">GS</option>
-                    <option value="Giáo sư">PGS</option>
-                    <option value="Tiến sĩ">TS</option>
-                    <option value="Tiến sĩ">ThS</option>
+                    <option value="GS">GS</option>
+                    <option value="PGS">PGS</option>
+                    <option value="TS">TS</option>
+                    <option value="ThS">ThS</option>
                   </Form.Control>
                 </Form.Group>
                 <Form.Group controlId="formFirstName">
@@ -247,7 +255,6 @@ const ModalCreateDoctor = ({
                     required
                   >
                     <option value="">Chọn chuyên khoa</option>
-                    <option value="Tất cả">Tất cả</option>
                     <option value="Chuẩn Đoán Hình Ảnh">
                       Chuẩn Đoán Hình Ảnh
                     </option>
@@ -259,6 +266,13 @@ const ModalCreateDoctor = ({
                     <option value="Gây Mê Hồi Sức">Gây Mê Hồi Sức</option>
                     <option value="Lão Khoa">Lão Khoa</option>
                     <option value="Nhi Khoa">Nhi Khoa</option>
+                    <option value="Huyết Học">Huyết Học</option>
+                    <option value="Phẫu Thuật Thẩm Mỹ">
+                      Phẫu Thuật Thẩm Mỹ
+                    </option>
+                    <option value="Ngoại Thần Kinh">Ngoại Thần Kinh</option>
+                    <option value="Y Học Thể Thao">Y Học Thể Thao</option>
+                    <option value="Dinh Dưỡng">Dinh Dưỡng</option>
                     <option value="Truyền Nhiễm">Truyền Nhiễm</option>
                     <option value="Xét Nghiệm">Xét Nghiệm</option>
                     <option value="Hô Hấp">Hô Hấp</option>

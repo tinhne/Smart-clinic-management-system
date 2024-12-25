@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { FaCalendarAlt, FaTimesCircle } from "react-icons/fa";
 import "../../../style/Appointment/Appointment.scss";
-import doctorPlaceholder from "../../../assets/img/customer01.png"; // Hình ảnh mặc định
+import doctorPlaceholder from "../../../assets/img/customer01.png"; // Default image
 import { getUserById } from "../../../utils/AuthAPI/AdminService";
 import {
   getAppointmentPatient,
   deleteAppointment,
 } from "../../../utils/AppointmentAPI/AppointmentService";
+import { sendCancellationReason } from "../../../utils/EmailNontification/EmailNontificationService";
 import Countdown from "./Countdown";
-import ConfirmationDialog from "../../layout/ConfirmationDialog"; // Import hộp thoại xác nhận
+import ConfirmationDialog from "../../layout/ConfirmationDialog"; // Confirmation dialog
 import { toast } from "react-toastify";
+import '@fortawesome/fontawesome-free/css/all.min.css';
 
 const Appointment = () => {
   const [appointments, setAppointments] = useState([]);
@@ -17,9 +19,11 @@ const Appointment = () => {
   const [doctorsInfo, setDoctorsInfo] = useState({});
   const [patientInfo, setPatientInfo] = useState(null);
   const [countdownFinished, setCountdownFinished] = useState({});
-  const [searchTerm, setSearchTerm] = useState(""); // State cho tìm kiếm
-  const [showConfirmation, setShowConfirmation] = useState(false); // Trạng thái hiển thị hộp thoại
-  const [appointmentToDelete, setAppointmentToDelete] = useState(null); // Lưu trữ lịch hẹn cần xóa
+  const [searchTerm, setSearchTerm] = useState(""); // Search term state
+  const [showConfirmation, setShowConfirmation] = useState(false); // Show confirmation dialog
+  const [appointmentToDelete, setAppointmentToDelete] = useState(null); // Store the appointment to delete
+  const [cancellationReason, setCancellationReason] = useState(""); // State lưu lý do hủy
+  const [isCancelling, setIsCancelling] = useState(false); // Trạng thái loading
 
   useEffect(() => {
     const fetchAppointments = async () => {
@@ -29,18 +33,21 @@ const Appointment = () => {
 
         if (Array.isArray(appointmentData) && appointmentData.length > 0) {
           setAppointments(appointmentData);
-          handleSelectAppointment(appointmentData[0]); // Mặc định chọn lịch đầu tiên
+          handleSelectAppointment(appointmentData[0]); // Default selection
 
           const doctorsPromises = appointmentData.map(async (appointment) => {
             try {
               const doctorResponse = await getUserById(
                 appointment.doctor_id,
-                'doctor'
+                "doctor"
               );
               return { id: appointment.doctor_id, info: doctorResponse.user };
             } catch (error) {
-              console.error(`Error fetching doctor info for ID ${appointment.doctor_id}:`, error);
-              return { id: appointment.doctor_id, info: null }; // Trả về null nếu có lỗi
+              console.error(
+                `Error fetching doctor info for ID ${appointment.doctor_id}:`,
+                error
+              );
+              return { id: appointment.doctor_id, info: null }; // Return null on error
             }
           });
 
@@ -51,7 +58,6 @@ const Appointment = () => {
           }, {});
 
           setDoctorsInfo(doctorsMap);
-          console.log("Doctors Info:", doctorsMap); // Thêm dòng này để kiểm tra nội dung
         } else {
           setAppointments([]);
         }
@@ -76,10 +82,9 @@ const Appointment = () => {
   };
 
   const handleCountdownEnd = (appointmentId) => {
-    console.log("Countdown finished for appointment:", appointmentId);
     setCountdownFinished((prev) => ({
       ...prev,
-      [appointmentId]: true, // Đánh dấu countdown đã kết thúc
+      [appointmentId]: true,
     }));
   };
 
@@ -105,12 +110,49 @@ const Appointment = () => {
       appointment.appointment_type === "online" &&
       now >= oneHourBefore &&
       !countdownFinished[appointment._id]
-    ); // Kiểm tra xem đã đủ 1 tiếng trước thời gian khám hay chưa
+    );
   };
 
   const handleCancelAppointment = async () => {
+    if (!selectedAppointment) {
+      toast.error("Không tìm thấy thông tin lịch hẹn.");
+      return;
+    }
+  
+    setIsCancelling(true); // Hiển thị vòng tròn loading
     try {
-      await deleteAppointment(appointmentToDelete); // Xóa lịch hẹn đã chọn
+      const doctorEmail = doctorsInfo[selectedAppointment.doctor_id]?.email;
+      const appointmentId = selectedAppointment._id;
+  
+      const appointmentInfo = {
+        timeSlot: selectedAppointment.time_slot,
+        date: new Date(selectedAppointment.appointment_date).toLocaleDateString(),
+        type: selectedAppointment.appointment_type,
+      };
+  
+      const patientInfoData = {
+        fullName: `${patientInfo.first_name} ${patientInfo.last_name}`,
+        gender: patientInfo.gender,
+        birthYear: new Date(patientInfo.birthdate).getFullYear(),
+        phone: patientInfo.phone,
+      };
+  
+      const payload = {
+        doctorEmail,
+        appointmentId,
+        cancellationReason,
+        appointmentInfo,
+        patientInfo: patientInfoData,
+      };
+  
+      if (doctorEmail) {
+        await sendCancellationReason(payload);
+        toast.success("Email thông báo lý do hủy lịch đã được gửi.");
+      } else {
+        toast.warning("Không tìm thấy email của bác sĩ để gửi thông báo.");
+      }
+  
+      await deleteAppointment(appointmentToDelete);
       setAppointments((prevAppointments) =>
         prevAppointments.filter((appt) => appt._id !== appointmentToDelete)
       );
@@ -120,14 +162,18 @@ const Appointment = () => {
       console.error("Error cancelling appointment:", error);
       toast.error("Có lỗi xảy ra khi hủy lịch hẹn.");
     } finally {
-      setShowConfirmation(false); // Đóng hộp thoại
+      setIsCancelling(false); // Tắt vòng tròn loading
+      setShowConfirmation(false);
       setAppointmentToDelete(null);
+      setCancellationReason(""); // Reset lý do hủy
     }
   };
+  
+  
 
   const openConfirmationDialog = (appointmentId) => {
     setAppointmentToDelete(appointmentId);
-    setShowConfirmation(true); // Mở hộp thoại xác nhận
+    setShowConfirmation(true);
   };
 
   const handleCloseConfirmation = () => {
@@ -135,13 +181,12 @@ const Appointment = () => {
     setAppointmentToDelete(null);
   };
 
-  const normalizeString = (str) => {
-    return str
-      .normalize("NFD") // Phân tách dấu
-      .replace(/[\u0300-\u036f]/g, "") // Xóa dấu
-      .toLowerCase(); // Chuyển thành chữ thường
-  };
-  // Hàm lọc lịch hẹn dựa trên từ khóa tìm kiếm
+  const normalizeString = (str) =>
+    str
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase();
+
   const filteredAppointments = appointments.filter((appointment) => {
     const doctorName = `${doctorsInfo[appointment.doctor_id]?.first_name ||
       ""} ${doctorsInfo[appointment.doctor_id]?.last_name || ""}`;
@@ -156,11 +201,10 @@ const Appointment = () => {
       normalizeString(
         new Date(appointment.appointment_date).toLocaleDateString()
       ).includes(normalizedSearchTerm) ||
-      normalizeString(appointment._id).includes(normalizedSearchTerm) // Tìm kiếm theo ID
+      normalizeString(appointment._id).includes(normalizedSearchTerm)
     );
   });
 
-  // Thêm hàm kiểm tra trạng thái lịch hẹn
   const getAppointmentStatus = (appointment) => {
     if (appointment.status === "cancelled") return "cancelled";
 
@@ -274,11 +318,42 @@ const Appointment = () => {
             )}
 
             {showConfirmation && (
-              <ConfirmationDialog
-                message="Bạn có chắc chắn muốn hủy lịch hẹn này không?"
-                onConfirm={handleCancelAppointment}
-                onCancel={handleCloseConfirmation}
+          <ConfirmationDialog
+          message="Bạn có chắc chắn muốn hủy lịch hẹn này không?"
+          onConfirm={handleCancelAppointment}
+          onCancel={handleCloseConfirmation}
+        >
+          {isCancelling ? (
+            <div className="loading-overlay">
+              <div className="spinner"></div>
+            </div>
+          ) : (
+            <>
+              <textarea
+                placeholder="Nhập lý do hủy lịch hẹn"
+                value={cancellationReason}
+                onChange={(e) => setCancellationReason(e.target.value)}
+                className="cancellation-reason-input"
+                style={{
+                  width: "100%",
+                  height: "100px",
+                  marginTop: "10px",
+                  padding: "10px",
+                  fontSize: "14px",
+                }}
               />
+              <button
+                className="confirm-button"
+                onClick={handleCancelAppointment}
+                style={{ position: "relative" }}
+              >
+                Xác nhận
+              </button>
+            </>
+          )}
+        </ConfirmationDialog>
+        
+           
             )}
           </ul>
         </div>
@@ -287,9 +362,7 @@ const Appointment = () => {
       {selectedAppointment && (
         <div className="appointment-details">
           <div className="appointment-info">
-            <span className="stt">
-              STT: {selectedAppointment._id.slice(-2)}
-            </span>
+           
             <span className="time">
               <FaCalendarAlt />{" "}
               {selectedAppointment.status === "confirmed"
@@ -312,7 +385,8 @@ const Appointment = () => {
             <div className="doctor-info-app">
               <h3>
                 {doctorsInfo[selectedAppointment.doctor_id]
-                  ? `${doctorsInfo[selectedAppointment.doctor_id].first_name} ${
+                  ?
+                   `${doctorsInfo[selectedAppointment.doctor_id].title} ${doctorsInfo[selectedAppointment.doctor_id].first_name} ${
                       doctorsInfo[selectedAppointment.doctor_id].last_name
                     }`
                   : "Bác sĩ không xác định"}

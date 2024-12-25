@@ -1,13 +1,39 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Card, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "../../style/ClinicInfor/ClinicInfor.scss";
+import { getAllServices } from "../../services/serviceAPI";
+import xuongkhop from "../../assets/img/Blog_Image/1 9.png"
 const subject = encodeURIComponent("Chào mừng bạn đến với phòng khám");
 const body = encodeURIComponent(
   "Nếu bạn cần hỗ trợ, vui lòng liên hệ với chúng tôi qua email này hoặc qua số điện thoại: +84 935038810"
 );
 
 const ClinicInfo = () => {
+  const [services, setServices] = useState([]); // State để lưu danh sách dịch vụ
+  const [error, setError] = useState(""); // State để lưu thông báo lỗi nếu có
+
+  // Gọi API để lấy danh sách dịch vụ
+  useEffect(() => {
+    const fetchServices = async () => {
+      try {
+        const response = await getAllServices(1, 10); // Gọi API với page=1, limit=10
+        console.log("API Response:", response); // Debug phản hồi API
+        if (response) {
+          setServices(response.services); // Lưu danh sách dịch vụ
+        } else {
+          setError("Không có dịch vụ nào được tìm thấy.");
+        }
+      } catch (err) {
+        console.error("Lỗi khi lấy danh sách dịch vụ:", err);
+        setError("Không thể tải danh sách dịch vụ. Vui lòng thử lại sau.");
+      }
+    };
+  
+    fetchServices();
+  }, []);
+  
+
   return (
     <Container className="clinic-info-page">
       <h1 className="text-center my-4">Giới Thiệu Về Phòng Khám</h1>
@@ -17,6 +43,13 @@ const ClinicInfo = () => {
         <Col md={6}>
           <Card className="info-card">
             <Card.Body>
+              <image 
+              style={
+                {width: "100%",
+                height: "auto",
+                objectFit: "cover"}
+              }
+              src={xuongkhop}></image>
               <Card.Title>Thông Tin Phòng Khám</Card.Title>
               <Card.Text>
                 <strong>Địa chỉ:</strong> 123 Đường Y Tế, Quận 1, TP. HCM
@@ -46,47 +79,39 @@ const ClinicInfo = () => {
         </Col>
       </Row>
 
-      {/* About Section */}
-      <Row className="my-5">
-        <Col>
-          <Card className="info-card">
-            <Card.Body>
-              <Card.Title>Về Phòng Khám Chúng Tôi</Card.Title>
-              <Card.Text>
-                Phòng khám của chúng tôi tự hào cung cấp các dịch vụ y tế chất
-                lượng cao với đội ngũ bác sĩ và nhân viên tận tâm, chuyên
-                nghiệp. Chúng tôi luôn cố gắng mang lại trải nghiệm tốt nhất cho
-                bệnh nhân.
-              </Card.Text>
-              <Card.Text>
-                <strong>Sứ mệnh:</strong> Cung cấp dịch vụ y tế đáng tin cậy,
-                chất lượng và toàn diện để đảm bảo sức khỏe tốt nhất cho cộng
-                đồng.
-              </Card.Text>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
-
       {/* Services Section */}
       <Row className="my-5">
-        <Col>
-          <Card className="info-card">
-            <Card.Body>
-              <Card.Title>Các Dịch Vụ Tại Phòng Khám</Card.Title>
-              <ul className="service-list">
-                <li>Khám tổng quát</li>
-                <li>
-                  Khám chuyên khoa (Tim mạch, Nội tiết, Tai mũi họng, v.v.)
-                </li>
-                <li>Xét nghiệm máu, X-Quang, siêu âm</li>
-                <li>Tư vấn sức khỏe</li>
-                <li>Khám và điều trị ngoại trú</li>
-              </ul>
-            </Card.Body>
-          </Card>
-        </Col>
-      </Row>
+  <Col>
+    <Card className="info-card">
+      <Card.Body>
+        <Card.Title>Các Dịch Vụ Tại Phòng Khám</Card.Title>
+        {error ? (
+          <p className="text-danger">{error}</p>
+        ) : services.length > 0 ? (
+          <table className="service-table">
+            <thead>
+              <tr>
+                <th>Tên dịch vụ</th>
+                <th>Giá (VND)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {services.map((service) => (
+                <tr key={service._id}>
+                  <td>{service.name}</td>
+                  <td>{service.price.toLocaleString()}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        ) : (
+          <p>Đang tải danh sách dịch vụ...</p>
+        )}
+      </Card.Body>
+    </Card>
+  </Col>
+</Row>
+
 
       {/* Contact Section */}
       <Row className="my-5">

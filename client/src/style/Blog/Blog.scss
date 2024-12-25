@@ -38,9 +38,12 @@
   padding: 0 20px;
   gap: 0 10px;
   .articles {
-    
     margin-right: 20px;
     width: 70%;
+    a{
+      text-decoration:none;
+
+    }
 
     .article {
       background-color: #fff;
@@ -49,7 +52,7 @@
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
       display: flex;
       img {
-        width: 200px;
+        width: 300px;
         height: 200px;
         top: 597px;
         left: 407px;
@@ -102,6 +105,7 @@
           line-height: 18.15px;
           text-align: left;
           padding: 40px;
+        
         }
       }
     }
@@ -176,7 +180,7 @@
       padding: 20px;
       margin-bottom: 20px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    
+
       span {
         display: block;
         font-family: Inter;
@@ -188,9 +192,8 @@
         padding-bottom: 5px; /* Optional, for some space at the bottom */
         border-bottom: 2px solid #00ff00; /* Green underline */
       }
-    
+
       p {
-        
         font-family: Inter;
         font-size: 17px;
         font-weight: 500;
@@ -199,20 +202,20 @@
         margin-bottom: 10px;
         padding-bottom: 5px;
       }
-    
+
       .most-blog {
         display: flex;
-    
+
         .most-viewed-img {
           margin-right: 20px;
-    
+
           img {
             width: 100px;
             height: auto;
             object-fit: cover;
           }
         }
-    
+
         .most-viewed-info {
           .title {
             font-family: Inter;
@@ -220,7 +223,7 @@
             font-weight: 500;
             line-height: 18px;
           }
-    
+
           .view {
             font-family: Inter;
             font-size: 12px;
@@ -230,6 +233,5 @@
         }
       }
     }
-    
   }
 }

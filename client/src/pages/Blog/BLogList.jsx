@@ -1,4 +1,4 @@
-import "../../style/Blog/Blog.scss";
+import "../../style/Blog/BlogList.scss";
 import { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom"; // Import NavLink and useNavigate
 import { getBlogByCategory } from "../../utils/BlogManagement/BlogManagement";

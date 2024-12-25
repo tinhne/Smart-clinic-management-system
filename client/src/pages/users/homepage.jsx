@@ -215,9 +215,7 @@ const HomePage = () => {
                 Đa dạng phòng khám với nhiều chuyên khoa khác nhau như Sản -
                 Nhi, Tai Mũi họng, Da Liễu, Tiêu Hoá...
               </p>
-              <p className="booking_content">
-                Phiếu khám kèm số thứ tự và thời gian của bạn được xác nhận
-              </p>
+            
             </div>
             <div>
               <button className="view-more-button" onClick={handleViewmore}>

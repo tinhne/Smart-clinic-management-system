@@ -19,7 +19,7 @@ router.post(
 );
 
 // lay tat ca dich vu phong kham
-router.get("/all-services", authenticate, getAllServices);
+router.get("/all-services", getAllServices);
 
 // cap nhat dich vu phong kham theo id
 router.put(

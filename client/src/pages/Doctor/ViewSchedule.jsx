@@ -39,8 +39,8 @@ const ViewSchedule = () => {
             );
             // console.log(patientResponse);
             return {
-              id: appointment.patient_id._id,
-              info: patientResponse.user,
+              id: appointment.patient_id?._id,
+              info: patientResponse?.user,
             };
           });
 
@@ -139,8 +139,8 @@ const ViewSchedule = () => {
   };
   // Hàm lọc lịch hẹn dựa trên từ khóa tìm kiếm
   const filteredAppointments = appointments.filter((appointment) => {
-    const patientName = `${patientsInfo[appointment.patient_id._id]
-      ?.first_name || ""} ${patientsInfo[appointment.patient_id._id]
+    const patientName = `${patientsInfo[appointment.patient_id?._id]
+      ?.first_name || ""} ${patientsInfo[appointment.patient_id?._id]
       ?.last_name || ""}`;
     const normalizedSearchTerm = normalizeString(searchTerm);
 

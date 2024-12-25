@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { FaCalendarAlt, FaTimesCircle } from "react-icons/fa";
 import "../../style/Appointment/Appointment.scss";
-import doctorPlaceholder from "../../assets/img/chuan1.png"; // Hình ảnh mặc định
+import doctorPlaceholder from "../../assets/img/chuan1.png"; // Default image
 import { getUserById } from "../../utils/AuthAPI/AdminService";
 import {
   deleteAppointment,
   getAppointmentDoctor,
 } from "../../utils/AppointmentAPI/AppointmentService";
 import Countdown from "../../components/user/Appointment/Countdown";
-import ConfirmationDialog from "../../components/layout/ConfirmationDialog"; // Import hộp thoại xác nhận
-import {toast} from "react-toastify"
-
+import ConfirmationDialog from "../../components/layout/ConfirmationDialog"; // Confirmation dialog
+import { toast } from "react-toastify";
 
 const ViewSchedule = () => {
   const [appointments, setAppointments] = useState([]);
@@ -18,34 +17,48 @@ const ViewSchedule = () => {
   const [patientsInfo, setPatientsInfo] = useState({});
   const [doctorInfo, setDoctorInfo] = useState(null);
   const [countdownFinished, setCountdownFinished] = useState({});
-  const [searchTerm, setSearchTerm] = useState(""); // State cho tìm kiếm
-  const [showConfirmation, setShowConfirmation] = useState(false); // Trạng thái hiển thị hộp thoại
-  const [appointmentToDelete, setAppointmentToDelete] = useState(null); // Lưu trữ lịch hẹn cần xóa
+  const [searchTerm, setSearchTerm] = useState(""); // Search term state
+  const [showConfirmation, setShowConfirmation] = useState(false); // Confirmation dialog state
+  const [appointmentToDelete, setAppointmentToDelete] = useState(null); // Appointment to delete
+
   useEffect(() => {
     const fetchAppointments = async () => {
       try {
         const response = await getAppointmentDoctor();
         const appointmentData = response;
-        // console.log(appointmentData);
 
         if (Array.isArray(appointmentData) && appointmentData.length > 0) {
           setAppointments(appointmentData);
-          handleSelectAppointment(appointmentData[0]); // Mặc định chọn lịch đầu tiên
+          handleSelectAppointment(appointmentData[0]); // Default to the first appointment
 
           const patientsPromises = appointmentData.map(async (appointment) => {
-            const patientResponse = await getUserById(
-              appointment.patient_id._id,
-              "patient"
-            );
-            // console.log(patientResponse);
-            return {
-              id: appointment.patient_id?._id,
-              info: patientResponse?.user,
-            };
+            if (appointment.patient_id && appointment.patient_id._id) {
+              try {
+                const patientResponse = await getUserById(
+                  appointment.patient_id._id,
+                  "patient"
+                );
+                return {
+                  id: appointment.patient_id._id,
+                  info: patientResponse.user,
+                };
+              } catch (error) {
+                console.error(
+                  `Error fetching patient info for appointment ID ${appointment._id}:`,
+                  error
+                );
+                return null;
+              }
+            } else {
+              console.warn("Invalid appointment data:", appointment);
+              return null;
+            }
           });
 
           const patientsData = await Promise.all(patientsPromises);
-          const patientsMap = patientsData.reduce((acc, patient) => {
+          const validPatientsData = patientsData.filter((patient) => patient !== null);
+
+          const patientsMap = validPatientsData.reduce((acc, patient) => {
             acc[patient.id] = patient.info;
             return acc;
           }, {});
@@ -72,10 +85,9 @@ const ViewSchedule = () => {
   };
 
   const handleCountdownEnd = (appointmentId) => {
-    // console.log("Countdown finished for appointment:", appointmentId);
     setCountdownFinished((prev) => ({
       ...prev,
-      [appointmentId]: true, // Đánh dấu countdown đã kết thúc
+      [appointmentId]: true, // Mark countdown as finished
     }));
   };
 
@@ -101,12 +113,12 @@ const ViewSchedule = () => {
       appointment.appointment_type === "online" &&
       now >= oneHourBefore &&
       !countdownFinished[appointment._id]
-    ); // Kiểm tra xem đã đủ 1 tiếng trước thời gian khám hay chưa
+    );
   };
 
   const handleCancelAppointment = async () => {
     try {
-      await deleteAppointment(appointmentToDelete); // Xóa lịch hẹn đã chọn
+      await deleteAppointment(appointmentToDelete); // Delete the selected appointment
       setAppointments((prevAppointments) =>
         prevAppointments.filter((appt) => appt._id !== appointmentToDelete)
       );
@@ -116,14 +128,14 @@ const ViewSchedule = () => {
       console.error("Error cancelling appointment:", error);
       toast.error("Có lỗi xảy ra khi hủy lịch hẹn.");
     } finally {
-      setShowConfirmation(false); // Đóng hộp thoại
+      setShowConfirmation(false); // Close the confirmation dialog
       setAppointmentToDelete(null);
     }
   };
 
   const openConfirmationDialog = (appointmentId) => {
     setAppointmentToDelete(appointmentId);
-    setShowConfirmation(true); // Mở hộp thoại xác nhận
+    setShowConfirmation(true); // Open confirmation dialog
   };
 
   const handleCloseConfirmation = () => {
@@ -133,30 +145,27 @@ const ViewSchedule = () => {
 
   const normalizeString = (str) => {
     return str
-      .normalize("NFD") // Phân tách dấu
-      .replace(/[\u0300-\u036f]/g, "") // Xóa dấu
-      .toLowerCase(); // Chuyển thành chữ thường
+      .normalize("NFD") // Decompose accents
+      .replace(/[\u0300-\u036f]/g, "") // Remove accents
+      .toLowerCase(); // Convert to lowercase
   };
-  // Hàm lọc lịch hẹn dựa trên từ khóa tìm kiếm
+
   const filteredAppointments = appointments.filter((appointment) => {
-    const patientName = `${patientsInfo[appointment.patient_id?._id]
-      ?.first_name || ""} ${patientsInfo[appointment.patient_id?._id]
-      ?.last_name || ""}`;
+    if (!appointment.patient_id || !appointment.patient_id._id) return false;
+
+    const patientInfo = patientsInfo[appointment.patient_id._id];
+    const patientName = `${patientInfo?.first_name || ""} ${patientInfo?.last_name || ""}`;
     const normalizedSearchTerm = normalizeString(searchTerm);
 
     return (
       normalizeString(patientName).includes(normalizedSearchTerm) ||
-      normalizeString(appointment.appointment_type).includes(
-        normalizedSearchTerm
-      ) ||
+      normalizeString(appointment.appointment_type).includes(normalizedSearchTerm) ||
       normalizeString(appointment.time_slot).includes(normalizedSearchTerm) ||
-      normalizeString(
-        new Date(appointment.appointment_date).toLocaleDateString()
-      ).includes(normalizedSearchTerm) ||
+      normalizeString(new Date(appointment.appointment_date).toLocaleDateString()).includes(normalizedSearchTerm) ||
       normalizeString(appointment._id).includes(normalizedSearchTerm)
     );
   });
-  // Thêm hàm kiểm tra trạng thái lịch hẹn
+
   const getAppointmentStatus = (appointment) => {
     if (appointment.status === "cancelled") return "cancelled";
 
@@ -179,7 +188,7 @@ const ViewSchedule = () => {
           placeholder="Mã giao dịch, tên dịch vụ, tên bệnh nhân..."
           className="search-bar"
           value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)} // Cập nhật giá trị tìm kiếm
+          onChange={(e) => setSearchTerm(e.target.value)} // Update search term
         />
         <div className="appointment-content">
           <ul>
@@ -257,8 +266,8 @@ const ViewSchedule = () => {
                       <button
                         className="delete-button"
                         onClick={(e) => {
-                          e.stopPropagation(); // Ngăn không cho sự kiện onClick của li kích hoạt
-                          openConfirmationDialog(appointment._id); // Mở hộp thoại xác nhận
+                          e.stopPropagation(); // Prevent li onClick
+                          openConfirmationDialog(appointment._id); // Open confirmation dialog
                         }}
                       >
                         Xóa
@@ -357,7 +366,8 @@ const ViewSchedule = () => {
                       patientsInfo[selectedAppointment.patient_id._id]
                         .first_name
                     } ${
-                      patientsInfo[selectedAppointment.patient_id._id].last_name
+                      patientsInfo[selectedAppointment.patient_id._id]
+                        .last_name
                     }`
                   : "Không xác định"}
               </p>
@@ -374,7 +384,8 @@ const ViewSchedule = () => {
               <p className="value">
                 {patientsInfo[selectedAppointment.patient_id._id]?.birthdate
                   ? new Date(
-                      patientsInfo[selectedAppointment.patient_id._id].birthdate
+                      patientsInfo[selectedAppointment.patient_id._id]
+                        .birthdate
                     ).toLocaleDateString()
                   : "Không xác định"}
               </p>

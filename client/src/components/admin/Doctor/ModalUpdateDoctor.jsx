@@ -217,8 +217,8 @@ const ModalEditDoctor = (props) => {
                 isInvalid={!!errors.gender}
               >
                 <option value="">Chọn giới tính</option>
-                <option value="Male">Nam</option>
-                <option value="Female">Nữ</option>
+                <option value="Nam">Nam</option>
+                <option value="Nữ">Nữ</option>
               </Form.Control>
               <Form.Control.Feedback type="invalid">{errors.gender}</Form.Control.Feedback>
             </Form.Group>

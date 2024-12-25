@@ -57,14 +57,18 @@ function LoginRegister() {
           expires: 1, // Thời gian hết hạn 7 ngày
           path: "/",
         });
-        Cookies.set("role", res.role, {secure: false,
-          sameSite: "Lax",  // Hoặc Strict tùy theo tình huống
-          expires: 1,  // Thời gian hết hạn 7 ngày
-          path: "/", });
-        Cookies.set("id", res._id, { secure: false,
-          sameSite: "Lax",  // Hoặc Strict tùy theo tình huống
-          expires: 1,  // Thời gian hết hạn 7 ngày
-          path: "/", });
+        Cookies.set("role", res.role, {
+          secure: false,
+          sameSite: "Lax", // Hoặc Strict tùy theo tình huống
+          expires: 1, // Thời gian hết hạn 7 ngày
+          path: "/",
+        });
+        Cookies.set("id", res._id, {
+          secure: false,
+          sameSite: "Lax", // Hoặc Strict tùy theo tình huống
+          expires: 1, // Thời gian hết hạn 7 ngày
+          path: "/",
+        });
         localStorage.setItem("username", res.username);
 
         // Hiển thị toast
@@ -216,8 +220,8 @@ function LoginRegister() {
                     <option value="" disabled>
                       Gioi tinh
                     </option>
-                    <option value="Male">Nam</option>
-                    <option value="Female">Nữ</option>
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
                   </select>
                 </div>
                 <div className="login__input-group">

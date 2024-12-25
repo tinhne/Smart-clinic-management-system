@@ -16,7 +16,7 @@ const ModalCreateDoctor = ({
     firstName: "",
     lastName: "",
     email: "",
-    gender: "Male",
+    gender: "Nam",
     dob: "",
     phone: "",
     specialization: "",
@@ -159,7 +159,7 @@ const ModalCreateDoctor = ({
           firstName: "",
           lastName: "",
           email: "",
-          gender: "Male",
+          gender: "Nam",
           dob: "",
           phone: "",
           specialization: "",
@@ -310,8 +310,8 @@ const ModalCreateDoctor = ({
                     onChange={handleInputChange}
                     required
                   >
-                    <option value="Male">Nam</option>
-                    <option value="Female">Nữ</option>
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
                   </Form.Control>
                 </Form.Group>
                 <Form.Group controlId="formPhone">

@@ -127,7 +127,7 @@ const ScheduleManage = () => {
         }
       } catch (error) {
         console.error("Error deleting schedule:", error);
-        toast.error("Có lỗi xảy ra khi xóa lịch.");
+        toast.error("Có lỗi xảy ra khi xóa lịch");
       }
     }
   };

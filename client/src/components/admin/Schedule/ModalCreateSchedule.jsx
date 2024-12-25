@@ -7,7 +7,9 @@ import ModalCreateScheduleByDoctor from "./ModalCreateScheduleByDoctor";
 const ModalCreateSchedule = ({ show, handleClose, onScheduleCreated }) => {
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(false); // Add loading state
-  const [showScheduleByDoctorModal, setShowScheduleByDoctorModal] = useState(false);
+  const [showScheduleByDoctorModal, setShowScheduleByDoctorModal] = useState(
+    false
+  );
   const [selectedDoctor, setSelectedDoctor] = useState(null);
 
   const fetchDoctor = async () => {
@@ -38,7 +40,7 @@ const ModalCreateSchedule = ({ show, handleClose, onScheduleCreated }) => {
     <>
       <Modal show={show} onHide={handleClose} centered>
         <Modal.Header closeButton>
-          <Modal.Title className="text-primary">Tạo Lịch Làm Việc</Modal.Title>
+          <Modal.Title>Tạo Lịch Làm Việc</Modal.Title>
         </Modal.Header>
 
         <Modal.Body>
@@ -70,8 +72,8 @@ const ModalCreateSchedule = ({ show, handleClose, onScheduleCreated }) => {
                       <td>{doctor.phone}</td>
                       <td>{doctor.specialties.join(", ")}</td>
                       <td>
-                        <Button 
-                          variant="success" 
+                        <Button
+                          variant="success"
                           onClick={() => handleCreateSchedule(doctor)}
                           size="sm"
                         >
@@ -90,7 +92,7 @@ const ModalCreateSchedule = ({ show, handleClose, onScheduleCreated }) => {
               </tbody>
             </Table>
           )}
-<div></div>
+          <div></div>
           <div className="d-flex justify-content-end">
             <Button variant="primary" onClick={handleClose}>
               Đóng
@@ -100,9 +102,9 @@ const ModalCreateSchedule = ({ show, handleClose, onScheduleCreated }) => {
       </Modal>
 
       {/* Conditionally render the ModalCreateScheduleByDoctor */}
-      <ModalCreateScheduleByDoctor 
-        show={showScheduleByDoctorModal} 
-        handleClose={handleCloseScheduleByDoctorModal} 
+      <ModalCreateScheduleByDoctor
+        show={showScheduleByDoctorModal}
+        handleClose={handleCloseScheduleByDoctorModal}
         doctor={selectedDoctor} // Pass the selected doctor to the next modal
         onScheduleCreated={onScheduleCreated} // Pass the callback
       />

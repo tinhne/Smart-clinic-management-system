@@ -176,7 +176,7 @@ function Medication() {
           Lùi
         </button>
         <span>
-          Page {currentPage} of {totalPages}
+          Trang {currentPage} của {totalPages}
         </span>
         <button
           className="btn"

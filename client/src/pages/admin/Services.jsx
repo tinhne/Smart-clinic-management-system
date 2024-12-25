@@ -149,7 +149,7 @@ function Services() {
           Lùi
         </button>
         <span>
-          Trang {currentPage} of {totalPages}
+          Trang {currentPage} của {totalPages}
         </span>
         <button
           onClick={() => handlePageChange(currentPage + 1)}

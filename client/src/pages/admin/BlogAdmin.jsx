@@ -7,7 +7,6 @@ import DeleteBlogModal from "../../components/admin/BlogAdmin/DeleteBlogModal";
 import { getBlog, deleteBlog } from "../../utils/BlogManagement/BlogManagement";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { NavLink } from "react-router-dom";
 
 const BlogAdmin = () => {
   const [blogs, setBlogs] = useState([]);

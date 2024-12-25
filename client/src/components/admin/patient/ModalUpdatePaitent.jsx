@@ -9,7 +9,12 @@ import { editUser } from "../../../utils/AuthAPI/AdminService";
 import { toast } from "react-toastify";
 
 const ModalEditPatient = (props) => {
-  const { showEditModal, setShowEditModal, selectedUser, fetchPatients } = props;
+  const {
+    showEditModal,
+    setShowEditModal,
+    selectedUser,
+    fetchPatients,
+  } = props;
 
   const [formData, setFormData] = useState({
     first_name: "",
@@ -64,7 +69,9 @@ const ModalEditPatient = (props) => {
 
     // Kiểm tra số điện thoại
     if (!phoneRegex.test(formData.phone)) {
-      toast.error("Số điện thoại không hợp lệ. Chỉ cho phép số, từ 10-11 ký tự.");
+      toast.error(
+        "Số điện thoại không hợp lệ. Chỉ cho phép số, từ 10-11 ký tự."
+      );
       return false;
     }
 
@@ -188,9 +195,7 @@ const ModalEditPatient = (props) => {
                       type="date"
                       value={formData.birthdate}
                       onChange={handleChange}
-                      isInvalid={
-                        new Date(formData.birthdate) > new Date()
-                      }
+                      isInvalid={new Date(formData.birthdate) > new Date()}
                     />
                     <Form.Control.Feedback type="invalid">
                       Ngày sinh không được lớn hơn ngày hiện tại.
@@ -206,8 +211,8 @@ const ModalEditPatient = (props) => {
                       value={formData.gender}
                       onChange={handleChange}
                     >
-                      <option value="Male">Male</option>
-                      <option value="Female">Female</option>
+                      <option value="Nam">Nam</option>
+                      <option value="Nữ">Nữ</option>
                     </Form.Control>
                   </Form.Group>
                 </Row>

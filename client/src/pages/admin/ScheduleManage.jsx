@@ -28,10 +28,17 @@ const ScheduleManage = () => {
   const [searchKeyword, setSearchKeyword] = useState("");
   const [loading, setLoading] = useState(false);
   const [noSchedulesMessage, setNoSchedulesMessage] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 10;
 
   // Lọc lịch khám theo từ khóa tìm kiếm
   const filteredSchedules = schedules.filter((schedule) =>
     schedule.doctor_name.toLowerCase().includes(searchKeyword.toLowerCase())
+  );
+
+  const paginatedSchedules = filteredSchedules.slice(
+    currentPage * itemsPerPage,
+    (currentPage + 1) * itemsPerPage
   );
 
   const fetchSchedules = async (date) => {
@@ -69,6 +76,7 @@ const ScheduleManage = () => {
 
   const handleSearchChange = (event) => {
     setSearchKeyword(event.target.value);
+    setCurrentPage(0);
   };
 
   const handleOpenDeleteModal = (schedule) => {
@@ -144,6 +152,10 @@ const ScheduleManage = () => {
     }
   };
 
+  const handlePageClick = (event) => {
+    setCurrentPage(event.selected);
+  };
+
   useEffect(() => {
     const formattedDate = selectedDate.toISOString().split("T")[0];
     fetchSchedules(formattedDate);
@@ -200,8 +212,8 @@ const ScheduleManage = () => {
             <tr>
               <td colSpan="7">Đang tải dữ liệu...</td>
             </tr>
-          ) : filteredSchedules.length > 0 ? (
-            filteredSchedules.map((schedule) => (
+          ) : paginatedSchedules.length > 0 ? (
+            paginatedSchedules.map((schedule) => (
               <tr key={schedule.schedule_id}>
                 <td>{schedule.doctor_name}</td>
                 <td>{schedule.specialties.join(", ")}</td>
@@ -241,9 +253,11 @@ const ScheduleManage = () => {
       <ReactPaginate
         previousLabel={"Lùi"}
         nextLabel={"Tiếp"}
-        pageCount={5}
-        containerClassName={"pagination"}
+        pageCount={Math.ceil(filteredSchedules.length / itemsPerPage)}
+        onPageChange={handlePageClick}
+        containerClassName={"pagination_schedule"}
         activeClassName={"active"}
+        forcePage={currentPage}
       />
 
       {/* Modals */}

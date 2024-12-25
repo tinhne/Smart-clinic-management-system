@@ -160,7 +160,7 @@ function Patients() {
         </button>
 
         <span>
-          Page {currentPage} of {totalPages}
+          Trang {currentPage} của {totalPages}
         </span>
 
         <button

@@ -214,10 +214,10 @@ function LoginRegister() {
                     onChange={(e) => setGender(e.target.value)}
                   >
                     <option value="" disabled>
-                      Gioi tinh
+                      Giới tính
                     </option>
-                    <option value="Male">Nam</option>
-                    <option value="Female">Nữ</option>
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
                   </select>
                 </div>
                 <div className="login__input-group">

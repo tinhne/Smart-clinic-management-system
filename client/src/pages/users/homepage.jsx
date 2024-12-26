@@ -215,7 +215,6 @@ const HomePage = () => {
                 Đa dạng phòng khám với nhiều chuyên khoa khác nhau như Sản -
                 Nhi, Tai Mũi họng, Da Liễu, Tiêu Hoá...
               </p>
-            
             </div>
             <div>
               <button className="view-more-button" onClick={handleViewmore}>
@@ -734,14 +733,14 @@ const HomePage = () => {
               <p>Không tìm thấy thuốc nào.</p>
             )}
             <ReactPaginate
-              previousLabel={"Previous"}
-              nextLabel={"Next"}
+              previousLabel={"Lùi"}
+              nextLabel={"Tiếp"}
               breakLabel={"..."}
               pageCount={totalPages}
               marginPagesDisplayed={2}
               pageRangeDisplayed={3}
               onPageChange={handlePageClick}
-              containerClassName={"pagination-container"}
+              containerClassName={"pagination_homepage"}
               pageClassName={"page-item"}
               pageLinkClassName={"page-link"}
               previousClassName={"page-item"}

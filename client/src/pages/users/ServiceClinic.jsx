@@ -148,15 +148,15 @@ const ServiceClinic = () => {
               </table>
 
               <ReactPaginate
-                previousLabel={"Previous"}
-                nextLabel={"Next"}
+                previousLabel={"Lùi"}
+                nextLabel={"Tiếp"}
                 breakLabel={"..."}
                 pageCount={totalPages}
                 marginPagesDisplayed={2}
                 pageRangeDisplayed={3}
                 onPageChange={handlePageClick}
                 forcePage={currentPage - 1}
-                containerClassName={"pagination justify-content-center"}
+                containerClassName={"pagination_service"}
                 pageClassName={"page-item"}
                 pageLinkClassName={"page-link"}
                 previousClassName={"page-item"}

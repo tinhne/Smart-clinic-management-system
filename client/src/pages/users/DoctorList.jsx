@@ -11,32 +11,29 @@ import { toast } from "react-toastify";
 import { Spinner } from "react-bootstrap";
 
 const categories = [
-    {"name": "Tất cả"},
-    {"name": "Chuẩn Đoán Hình Ảnh"},
-    {"name": "Xương Khớp"},
-    {"name": "Y Học Cổ Truyền"},
-    {"name": "Da Liễu"},
-    {"name": "Dị Ứng Miễn Dịch"},
-    {"name": "Lao Phổi"},
-    {"name": "Gây Mê Hồi Sức"},
-    {"name": "Lão Khoa"},
-    {"name": "Nhi Khoa"},
-    {"name": "Huyết Học"},
-    {"name": "Phẫu Thuật Thẩm Mỹ"},
-    {"name": "Ngoại Thần Kinh"},
-    {"name": "Y Học Thể Thao"},
-    {"name": "Dinh Dưỡng"},
-    {"name": "Truyền Nhiễm"},
-    {"name": "Xét Nghiệm"},
-    {"name": "Hô Hấp"},
-    {"name": "Tâm Thần"},
-    {"name": "Sản Phụ Khoa"},
-    {"name": "Tai - Mũi - Họng"},
-    {"name": "Nội Thần Kinh"}
-]
-
-
-
+  { name: "Tất cả" },
+  { name: "Chuẩn Đoán Hình Ảnh" },
+  { name: "Xương Khớp" },
+  { name: "Y Học Cổ Truyền" },
+  { name: "Da Liễu" },
+  { name: "Dị Ứng Miễn Dịch" },
+  { name: "Lao Phổi" },
+  { name: "Gây Mê Hồi Sức" },
+  { name: "Lão Khoa" },
+  { name: "Nhi Khoa" },
+  { name: "Huyết Học" },
+  { name: "Phẫu Thuật Thẩm Mỹ" },
+  { name: "Ngoại Thần Kinh" },
+  { name: "Y Học Thể Thao" },
+  { name: "Dinh Dưỡng" },
+  { name: "Truyền Nhiễm" },
+  { name: "Xét Nghiệm" },
+  { name: "Hô Hấp" },
+  { name: "Tâm Thần" },
+  { name: "Sản Phụ Khoa" },
+  { name: "Tai - Mũi - Họng" },
+  { name: "Nội Thần Kinh" },
+];
 
 function DoctorList() {
   const location = useLocation();
@@ -190,12 +187,12 @@ function DoctorList() {
         )}
 
         <ReactPaginate
-          nextLabel="Tiếp>"
+          nextLabel="Tiếp"
           onPageChange={handlePageClick}
           pageRangeDisplayed={3}
           marginPagesDisplayed={2}
           pageCount={pageCount}
-          previousLabel="<Lùi"
+          previousLabel="Lùi"
           pageClassName="page-item"
           pageLinkClassName="page-link"
           previousClassName="page-item"
@@ -205,7 +202,7 @@ function DoctorList() {
           breakLabel="..."
           breakClassName="page-item"
           breakLinkClassName="page-link"
-          containerClassName="pagination"
+          containerClassName="pagination_doctorlist"
           activeClassName="active"
           renderOnZeroPageCount={null}
         />

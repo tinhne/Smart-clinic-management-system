@@ -6,17 +6,20 @@ import EditBlogModal from "../../components/admin/BlogAdmin/EditBlogModal";
 import DeleteBlogModal from "../../components/admin/BlogAdmin/DeleteBlogModal";
 import { getBlog, deleteBlog } from "../../utils/BlogManagement/BlogManagement";
 import { toast, ToastContainer } from "react-toastify";
+import "../../style/adminStyle/blogAdmin.scss";
 import "react-toastify/dist/ReactToastify.css";
 
 const BlogAdmin = () => {
   const [blogs, setBlogs] = useState([]);
-  const [searchTerm, setSearchTerm] = useState(""); // State để lưu từ khóa tìm kiếm
+  const [searchTerm, setSearchTerm] = useState("");
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [selectedBlog, setSelectedBlog] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [currentPage, setCurrentPage] = useState(0); // Trang hiện tại
+  const blogsPerPage = 8; // Số bài viết mỗi trang
 
   const fetchBlogs = async () => {
     setLoading(true);
@@ -72,9 +75,7 @@ const BlogAdmin = () => {
   const handleDelete = async () => {
     const toastId = toast.loading("Đang xóa bài viết...");
     try {
-      console.log("Đang xóa bài viết với ID:", selectedBlog._id);
       await deleteBlog(selectedBlog._id);
-
       setBlogs((prevBlogs) =>
         prevBlogs.filter((blog) => blog._id !== selectedBlog._id)
       );
@@ -99,9 +100,9 @@ const BlogAdmin = () => {
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
+    setCurrentPage(0); // Reset về trang đầu khi tìm kiếm
   };
 
-  // Lọc danh sách blogs dựa trên từ khóa
   const filteredBlogs = blogs.filter(
     (blog) =>
       blog?.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -110,6 +111,18 @@ const BlogAdmin = () => {
         content.text.toLowerCase().includes(searchTerm.toLowerCase())
       )
   );
+
+  const startIndex = currentPage * blogsPerPage;
+  const displayedBlogs = filteredBlogs.slice(
+    startIndex,
+    startIndex + blogsPerPage
+  );
+
+  const pageCount = Math.ceil(filteredBlogs.length / blogsPerPage);
+
+  const handlePageChange = (event) => {
+    setCurrentPage(event.selected);
+  };
 
   return (
     <div className="container mt-4">
@@ -148,8 +161,8 @@ const BlogAdmin = () => {
                 liệu...
               </td>
             </tr>
-          ) : filteredBlogs.length > 0 ? (
-            filteredBlogs.map((blog) => (
+          ) : displayedBlogs.length > 0 ? (
+            displayedBlogs.map((blog) => (
               <tr key={blog._id}>
                 <td>
                   <a
@@ -160,7 +173,6 @@ const BlogAdmin = () => {
                     {blog?.title || "Không xác định"}
                   </a>
                 </td>
-
                 <td>
                   {Array.isArray(blog?.category)
                     ? blog.category.join(", ")
@@ -214,11 +226,11 @@ const BlogAdmin = () => {
         previousLabel={"Lùi"}
         nextLabel={"Tiếp"}
         breakLabel={"..."}
-        pageCount={5}
+        pageCount={pageCount}
         marginPagesDisplayed={2}
         pageRangeDisplayed={3}
-        onPageChange={() => {}}
-        containerClassName={"pagination justify-content-center"}
+        onPageChange={handlePageChange}
+        containerClassName={"pagination_blog"}
         pageClassName={"page-item"}
         pageLinkClassName={"page-link"}
         previousClassName={"page-item"}
@@ -229,7 +241,6 @@ const BlogAdmin = () => {
         breakLinkClassName={"page-link"}
         activeClassName={"active"}
       />
-
       <AddBlogModal
         show={showModal}
         onClose={handleCloseModal}

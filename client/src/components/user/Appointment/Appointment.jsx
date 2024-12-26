@@ -105,7 +105,7 @@ const Appointment = () => {
   const shouldShowButton = (appointment) => {
     const now = new Date();
     const appointmentTime = parseAppointmentTime(appointment);
-    const oneHourBefore = new Date(appointmentTime.getTime() - 60 * 60 * 1000);
+    const oneHourBefore = new Date(appointmentTime.getTime() - 24 * 60 * 60 * 1000);
     return (
       appointment.appointment_type === "online" &&
       now >= oneHourBefore &&
@@ -194,7 +194,7 @@ const Appointment = () => {
 
     return (
       normalizeString(doctorName).includes(normalizedSearchTerm) ||
-      normalizeString(appointment.appointment_type).includes(
+      normalizeString(appointment.appointment_type === 'online' ? 'Khám trực tuyến' : 'Khám trực tiếp').includes(
         normalizedSearchTerm
       ) ||
       normalizeString(appointment.time_slot).includes(normalizedSearchTerm) ||
@@ -258,7 +258,7 @@ const Appointment = () => {
                       ).toLocaleDateString()}
                     </p>
                     <h4 className="appointment-type">
-                      {appointment.appointment_type}
+                      {appointment.appointment_type === 'online' ? 'Khám trực tuyến' : 'Khám trực tiếp'}
                     </h4>
                     <span
                       className={`status ${
@@ -414,7 +414,7 @@ const Appointment = () => {
             </div>
             <div className="info-row">
               <p className="label">Loại khám:</p>
-              <p className="value">{selectedAppointment.appointment_type}</p>
+              <p className="value">{selectedAppointment.appointment_type === 'online' ? 'Khám trực tuyến' : 'Khám trực tiếp'}</p>
             </div>
             <div className="info-row">
               <p className="label">Ghi chú:</p>

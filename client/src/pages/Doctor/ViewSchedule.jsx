@@ -10,6 +10,13 @@ import {
 import Countdown from "../../components/user/Appointment/Countdown";
 import ConfirmationDialog from "../../components/layout/ConfirmationDialog"; // Confirmation dialog
 import { toast } from "react-toastify";
+import Accordion from '@mui/material/Accordion';
+import AccordionActions from '@mui/material/AccordionActions';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import Typography from '@mui/material/Typography';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import Button from '@mui/material/Button';
 
 const ViewSchedule = () => {
   const [appointments, setAppointments] = useState([]);
@@ -108,7 +115,7 @@ const ViewSchedule = () => {
   const shouldShowButton = (appointment) => {
     const now = new Date();
     const appointmentTime = parseAppointmentTime(appointment);
-    const oneHourBefore = new Date(appointmentTime.getTime() - 60 * 60 * 1000);
+    const oneHourBefore = new Date(appointmentTime.getTime() - 24 * 60 * 60 * 1000);
     return (
       appointment.appointment_type === "online" &&
       now >= oneHourBefore &&
@@ -159,7 +166,8 @@ const ViewSchedule = () => {
 
     return (
       normalizeString(patientName).includes(normalizedSearchTerm) ||
-      normalizeString(appointment.appointment_type).includes(normalizedSearchTerm) ||
+      normalizeString(appointment.appointment_type === 'online' ? 'Khám từ xa' : 'Khám tại phòng khám').includes(normalizedSearchTerm) ||
+      
       normalizeString(appointment.time_slot).includes(normalizedSearchTerm) ||
       normalizeString(new Date(appointment.appointment_date).toLocaleDateString()).includes(normalizedSearchTerm) ||
       normalizeString(appointment._id).includes(normalizedSearchTerm)
@@ -221,7 +229,7 @@ const ViewSchedule = () => {
                       ).toLocaleDateString()}
                     </p>
                     <h4 className="appointment-type">
-                      {appointment.appointment_type}
+                      {appointment.appointment_type === 'online' ? 'khám từ xa' : 'khám tại phòng khám'}
                     </h4>
                     <span
                       className={`status ${
@@ -276,9 +284,11 @@ const ViewSchedule = () => {
                   </div>
                   {/* <span className="stt">STT: {appointment._id.slice(-2)}</span> */}
                 </li>
+                
               ))
             ) : (
               <p>Không có lịch hẹn nào</p>
+              
             )}
 
             {showConfirmation && (
@@ -341,7 +351,7 @@ const ViewSchedule = () => {
             </div>
             <div className="info-row">
               <p className="label">Loại khám:</p>
-              <p className="value">{selectedAppointment.appointment_type}</p>
+              <p className="value">{selectedAppointment.appointment_type === 'online' ? 'Khám từ xa' : 'Khám tại phòng khám'}</p>
             </div>
             <div className="info-row">
               <p className="label">Ghi chú:</p>

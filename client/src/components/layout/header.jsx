@@ -102,9 +102,6 @@ const Header = () => {
                       <NavDropdown.Item href="/thong-tin/lich-kham">
                         Lịch khám
                       </NavDropdown.Item>
-                      <NavDropdown.Item href="/thong-tin/thanh-toan">
-                        Thanh toán
-                      </NavDropdown.Item>
                       <NavDropdown.Item href="/thong-tin/tai-khoan">
                         Tài Khoản
                       </NavDropdown.Item>

@@ -236,8 +236,8 @@ const ContentProfile = () => {
                     type="text"
                     name="email"
                     value={profile.email}
-                    onChange={handleChange}
-                    onKeyDown={handleKeyDown} // Thêm sự kiện onKeyDown
+                    readOnly // Ngăn không cho người dùng chỉnh sửa
+                    title="Không thể thay đổi email" 
                     className="w-full p-2 border border-gray-300 rounded"
                   />
                 </div>

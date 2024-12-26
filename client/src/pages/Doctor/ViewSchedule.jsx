@@ -274,7 +274,7 @@ const ViewSchedule = () => {
                       </button>
                     </div>
                   </div>
-                  <span className="stt">STT: {appointment._id.slice(-2)}</span>
+                  {/* <span className="stt">STT: {appointment._id.slice(-2)}</span> */}
                 </li>
               ))
             ) : (
@@ -295,9 +295,9 @@ const ViewSchedule = () => {
       {selectedAppointment && (
         <div className="appointment-details">
           <div className="appointment-info">
-            <span className="stt">
+            {/* <span className="stt">
               STT: {selectedAppointment._id.slice(-2)}
-            </span>
+            </span> */}
             <span className="time">
               <FaCalendarAlt />{" "}
               {selectedAppointment.status === "confirmed"

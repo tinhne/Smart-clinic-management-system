@@ -70,14 +70,6 @@ const ProfileSidebar = () => {
               </li>
               <li>
                 <NavLink
-                  to="/thong-tin/thanh-toan"
-                  className={({ isActive }) => (isActive ? "active" : "")}
-                >
-                  Lịch sử thanh toán
-                </NavLink>
-              </li>
-              <li>
-                <NavLink
                   to="/thong-tin/ho-so"
                   className={({ isActive }) => (isActive ? "active" : "")}
                 >

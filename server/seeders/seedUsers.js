@@ -1,6 +1,10 @@
 const mongoose = require('mongoose');
 const { faker } = require('@faker-js/faker');
 const User = require('../models/User');
+const bcrypt = require('bcryptjs');
+
+// Thiết lập locale cho faker
+faker.locale = 'vi';
 
 // Kết nối tới MongoDB
 const connectionString = 'mongodb+srv://admin:1@cluster0.yae41.mongodb.net/ClinicManagement?retryWrites=true&w=majority&appName=Cluster0';
@@ -16,51 +20,61 @@ const generateVietnamPhoneNumber = () => {
     return phoneNumber;
 };
 
-// Hàm để tạo nhiều bác sĩ và bệnh nhân
-const insertBulkUsers = async (numDoctors, numPatients) => {
+// Hàm để tạo tên đầy đủ tiếng Việt
+const generateVietnameseName = () => {
+    const firstNames = ['Nguyễn', 'Trần', 'Lê', 'Phạm', 'Hoàng', 'Võ', 'Đặng', 'Bùi', 'Đỗ', 'Hồ'];
+    const middleNames = ['Văn', 'Thị', 'Hữu', 'Thanh', 'Thu', 'Minh', 'Ngọc', 'Đình', 'Xuân', 'Quốc'];
+    const lastNames = ['An', 'Bình', 'Chi', 'Dũng', 'Hải', 'Hương', 'Khánh', 'Linh', 'Phúc', 'Quân'];
+
+    const firstName = faker.helpers.arrayElement(firstNames);
+    const middleName = faker.helpers.arrayElement(middleNames);
+    const lastName = faker.helpers.arrayElement(lastNames);
+
+    return {
+        firstName: `${firstName} ${middleName}`,
+        lastName: lastName
+    };
+};
+
+// Hàm để tạo địa chỉ tiếng Việt
+const generateVietnameseAddress = () => {
+    const cities = ['Hà Nội', 'Hồ Chí Minh', 'Đà Nẵng', 'Hải Phòng', 'Cần Thơ', 'Nha Trang', 'Đà Lạt', 'Huế', 'Vũng Tàu'];
+    const streets = ['Nguyễn Trãi', 'Lê Lợi', 'Trần Phú', 'Hùng Vương', 'Hoàng Hoa Thám', 'Quang Trung', 'Phan Bội Châu', 'Lý Thường Kiệt'];
+
+    const city = faker.helpers.arrayElement(cities);
+    const street = faker.helpers.arrayElement(streets);
+    const streetNumber = faker.string.numeric(2);
+
+    return `${streetNumber} ${street}, ${city}`;
+};
+
+// Hàm để chèn dữ liệu bệnh nhân
+const insertBulkPatients = async (numPatients) => {
+    const hashedPassword = await bcrypt.hash("test123", 10);
     try {
-        const users = [];
+        const patients = [];
 
-        // Tạo dữ liệu mẫu cho Doctor
-        for (let i = 0; i < numDoctors; i++) {
-            const doctor = new User({
-                first_name: faker.person.firstName(),
-                last_name: faker.person.lastName(),
-                email: faker.internet.email(),
-                phone: generateVietnamPhoneNumber(), // Số điện thoại Việt Nam hợp lệ
-                address: faker.location.streetAddress(),
-                gender: faker.helpers.arrayElement(['Male', 'Female', 'Other']),
-                role: 'doctor',
-                password: faker.internet.password(10),
-                birthdate: faker.date.past(40, new Date('2000-01-01')),
-                specialties: [faker.helpers.arrayElement(['Cardiology', 'Dermatology', 'Neurology', 'Pediatrics'])],
-                imageUrl: faker.image.avatar(),
-            });
-
-            users.push(doctor);
-        }
-
-        // Tạo dữ liệu mẫu cho Patient
         for (let i = 0; i < numPatients; i++) {
+            const { firstName, lastName } = generateVietnameseName();
             const patient = new User({
-                first_name: faker.person.firstName(),
-                last_name: faker.person.lastName(),
+                first_name: firstName,
+                last_name: lastName,
                 email: faker.internet.email(),
                 phone: generateVietnamPhoneNumber(), // Số điện thoại Việt Nam hợp lệ
-                address: faker.location.streetAddress(),
-                gender: faker.helpers.arrayElement(['Male', 'Female', 'Other']),
+                address: generateVietnameseAddress(),
+                gender: faker.helpers.arrayElement(['Nam', 'Nữ']),
                 role: 'patient',
-                password: faker.internet.password(10),
+                password: hashedPassword,
                 birthdate: faker.date.past(60, new Date('2010-01-01')),
-                imageUrl: faker.image.avatar(),
+                imageUrl: faker.image.avatar()
             });
 
-            users.push(patient);
+            patients.push(patient);
         }
 
         // Chèn dữ liệu vào MongoDB
-        await User.insertMany(users);
-        console.log(`Đã chèn thành công ${numDoctors} bác sĩ và ${numPatients} bệnh nhân.`);
+        await User.insertMany(patients);
+        console.log(`Đã chèn thành công ${numPatients} bệnh nhân.`);
     } catch (error) {
         console.error('Có lỗi khi chèn dữ liệu:', error.message);
     } finally {
@@ -69,4 +83,4 @@ const insertBulkUsers = async (numDoctors, numPatients) => {
 };
 
 // Gọi hàm để chèn 100 bác sĩ và 500 bệnh nhân
-insertBulkUsers(0, 2);
+insertBulkPatients(1000);
